@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dekko Shi | Senior UX Designer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.174.0/three.module.min.js"
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <h1><span class="gradient-text">Dekko Shi:</span> Designing Valuable Experiences for the Intelligence Age.</h1>
+            <p>Senior UX Designer. Creating valuable, personal interactions between people and brands.</p>
+            <div class="hero-description">
+                <p>Harnessing design and technology to help define, design and accelerate delivery of more valuable, personal interactions.</p>
+            </div>
+            <div class="hero-cta">
+                <a href="#experience" class="primary-btn">My Experience</a>
+                <a href="#projects" class="secondary-btn">My Work</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div id="hero-3d-canvas"></div>
+            <!-- Original placeholder removed/commented out if 3D canvas replaces it -->
+            <!-- <div class="hero-visual-placeholder">New Visual Area (Abstract/Conceptual)</div> -->
+        </div>
+    </section>
+
+    <div class="page-nav">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+    </div>
+
+    <section id="about" class="about">
+        <div class="section-header">
+            <h2>About Me</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <p>I am a Senior UX Designer driven by purpose and curiosity, passionate about creating a more human future through the intersection of design, technology, and empathy. My approach is rooted in active listening, collaboration, and a relentless pursuit of simplicity and impact. I thrive in environments that value diversity, iteration, and bold ideas—where learning and unlearning are part of the process, and where creativity is everyone's job.</p>
+                <p>I believe the best solutions emerge when diverse perspectives come together, and I'm energized by the opportunity to work across disciplines to deliver breakthrough, culturally relevant experiences. My work is guided by a commitment to equity, inclusion, and measurable results for both users and brands.</p>
+                <p>A core tenet of my design and career philosophy is drawn from the 'Lean Startup' methodology. Its emphasis on validated learning, iterative cycles, and a relentless focus on customer value, as discussed in insightful articles like '<a href="https://www.linkedin.com/pulse/lean-startup-toyota-production-system-entrepreneurs-service-designer/" target="_blank" style="text-decoration: underline;">Lean Startup, the Toyota Production System for Entrepreneurs</a>', deeply informs my process. This allows me to rapidly test assumptions, learn from real-world feedback, and build solutions that are not only innovative but also genuinely impactful and human-centered.</p>
+                <div class="about-public-titles" style="margin-top:2rem;">
+                    <h4 style="text-transform:uppercase; letter-spacing:1px; color:#fff; margin-bottom:0.5rem;">Public Titles & Partnerships</h4>
+                    <ul style="list-style:none; padding-left:0; color:var(--primary-text);">
+                        <li><strong>Rednote Special Correspondent:</strong> Google I/O 2025, SME Business Advisor, International Indie Developer Competition 2025</li>
+                        <li><strong>Partnership with OPPO Global</strong></li>
+                        <li><strong>Partnership with Huawei Europe</strong></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="about-stats">
+                <div class="stat-item">
+                    <span class="stat-number">7</span>
+                    <span class="stat-label">Years in UX Design</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">Years in Data Visualization and <br> Software Engineering</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">10+</span>
+                    <span class="stat-label">Enterprise Projects</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="skills">
+        <div class="section-header">
+            <h2>My Technical Expertise</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="skills-container">
+            <div class="skill-category">
+                <h3>UX Leadership</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">User Research</span>
+                    <span class="skill-tag">Workshop Facilitation</span>
+                    <span class="skill-tag">Design Strategy</span>
+                    <span class="skill-tag">Team Collaboration</span>
+                    <span class="skill-tag">Stakeholder Management</span>
+                    <span class="skill-tag">Impact Measurement</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Technical Expertise</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Data Visualization</span>
+                    <span class="skill-tag">Dashboard Design</span>
+                    <span class="skill-tag">Analytics UI</span>
+                    <span class="skill-tag">B2B Platforms</span>
+                    <span class="skill-tag">Technical Systems</span>
+                    <span class="skill-tag">Enterprise Solutions</span>
+                    <span class="skill-tag">JDM Vechile Modification</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Design Process</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">User Research</span>
+                    <span class="skill-tag">Prototyping</span>
+                    <span class="skill-tag">Wireframing</span>
+                    <span class="skill-tag">Visual Design</span>
+                    <span class="skill-tag">Design Systems</span>
+                    <span class="skill-tag">User Testing</span>
+                    <span class="skill-tag">Design Documentation</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Tools & Technologies</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Figma</span>
+                    <span class="skill-tag">Sketch</span>
+                    <span class="skill-tag">Adobe Suite</span>
+                    <span class="skill-tag">Prototyping Tools</span>
+                    <span class="skill-tag">Analytics Tools</span>
+                    <span class="skill-tag">Research Tools</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="company-section">
+        <div class="section-header">
+            <h2>Design Philosophy</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="company-content">
+            <p>My design philosophy centers on the convergence of creative innovation and intelligent technology. I believe in harnessing data-driven insights and human-centered design principles to create experiences that are not only valuable and personal but also anticipate the needs of the intelligence age. My approach is collaborative, iterative, and always focused on delivering measurable impact for brands and their audiences.</p>
+            <div class="company-values">
+                <div class="value-item">
+                    <i class="fas fa-brain"></i>
+                    <h3>Intelligent Experiences</h3>
+                    <p>Crafting solutions that are smart, adaptive, and deeply aligned with user needs.</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-users-cog"></i>
+                    <h3>Technology-Infused Creativity</h3>
+                    <p>Blending cutting-edge technology with creative design to solve complex challenges.</p>
+                </div>
+                <div class="value-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Impact-Driven Design</h3>
+                    <p>Focusing on creating designs that deliver tangible results and drive business value.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="experience">
+        <div class="section-header">
+            <h2>My Experience</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>2019-2024</h3>
+                    <h3>Senior UX Engineer</h3>
+                    <h4>Arcitecta Pty Ltd</h4>
+                    <ul>
+                        <li>Established and evolved an enterprise-wide design system supporting multiple product teams with a reusable component library</li>
+                        <li>Led documentation and adoption strategies for design system implementation</li>
+                        <li>Built Figma component libraries synced with production code</li>
+                        <li>Mentored teams on design system best practices and implementation</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>2015-Present</h3>
+                    <h3>Principal Product Designer</h3>
+                    <h4>INTHEPOND</h4>
+                    <ul>
+                        <li>Developed an accessibility-first component library in Figma</li>
+                        <li>Established design tokens and systematic approach to visual design</li>
+                        <li>Built documentation portal for design system guidelines</li>
+                        <li>Led cross-functional workshops for design system adoption</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>2020-2023</h3>
+                    <h3>UX Tutor</h3>
+                    <h4>The University of Melbourne</h4>
+                    <ul>
+                        <li>Taught user-centred design principles and methodologies to undergraduate and postgraduate students</li>
+                        <li>Guided students through usability testing exercises and prototype development</li>
+                        <li>Developed curriculum components focusing on customer-centric design approaches</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="projects">
+        <div class="section-header">
+            <h2>My Key Projects</h2>
+            <div class="section-line"></div>
+        </div>
+    </section>
+
+    <!-- BEGIN BAMAI FULLPAGE SECTIONS -->
+
+    <section id="bamai-intro" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <div class="project-header" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem;">
+                <h3 style="font-size: 2.5rem; margin-bottom: 1rem;">Bǎ Mài - AI-Powered Health & Fitness</h3>
+                <div class="project-visual" style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom:2rem; flex-wrap: wrap;">
+                    <div class="image-container main-app" style="max-width: 250px;">
+                        <img src="./img/bamai_logo.png" alt="Bamai Mobile App Interface" class="floating-image" style="width: 100%;">
+                    </div>
+                </div>
+                <h4>Technical Stack</h4>
+                <div class="tech-tags" style="justify-content: center;">
+                    <span>Swift UI</span>
+                    <span>WatchKit</span>
+                    <span>CoreML</span>
+                    <span>HealthKit Integration</span>
+                    <span>Real-time Analytics</span>
+                </div>
+                <div class="project-link" style="margin-top: 1.5rem;">
+                    <a href="https://apps.apple.com/cn/app/bamai/id6740943002?l=en-GB&platform=iphone" target="_blank" class="app-link">
+                        <i class="fab fa-apple"></i> View on App Store
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-chat" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <h3 class="chat-section-heading">What happened on April Fool's day?</h3>
+            <div class="chat-simulation-container">
+                <p class="chat-date">1st April 2025</p>
+                <div class="chat-message user-a">
+                    <p id="chat-message-1"></p>
+                </div>
+                <div class="chat-message user-b">
+                    <p id="chat-message-2"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-overview" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <div class="project-bamai-visual-ux"> <!-- Reusing class for consistent styling if possible -->
+                <h4>Project Overview: Bǎ Mài - A Holistic Approach to Well-being</h4>
+                <p>Bǎ Mài began not just as an app, but as an answer to a question: In an increasingly fragmented digital world, how can technology foster genuine, intuitive well-being? The core challenge was to design an AI-powered health and fitness experience that felt deeply personal, calming, and seamlessly integrated into a user's life, rather than another demanding digital chore. Our goal was to create a sanctuary for self-care, making the path to a healthier lifestyle both accessible and inspiring.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-role" class="bamai-fullscreen-section">
+        <div class="project-container">
+             <div class="project-bamai-visual-ux">
+                <h4>My Role: Lead UX/UI Strategist & Designer</h4>
+                <p>As the lead UX/UI strategist and designer, I was responsible for the end-to-end design process. This encompassed initial user research and concept validation, through to information architecture, interaction design, visual design, prototyping, and user testing. I championed a user-centered approach, ensuring that every design decision was rooted in user needs and aimed at creating an experience that was not only functional but also emotionally resonant. I also spearheaded the creation of its distinct visual identity, including the Zen-inspired aesthetic and cross-platform design system for iOS and WatchOS.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-challenge" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <div class="challenge-content" style="display: flex; align-items: start; gap: 2rem;">
+                <div class="project-bamai-visual-ux" style="flex: 1;">
+                    <h4>The Challenge: Simplifying Complexity, Fostering Calm</h4>
+                    <p>The modern health-tech landscape is often noisy and overwhelming. Users are bombarded with data, complex interfaces, and a pressure to perform. The Bǎ Mài challenge was to cut through this noise by:</p>
+                    <ul>
+                        <li><strong>Demystifying AI:</strong> Translating complex AI-driven health insights into simple, actionable guidance.</li>
+                        <li><strong>Ensuring Effortless Interaction:</strong> Designing for 'one-click' ease where possible, making tracking and engagement feel natural, not burdensome.</li>
+                        <li><strong>Cultivating a Serene Digital Space:</strong> Crafting an interface that evoked a sense of calm, focus, and gentle encouragement.</li>
+                        <li><strong>Promoting Holistic Well-being:</strong> Enabling seamless collaboration with other lifestyle apps (like Ruce for mindfulness or nutrition trackers) to present a unified view of health.</li>
+                    </ul>
+                </div>
+                <div style="flex: 1; display: flex; justify-content: center; align-items: center; margin-top: 5em;">
+                    <img src="./img/complex.png" alt="Complex" style="width: 100%; max-width: 400px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-approach" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <div class="project-bamai-visual-ux">
+                <h4>The Approach & Process: An Empathetic, Iterative Journey</h4>
+                <p>Our design philosophy was anchored in empathy and iteration. We embarked on a journey to understand the nuanced needs of individuals seeking to improve their well-being:</p>
+                <ol>
+                    <li><strong>Deep User Research:</strong> We started by listening. Through interviews and surveys, we uncovered common pain points: information overload, lack of motivation, and the feeling of being overwhelmed by health apps. Personas were developed to keep these user narratives at the forefront.</li>
+                    <li><strong>Ideation & Conceptualization:</strong> We explored various approaches to make health tracking feel less like a chore and more like a supportive ritual. The concept of "Streamlined Simplicity" emerged, focusing on minimizing cognitive load and maximizing clarity.</li>
+                    <li><strong>Interaction Design for 'One-Click' Ease:</strong> We meticulously mapped user flows to identify opportunities for simplification. For instance, integrating AI to automate tracking or provide personalized suggestions with minimal user input was key. The goal was to make essential actions achievable in a single, intuitive step.</li>
+                    <li><strong>Data Visualization with Purpose:</strong> We re-imagined how health statistics were presented. Instead of dense charts, we focused on clear, meaningful visuals that highlighted progress and offered gentle nudges, as demonstrated in the user's stats dashboard. <br>
+                        <div class="single-image-container">
+                            <img src="./img/bamai_mobile_stats.png" alt="Bamai Mobile App Stats Screen - Intuitive Data Visualization">
+                            <p class="caption"><em>Intuitive presentation of health statistics in Bǎ Mài.</em></p>
+                        </div>
+                    </li>
+                    <li><strong>Prototyping & Iterative Testing:</strong> Low and high-fidelity prototypes were tested with target users at multiple stages. Feedback directly informed design refinements, ensuring the app evolved based on real-world interaction and needs. This iterative loop was crucial in refining the collaborative features, like the Ruce integration, ensuring data exchange was seamless and added real value.</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-visuals" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <div class="project-bamai-visual-ux">
+                <h4>Visual Design & Philosophy: Crafting a Digital Zen Garden</h4>
+                <p>The visual identity of Bǎ Mài was intentionally designed to be a counterpoint to the often chaotic digital landscape. We aimed to create a digital Zen garden – a space that felt calm, focused, and restorative. This philosophy permeated every visual choice:</p>
+                
+                <h5>The Palette: Colors of Calm</h5>
+                <p>Our color palette was chosen to evoke subtlety and tranquility, forming the foundation of the app's serene atmosphere. These colors work in harmony to create a visually peaceful and sophisticated user interface.</p>
+                <div class="palette-cubes-container">
+                    <div class="palette-cube-wrapper">
+                        <div class="palette-cube-canvas" id="bamai-color-cube-4"></div>
+                        <span class="cube-color-label">#404040 (Accents, Key Information)</span>
+                    </div>
+                    <div class="palette-cube-wrapper">
+                        <div class="palette-cube-canvas" id="bamai-color-cube-2"></div>
+                        <span class="cube-color-label">#656565 (Primary Text, Depth)</span>
+                    </div>
+                    <div class="palette-cube-wrapper">
+                        <div class="palette-cube-canvas" id="bamai-color-cube-3"></div>
+                        <span class="cube-color-label">#D4D4D4 (Dividers, Secondary Elements)</span>
+                    </div>
+                    <div class="palette-cube-wrapper">
+                        <div class="palette-cube-canvas" id="bamai-color-cube-1"></div>
+                        <span class="cube-color-label">#EEEFEE (Subtle Backgrounds)</span>
+                    </div>
+                </div>
+
+                <h5>Typography: The Voice of Serenity - Cormorant</h5>
+                <p>While the primary interface text utilizes clear and modern Helvetica for optimal readability across the application, the Cormorant font family was specifically chosen for its elegant, serif characteristics to be used in key moments and branding, adding a layer of sophistication and calm. It brings a classic, almost literary quality that enhances the Zen-like feel, particularly in headings and reflective content.</p>
+                <div class="font-examples">
+                    <div class="font-example-item">
+                        <span class="label">Heading 1 (Cormorant Bold, 2.4rem, #EEEFEE)</span>
+                        <p class="text-preview-h1">A Moment of Mindfulness</p>
+                    </div>
+                    <div class="font-example-item">
+                        <span class="label">Heading 2 (Cormorant SemiBold, 2rem, #EEEFEE)</span>
+                        <p class="text-preview-h2">Your Journey Unfolds</p>
+                    </div>
+                    <div class="font-example-item">
+                        <span class="label">Body Text (Cormorant Regular, 1.2rem, #D4D4D4)</span>
+                        <p class="text-preview-body">Embrace the gentle rhythm of your progress. Each step, no matter how small, contributes to a larger tapestry of well-being. Let this space be your calm amidst the everyday.</p>
+                    </div>
+                    <div class="font-example-item">
+                        <span class="label">Accent/Quote (Cormorant Italic, 1.2rem, #EEEFEE)</span>
+                        <p class="text-preview-accent">"The art of healing comes from nature, not from the physician."</p>
+                    </div>
+                </div>
+
+                <h5>Imagery & Brand Expression: Subtle, Evocative Visuals</h5>
+                <p>The broader visual language, extending to marketing and brand collateral, carried this ethos of sophisticated simplicity. The goal was to be evocative and aspirational, hinting at the calm and clarity Bǎ Mài offers. This is reflected in the design of associated materials:</p>
+                <div class="image-gallery">
+                    <div class="gallery-item">
+                        <img src="./img/bamai_sticker.png" alt="Bamai Sticker Design - Zen Aesthetic">
+                        <p class="caption"><em>Bǎ Mài Sticker: Clean lines and tranquil imagery.</em></p>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./img/bamai_sticker_2.png" alt="Bamai Sticker Design - Alternate Concept">
+                        <p class="caption"><em>Alternate Sticker: Minimalist brand expression.</em></p>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./img/bamai_soft_disk.png" alt="Bamai Soft Disk Product Mockup - Tactile and Calm">
+                        <p class="caption"><em>Product Concept: Soft, tactile, and inviting.</em></p>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./img/bamai_billboards.png" alt="Bamai Billboards Advertising - Serene Public Presence">
+                        <p class="caption"><em>Brand Campaign: Extending the Zen vibe to public spaces.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="bamai-outcomes" class="bamai-fullscreen-section">
+        <div class="project-container">
+            <div class="project-bamai-visual-ux"> <!-- Reusing class for consistent styling -->
+                <h4>Outcomes & Impact: Fostering Engagement Through Serenity</h4>
+                <p>While specific metrics like the 0.9% conversion rate and 2.75 sessions per active device indicate strong initial engagement, the true intended impact of Bǎ Mài's design was qualitative: to create a health app that users *wanted* to return to, not because of gamification or alerts, but because it offered a genuinely calming and supportive experience. The high App Store search discovery (86.4%) suggests a strong product-market fit for users seeking a different, more mindful approach to their health and fitness journey. The design choices directly contributed to this by prioritizing ease of use, clarity, and a tranquil user experience, making Bǎ Mài a distinct and appealing offering in a crowded market.</p>
+                
+                <div class="achievement-banner" style="margin-top: 2rem; margin-bottom: 2rem;">
+                    <div class="rank-highlight">
+                        <span class="rank-number">#14</span>
+                        <span class="rank-label">Overall Ranking<br>China App Store</span>
+                    </div>
+                    <div class="category-achievements">
+                        <div class="market-rank">
+                            <i class="fas fa-globe-asia"></i>
+                            <span class="country">China</span>
+                            <span class="rank-detail">Overall: #14 | Health & Fitness: #1</span>
+                        </div>
+                        <div class="market-rank">
+                            <i class="fas fa-globe-asia"></i>
+                            <span class="country">Singapore</span>
+                            <span class="rank-detail">Overall: #15 | Health & Fitness: #1</span>
+                        </div>
+                        <div class="market-rank">
+                            <i class="fas fa-globe-asia"></i>
+                            <span class="country">Malaysia</span>
+                            <span class="rank-detail">Overall: #9 | Health & Fitness: #1</span>
+                        </div>
+                        <div class="market-rank">
+                            <i class="fas fa-globe-americas"></i>
+                            <span class="country">United States</span>
+                            <span class="rank-detail">Health & Fitness: #15</span>
+                        </div>
+                        <div class="market-rank">
+                            <i class="fas fa-globe-asia"></i>
+                            <span class="country">Australia</span>
+                            <span class="rank-detail">Health & Fitness: #4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-metrics" style="margin-bottom: 2rem;">
+                    <div class="metric">
+                        <span class="metric-number">527K</span>
+                        <span class="metric-label">Impressions</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-number">3.25K</span>
+                        <span class="metric-label">Total Downloads</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-number">$3.48K</span>
+                        <span class="metric-label">Total Proceeds</span>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 2rem;">Market Performance</h4>
+                <ul>
+                    <li>China Mainland: 2,878 downloads (88.2%)</li>
+                    <li>United States: 118 downloads (3.6%)</li>
+                    <li>Australia: 52 downloads (1.6%)</li>
+                    <li>Average Revenue per User: $1.5</li>
+                </ul>
+
+                <div class="project-highlight" style="margin-top: 2rem;">
+                    <i class="fas fa-trophy"></i> 86.4% Downloads from App Store Search
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- END BAMAI FULLPAGE SECTIONS -->
+
+    <section class="project-section project-x6ren">
+        <div class="project-container">
+            <div class="project-content">
+                <div class="project-badge">Mobile</div>
+                <div class="project-header">
+                    <div class="project-text">
+                        <h3>X6ren - Lifestyle & Decision Making</h3>
+                        <p>For X6ren, we challenged ourselves to simplify the often-overwhelming process of lifestyle choices. Our purpose was clear: to empower users with clarity and confidence. We brought together diverse skill sets to untangle complexity. We were constantly learning and unlearning, particularly around user biases in decision-making, which pushed us to design a more equitable and intuitive platform. The journey involved many 'What if...?' moments and rapid iterations, always striving for that breakthrough creative solution. The strong user engagement wasn't just a metric; it was a sign that we'd successfully navigated the intersection of user desire and platform simplicity, creating real value.</p>
+                    </div>
+                    <div class="project-visual">
+                        <img src="./img/x6ren_mobile.png" alt="X6ren Mobile App Interface" class="floating-image">
+                    </div>
+                </div>
+                
+                <div class="project-details">
+                    <h4>Key Contributions</h4>
+                    <ul>
+                        <li>Designed an efficient conversion funnel achieving 0.3% conversion rate from product page views</li>
+                        <li>Implemented engagement features leading to 2.54 sessions per active device</li>
+                        <li>Created a robust social commerce platform with minimal crash rate (3 crashes)</li>
+                        <li>Optimized user acquisition through App Store Search (70.1% of downloads)</li>
+                        <li>Developed streamlined payment flow with $1 average revenue per paying user</li>
+                    </ul>
+
+                    <div class="project-metrics">
+                        <div class="metric">
+                            <span class="metric-number">512K</span>
+                            <span class="metric-label">Impressions</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-number">990</span>
+                            <span class="metric-label">Total Downloads</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-number">$726</span>
+                            <span class="metric-label">Total Proceeds</span>
+                        </div>
+                    </div>
+
+                    <h4>Market Performance</h4>
+                    <ul>
+                        <li>China Mainland: 902 downloads (91.1%)</li>
+                        <li>United States: 35 downloads (3.5%)</li>
+                        <li>Australia: 24 downloads (2.4%)</li>
+                        <li>App Store Search: 70.1% of traffic</li>
+                        <li>App Store Browse: 19.3% of traffic</li>
+                    </ul>
+
+                    <h4>Technical Stack</h4>
+                    <div class="tech-tags">
+                        <span>Swift UI</span>
+                        <span>WatchKit</span>
+                        <span>SVG Animation</span>
+                    </div>
+
+                    <div class="project-highlight">
+                        <i class="fas fa-trophy"></i> 70.1% Downloads from App Store Search
+                    </div>
+                    <div class="project-link">
+                        <a href="https://apps.apple.com/cn/app/x6ren/id6740508391?l=en-GB&platform=iphone" target="_blank" class="app-link">
+                            <i class="fab fa-apple"></i> View on App Store
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="project-section project-enterprise">
+        <div class="project-container">
+            <div class="project-content">
+                <div class="project-badge">Enterprise</div>
+                <div class="project-partners">
+                    <span>Arcitecta | </span>
+                    <span>Fortune 20 Company | </span>
+                    <span>Dell</span>
+                </div>
+                <h3>Point In Time and Archive System</h3>
+                <div class="project-challenge">
+                    <h4>Challenge</h4>
+                    <p>Tackling the Point In Time system was about simplifying immense complexity to serve a critical human need: secure and accessible data. Our purpose was to bring 'high humanity' to a 'high technology' challenge for a global leader. We fostered a culture of active listening with stakeholders across continents, ensuring every voice was heard and valued. This commitment to equity and inclusion in our design process was paramount. Innovation happened at the intersection of robust security demands and the end-user's daily workflow. We iterated constantly, asking 'What if we could make this even more intuitive?' The outcome was a system that not only managed vast data securely but did so in a way that empowered its users, proving that even the most technical solutions can be human-centered.</p>
+                </div>
+                <div class="design-approach">
+                    <h4>Design Strategy</h4>
+                    <ul>
+                        <li><strong>Global UX Research:</strong> Conducted user studies across multiple time zones and user roles</li>
+                        <li><strong>Security-First Design:</strong> Implemented secure access patterns without compromising usability</li>
+                        <li><strong>Cross-Cultural Design:</strong> Created interfaces that work across different cultural contexts</li>
+                        <li><strong>Scalable Architecture:</strong> Designed systems that maintain performance at enterprise scale</li>
+                    </ul>
+                </div>
+                <div class="project-outcomes">
+                    <h4>Results</h4>
+                    <ul>
+                        <li>Successfully managed 100PB+ of sensitive manufacturing data</li>
+                        <li>Reduced data access time by 40% while maintaining security protocols</li>
+                        <li>Achieved 99.99% system reliability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="project-section project-enterprise">
+        <div class="project-container">
+            <div class="project-content">
+                <div class="project-badge">Enterprise</div>
+                <div class="project-partners">
+                    <span>Arcitecta | </span>
+                    <span>University of Melbourne</span>
+                </div>
+                <h3>Mediaflux Data Mover</h3>
+                <div class="project-challenge">
+                    <h4>Challenge</h4>
+                    <p>The Mediaflux Data Mover challenged us to redefine what 'intuitive' means in the world of large-scale data. Our journey was driven by the purpose of making complex operations feel simple and reliable. It was a fantastic example of 'innovation at intersections,' bringing together engineering brilliance with user-centric design. We embraced the '80% finished' ethos, continually learning from performance analytics and user feedback to refine the interface. This iterative process, fueled by curiosity and a desire to simplify, led to a solution recognized for its architectural elegance and a significant reduction in transfer failures—a direct impact of putting human needs at the center of a technological challenge.</p>
+                </div>
+                <div class="design-approach">
+                    <h4>Design Strategy</h4>
+                    <ul>
+                        <li><strong>Data-Informed Design:</strong> Utilized analytics to identify common transfer patterns</li>
+                        <li><strong>Progressive Disclosure:</strong> Simplified complex operations through staged interfaces</li>
+                        <li><strong>Visual Feedback:</strong> Designed real-time progress indicators and status updates</li>
+                        <li><strong>Error Handling:</strong> Implemented predictive error prevention and recovery flows</li>
+                    </ul>
+                </div>
+                <div class="project-outcomes">
+                    <h4>Recognition</h4>
+                    <ul>
+                        <li>Won "Most Complete Architecture" at International Data Mover Challenge 2024</li>
+                        <li>Achieved "Best Software Architecture" award</li>
+                        <li>Reduced failed transfers by 75% through improved error handling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="project-section project-enterprise">
+        <div class="project-container">
+            <div class="project-content">
+                <div class="project-badge">Enterprise</div>
+                <div class="project-partners">
+                    <span>Arcitecta | </span>
+                    <span>Powerhouse Museum | </span>
+                    <span>NSW Government</span>
+                </div>
+                <h3>Powerhouse Museum DAMS</h3>
+                <div class="project-challenge">
+                    <h4>Challenge</h4>
+                    <p>With the Powerhouse Museum DAMS, our purpose was to honor the past while building a more human future for cultural heritage. This meant actively listening to curators and archivists, understanding their deep connection to the collections. We saw creativity as everyone's job, collaborating closely to ensure the technology served their intricate workflows. The project was a process of learning and unlearning – shedding old assumptions to embrace new possibilities for access and preservation. By simplifying complex archival processes and fostering an inclusive design approach, we helped create a platform that not only protected priceless assets but also empowered those dedicated to sharing them with the world. It was innovation happening at the profound intersection of history, technology, and human passion.</p>
+                </div>
+                <div class="design-approach">
+                    <h4>Design Strategy</h4>
+                    <ul>
+                        <li><strong>User Research:</strong> Conducted in-depth interviews with curators, archivists, and digital teams to understand pain points and workflow requirements</li>
+                        <li><strong>System Analysis:</strong> Mapped legacy system architecture and identified opportunities for UX improvements</li>
+                        <li><strong>Information Architecture:</strong> Restructured content hierarchy to reflect museum's cataloging practices</li>
+                        <li><strong>Iterative Design:</strong> Implemented feedback loops with stakeholders for continuous refinement</li>
+                    </ul>
+                </div>
+                <div class="project-outcomes">
+                    <h4>Key Outcomes</h4>
+                    <ul>
+                        <li>Reduced asset discovery time through improved search and filtering</li>
+                        <li>Streamlined curatorial workflow with intuitive batch operations</li>
+                        <li>Enhanced metadata management with customizable templates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="project-section project-enterprise">
+        <div class="project-container">
+            <div class="project-content">
+                <div class="project-badge">Enterprise</div>
+                <div class="project-partners">
+                    <span>Arcitecta | </span>
+                    <span>University of Melbourne | </span>
+                    <span>UNSW</span>
+                </div>
+                <h3>Mediaflux Pocket - MFA Security Solution</h3>
+                <div class="project-challenge">
+                    <h4>Challenge</h4>
+                    <p>Mediaflux Pocket was about making security feel less like a barrier and more like a seamless part of a trusted experience. Our guiding principle was 'simplify.' We asked, 'What if robust security could also be effortlessly human?' This purpose drove us to innovate at the intersection of stringent compliance and user empathy. Through active listening and iterative design, focusing on diverse user needs, we transformed a potentially frustrating interaction into one that felt intuitive and empowering. It was a journey of learning how to build trust through technology, ensuring that the solution was not just secure, but also equitable and accessible to all users, reflecting a commitment to a more human-centered digital world.</p>
+                </div>
+                <div class="design-approach">
+                    <h4>Design Strategy</h4>
+                    <ul>
+                        <li><strong>Security UX Research:</strong> Analyzed user behavior patterns in security interactions</li>
+                        <li><strong>Compliance Mapping:</strong> Created user flows that align with security standards</li>
+                        <li><strong>Progressive Disclosure:</strong> Implemented layered security interfaces to reduce cognitive load</li>
+                        <li><strong>Error Prevention:</strong> Designed proactive validation and clear error recovery paths</li>
+                    </ul>
+                </div>
+                <div class="project-outcomes">
+                    <h4>Impact</h4>
+                    <ul>
+                        <li>Achieved 98% user adoption rate within first month</li>
+                        <li>Reduced authentication-related support tickets by 45%</li>
+                        <li>Met all government and University
+                             security compliance requirements</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Dekko Shi</h3>
+            </div>
+            <div class="footer-links">
+                <a href="#about">About</a>
+                <a href="#experience">Experience</a>
+                <a href="#projects">Projects</a>
+                <a href="#skills">Skills</a>
+            </div>
+            <div class="footer-social">
+                <a href="https://www.linkedin.com/in/dekko-zhonglin-shi-0a283a157/" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Dekko Shi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html> 
