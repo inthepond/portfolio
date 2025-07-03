@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design System Example</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Tokyo+Zoo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* QÌ Design System Colors */
+            --qi-background: #DCD7CD;
+            --qi-primary-text: #2E2E2E;
+            --qi-secondary-text: #4A4A4A;
+            --qi-accent: #A39788;
+            --qi-card-background: #7A7A7A;
+            --qi-selected-card-background: #A39788;
+            --qi-card-selected-border: #A39788;
+            --qi-disabled: #9E9E9E;
+            --qi-image-placeholder: #E7E1D7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--qi-background);
+            color: var(--qi-primary-text);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Typography System */
+        .qi-logo {
+            font-family: 'Zen Tokyo Zoo', cursive;
+            font-size: 4rem;
+            font-weight: normal;
+            color: var(--qi-primary-text);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .chinese-text {
+            font-family: 'Songti SC', serif;
+        }
+
+        .english-text {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        /* Header */
+        .header {
+            background: var(--qi-background);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--qi-accent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section h1 {
+            font-family: 'Zen Tokyo Zoo', cursive;
+            font-size: 2.5rem;
+            color: var(--qi-primary-text);
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .logo-section p {
+            color: var(--qi-secondary-text);
+            margin-top: 0.5rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--qi-accent);
+            border-radius: 8px;
+            color: var(--qi-primary-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: var(--qi-accent);
+            color: var(--qi-background);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 4rem;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s ease;
+            scroll-margin-top: 100px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--qi-primary-text);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--qi-secondary-text);
+            margin-bottom: 2rem;
+        }
+
+        /* Color Palette */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .color-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+                 .color-card:hover {
+             transform: translateY(-2px);
+         }
+
+         .color-swatch {
+             height: 120px;
+             cursor: pointer;
+             position: relative;
+             transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+         }
+
+         .color-swatch:hover {
+             height: 130px;
+         }
+
+        .color-info {
+            padding: 1rem;
+        }
+
+        .color-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--qi-primary-text);
+        }
+
+        .color-hex {
+            color: var(--qi-secondary-text);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Typography Showcase */
+        .typography-examples {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .type-example {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--qi-image-placeholder);
+        }
+
+        .type-example:last-child {
+            border-bottom: none;
+        }
+
+        .type-label {
+            font-size: 0.8rem;
+            color: var(--qi-secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bounce {
+            animation: zenBreathe 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes zenBreathe {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-3px) scale(1.02); }
+        }
+
+        /* Copy notification */
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--qi-accent);
+            color: var(--qi-background);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .copy-notification.show {
+            transform: translateX(0);
+        }
+
+        /* Prototype Section */
+        .prototype-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+
+        .prototype-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 700px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prototype-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .media-controls {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .media-toggle-btn {
+            background: rgba(220, 215, 205, 0.9);
+            color: var(--qi-primary-text);
+            border: 1px solid var(--qi-accent);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .media-toggle-btn:hover {
+            background: var(--qi-accent);
+            color: var(--qi-background);
+            transform: translateY(-1px);
+        }
+
+        .media-toggle-btn.active {
+            background: var(--qi-accent);
+            color: var(--qi-background);
+            box-shadow: 0 2px 8px rgba(163, 151, 136, 0.3);
+        }
+
+        .media-toggle-btn i {
+            font-size: 0.8rem;
+        }
+
+        /* Prototype Divider Styles */
+        .prototype-divider {
+            display: flex;
+            align-items: center;
+            margin: 6rem 0;
+            padding: 0 2rem;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--qi-accent), transparent);
+        }
+
+        .divider-text {
+            margin: 0 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--qi-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Component Breakdown Section */
+        .component-breakdown {
+            margin-top: 3rem;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .breakdown-title {
+            font-size: 1.8rem;
+            color: var(--qi-primary-text);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .breakdown-subtitle {
+            color: var(--qi-secondary-text);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .breakdown-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            height: 500px;
+        }
+
+        .component-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .component-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--qi-image-placeholder);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--qi-secondary-text);
+        }
+
+        .component-item:hover {
+            background: var(--qi-accent);
+            color: var(--qi-background);
+            transform: translateX(4px);
+        }
+
+        .component-item.active {
+            background: var(--qi-accent);
+            color: var(--qi-background);
+            border-color: var(--qi-card-selected-border);
+            box-shadow: 0 2px 8px rgba(163, 151, 136, 0.3);
+        }
+
+        .component-item i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .component-item span {
+            font-weight: 500;
+        }
+
+        .component-code {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .component-code .code-header {
+            background: #2a2a2a;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .component-code pre {
+            flex: 1;
+            padding: 1.5rem;
+            margin: 0;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #f8f8f2;
+        }
+
+        /* Custom scrollbar for component code */
+        .component-code pre::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .component-code pre::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .component-code pre::-webkit-scrollbar-thumb {
+            background: var(--qi-accent);
+            border-radius: 4px;
+        }
+
+        .component-code pre::-webkit-scrollbar-thumb:hover {
+            background: var(--qi-primary-text);
+        }
+
+        .prototype-code {
+            background: #1a1a1a;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            height: 700px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            position: relative;
+            border-left: 1px solid #333;
+        }
+
+        /* Custom scrollbar for code area */
+        .prototype-code::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .prototype-code::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .prototype-code::-webkit-scrollbar-thumb {
+            background: var(--qi-accent);
+            border-radius: 4px;
+        }
+
+        .prototype-code::-webkit-scrollbar-thumb:hover {
+            background: var(--qi-primary-text);
+        }
+
+        .prototype-code::before {
+            content: 'Swift';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #ff6b35;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-title {
+            font-weight: bold;
+            color: #f8f8f2;
+            font-size: 1rem;
+        }
+
+        .copy-button {
+            background: var(--qi-accent);
+            color: var(--qi-background);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--qi-primary-text);
+            transform: translateY(-1px);
+        }
+
+        .prototype-description {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .prototype-title {
+            font-size: 1.8rem;
+            color: var(--qi-primary-text);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .prototype-subtitle {
+            color: var(--qi-secondary-text);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .design-principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .principle-item {
+            background: var(--qi-image-placeholder);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .principle-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--qi-accent);
+        }
+
+        .principle-text {
+            font-size: 0.9rem;
+            color: var(--qi-secondary-text);
+        }
+
+        /* Syntax Highlighting */
+        .code-keyword { color: #ff79c6; }
+        .code-string { color: #f1fa8c; }
+        .code-comment { color: #6272a4; font-style: italic; }
+        .code-function { color: #50fa7b; }
+        .code-type { color: #8be9fd; }
+        .code-number { color: #bd93f9; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .prototype-showcase {
+                grid-template-columns: 1fr;
+            }
+            
+            .prototype-image {
+                min-height: 400px;
+            }
+
+            .breakdown-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .component-list {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .component-item {
+                flex-shrink: 0;
+                min-width: 180px;
+            }
+
+            .component-code {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .qi-logo {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .prototype-code {
+                font-size: 0.75rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1>Product: QÌ mobile app</h1>
+            </div>
+            <nav class="nav-tabs">
+                <a href="#overview" class="nav-tab active" onclick="showSection('overview')">Overview</a>
+                <a href="#colors" class="nav-tab" onclick="showSection('colors')">Colors</a>
+                <a href="#typography" class="nav-tab" onclick="showSection('typography')">Typography</a>
+                <a href="#prototypes" class="nav-tab" onclick="showSection('prototypes')">Prototypes</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Overview Section -->
+        <section id="overview" class="section">
+            <h2 class="section-title">QÌ Design System</h2>
+            <p class="section-subtitle">A harmonious blend of Eastern philosophy and modern web design</p>
+            
+            <div class="qi-logo">QÌ</div>
+            
+            <div class="typography-examples">
+                <h3>Philosophy</h3>
+                <p>The QÌ design system embodies the concept of <span class="chinese-text">氣</span> (qì) - the fundamental life force that flows through all things. This design language seeks to create digital experiences that feel natural, balanced, and energizing.</p>
+                
+                <h4>Core Principles</h4>
+                <ul>
+                    <li><strong>Balance:</strong> Every element is purposefully placed to create visual harmony</li>
+                    <li><strong>Flow:</strong> Smooth transitions and interactions guide users naturally</li>
+                    <li><strong>Clarity:</strong> Information hierarchy promotes understanding</li>
+                    <li><strong>Accessibility:</strong> Inclusive design for all users</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Colors Section -->
+        <section id="colors" class="section">
+            <h2 class="section-title">Color Palette</h2>
+            <p class="section-subtitle">Earthy tones inspired by natural elements and traditional aesthetics</p>
+            
+            <div class="color-grid" id="colorGrid">
+                <!-- Colors will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section id="typography" class="section">
+            <h2 class="section-title">Typography</h2>
+            <p class="section-subtitle">A harmonious blend of Eastern and Western typographic traditions</p>
+            
+            <div class="typography-examples">
+                <div class="type-example">
+                    <div class="type-label">Logo - Zen Tokyo Zoo</div>
+                    <div style="font-family: 'Zen Tokyo Zoo', cursive; font-size: 3rem; color: var(--qi-primary-text);">QÌ</div>
+                </div>
+                
+                <div class="type-example">
+                    <div class="type-label">Heading 1 - Helvetica Bold</div>
+                    <h1 class="english-text" style="font-size: 2.5rem; font-weight: bold;">Design with Purpose</h1>
+                </div>
+                
+                <div class="type-example">
+                    <div class="type-label">Heading 2 - Helvetica Semibold</div>
+                    <h2 class="english-text" style="font-size: 2rem; font-weight: 600;">Creating Digital Harmony</h2>
+                </div>
+                
+                <div class="type-example">
+                    <div class="type-label">Body Text - Helvetica Regular</div>
+                    <p class="english-text">This is body text that demonstrates readability and flow. The QÌ design system prioritizes clarity and accessibility in all textual content.</p>
+                </div>
+                
+                <div class="type-example">
+                    <div class="type-label">Chinese Text - Songti SC</div>
+                    <p class="chinese-text" style="font-size: 1.2rem;">氣韻生動，設計如行雲流水般自然。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prototypes Section -->
+        <section id="prototypes" class="section">
+            <h2 class="section-title">QÌ Prototypes</h2>
+            <p class="section-subtitle">Real implementation examples showing design system components in action</p>
+            
+            <!-- Landing View Prototype -->
+            <div class="prototype-description">
+                <h3 class="prototype-title">Onboarding Landing View</h3>
+                <p class="prototype-subtitle">A zen-inspired onboarding experience with floating motes and gesture-based interaction</p>
+                
+                <div class="design-principles">
+                    <div class="principle-item">
+                        <div class="principle-icon">🎨</div>
+                        <div class="principle-text">Visual Harmony</div>
+                    </div>
+                    <div class="principle-item">
+                        <div class="principle-icon">✨</div>
+                        <div class="principle-text">Subtle Animation</div>
+                    </div>
+                    <div class="principle-item">
+                        <div class="principle-icon">👆</div>
+                        <div class="principle-text">Gesture Navigation</div>
+                    </div>
+                    <div class="principle-item">
+                        <div class="principle-icon">🔐</div>
+                        <div class="principle-text">Auth Integration</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prototype-showcase">
+                <div class="prototype-image">
+                    <div class="media-controls">
+                        <button class="media-toggle-btn active" onclick="toggleMedia('image')" id="imageBtn">
+                            <i class="fas fa-image"></i> Static
+                        </button>
+                        <button class="media-toggle-btn" onclick="toggleMedia('video')" id="videoBtn">
+                            <i class="fas fa-play"></i> Animation
+                        </button>
+                    </div>
+                    <img id="prototypeImage" src="./img/qi_landing.PNG" alt="QÌ Landing Screen Prototype" />
+                    <video id="prototypeVideo" src="./img/qi_landing_demo.mp4" loop muted style="display: none; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="prototype-code">
+                    <div class="code-header">
+                        <span class="code-title">OnboardingView.swift</span>
+                        <button class="copy-button" onclick="copyCode('landingCode')">Copy Code</button>
+                    </div>
+                    <pre id="landingCode"><span class="code-keyword">import</span> <span class="code-type">SwiftUI</span>
+<span class="code-keyword">import</span> <span class="code-type">CoreImage</span>
+<span class="code-keyword">import</span> <span class="code-type">CoreImage.CIFilterBuiltins</span>
+<span class="code-keyword">import</span> <span class="code-type">PhotosUI</span>
+
+<span class="code-comment">// MoteData Struct - Floating background elements</span>
+<span class="code-keyword">struct</span> <span class="code-type">MoteData</span>: <span class="code-type">Identifiable</span> {
+    <span class="code-keyword">let</span> id = <span class="code-type">UUID</span>()
+    <span class="code-keyword">let</span> position: <span class="code-type">UnitPoint</span> = .<span class="code-function">init</span>(x: .<span class="code-function">random</span>(in: <span class="code-number">0</span>...<span class="code-number">1</span>), y: .<span class="code-function">random</span>(in: <span class="code-number">0</span>...<span class="code-number">1</span>))
+    <span class="code-keyword">let</span> size: <span class="code-type">CGFloat</span> = .<span class="code-function">random</span>(in: <span class="code-number">50</span>...<span class="code-number">150</span>)
+    <span class="code-keyword">let</span> color: <span class="code-type">Color</span> = [
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.1</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.6</span>, saturation: <span class="code-number">0.25</span>, brightness: <span class="code-number">0.9</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.8</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.95</span>, saturation: <span class="code-number">0.25</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.3</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.9</span>)
+    ].<span class="code-function">randomElement</span>()!.<span class="code-function">opacity</span>(<span class="code-type">Double</span>.<span class="code-function">random</span>(in: <span class="code-number">0.4</span>...<span class="code-number">0.7</span>))
+}
+
+<span class="code-keyword">struct</span> <span class="code-type">OnboardingView</span>: <span class="code-type">View</span> {
+    <span class="code-keyword">var</span> onGetStarted: () -> <span class="code-type">Void</span>
+    
+    <span class="code-comment">// State management</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> showAuthView = <span class="code-keyword">false</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> showUserProfile = <span class="code-keyword">false</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> dragOffset: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+    
+    <span class="code-comment">// Environment objects</span>
+    <span class="code-keyword">@EnvironmentObject</span> <span class="code-keyword">var</span> supabaseService: <span class="code-type">SupabaseService</span>
+    
+    <span class="code-comment">// Motes animation state</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> motes: [<span class="code-type">MoteData</span>] = []
+    <span class="code-keyword">let</span> timer = <span class="code-type">Timer</span>.<span class="code-function">publish</span>(every: <span class="code-number">0.6</span>, tolerance: <span class="code-number">0.2</span>, on: .main, in: .common).<span class="code-function">autoconnect</span>()
+    <span class="code-keyword">let</span> maxMotes = <span class="code-number">15</span>
+    <span class="code-keyword">let</span> moteLifetime: <span class="code-type">TimeInterval</span> = <span class="code-number">4.0</span>
+
+    <span class="code-keyword">var</span> body: <span class="code-keyword">some</span> <span class="code-type">View</span> {
+        <span class="code-type">GeometryReader</span> { geometry <span class="code-keyword">in</span>
+            <span class="code-type">ZStack</span> {
+                <span class="code-type">Color</span>.jtBackground.<span class="code-function">ignoresSafeArea</span>()
+                
+                <span class="code-comment">// Background Motes Layer</span>
+                <span class="code-type">ZStack</span> {
+                    <span class="code-type">ForEach</span>(motes) { mote <span class="code-keyword">in</span>
+                        <span class="code-type">Circle</span>()
+                            .<span class="code-function">fill</span>(mote.color)
+                            .<span class="code-function">frame</span>(width: mote.size, height: mote.size)
+                            .<span class="code-function">position</span>(x: mote.position.x * geometry.size.width, 
+                                      y: mote.position.y * geometry.size.height)
+                            .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>.<span class="code-function">animation</span>(.<span class="code-function">easeInOut</span>(duration: <span class="code-number">1.5</span>)))
+                            .<span class="code-function">id</span>(mote.id)
+                    }
+                }
+                .<span class="code-function">blur</span>(radius: <span class="code-number">20</span>)
+                .<span class="code-function">ignoresSafeArea</span>()
+
+                <span class="code-comment">// Main Content</span>
+                <span class="code-type">VStack</span>(spacing: <span class="code-number">0</span>) {
+                    <span class="code-type">Spacer</span>()
+                    <span class="code-type">Spacer</span>()
+                    
+                    <span class="code-type">VStack</span>(spacing: <span class="code-number">20</span>) {
+                        <span class="code-type">Text</span>(<span class="code-string">"Swipe up to begin"</span>)
+                            .<span class="code-function">font</span>(.<span class="code-function">caption</span>)
+                            .<span class="code-function">foregroundColor</span>(<span class="code-type">Color</span>.jtSecondaryText.<span class="code-function">opacity</span>(<span class="code-number">0.6</span>))
+                            .<span class="code-function">opacity</span>(<span class="code-number">1.0</span> - <span class="code-function">abs</span>(dragOffset / <span class="code-number">50</span>))
+                        
+                        <span class="code-comment">// Conditional UI based on auth state</span>
+                        <span class="code-keyword">if</span> supabaseService.isAuthenticated {
+                            <span class="code-comment">// Profile button for authenticated users</span>
+                            <span class="code-type">Button</span>(action: {
+                                showUserProfile = <span class="code-keyword">true</span>
+                            }) {
+                                <span class="code-type">HStack</span>(spacing: <span class="code-number">8</span>) {
+                                    <span class="code-type">UserQiAvatarView</span>(userProfile: supabaseService.userProfile, size: <span class="code-number">30</span>)
+                                    <span class="code-comment">// Profile info display...</span>
+                                }
+                                .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">12</span>)
+                                .<span class="code-function">padding</span>(.<span class="code-function">vertical</span>, <span class="code-number">8</span>)
+                                .<span class="code-function">background</span>(.<span class="code-function">ultraThinMaterial</span>)
+                                .<span class="code-function">clipShape</span>(<span class="code-type">Capsule</span>())
+                            }
+                        } <span class="code-keyword">else</span> {
+                            <span class="code-comment">// Login button for unauthenticated users</span>
+                            <span class="code-type">Button</span>(action: {
+                                showAuthView = <span class="code-keyword">true</span>
+                            }) {
+                                <span class="code-type">Text</span>(<span class="code-string">"Already have an account? Sign in"</span>)
+                                    .<span class="code-function">font</span>(.<span class="code-function">footnote</span>)
+                                    .<span class="code-function">foregroundColor</span>(<span class="code-type">Color</span>.jtAccent)
+                                    <span class="code-comment">// Button styling...</span>
+                            }
+                        }
+                    }
+                    .<span class="code-function">opacity</span>(<span class="code-number">1.0</span> - <span class="code-function">abs</span>(dragOffset / <span class="code-number">50</span>))
+                }
+                .<span class="code-function">padding</span>(.<span class="code-function">bottom</span>, <span class="code-number">40</span>)
+            }
+            .<span class="code-function">offset</span>(y: dragOffset > <span class="code-number">0</span> ? <span class="code-number">0</span> : dragOffset)
+        }
+        .<span class="code-function">contentShape</span>(<span class="code-type">Rectangle</span>())
+        .<span class="code-function">gesture</span>(
+            <span class="code-type">DragGesture</span>()
+                .<span class="code-function">onChanged</span> { value <span class="code-keyword">in</span>
+                    <span class="code-keyword">if</span> value.translation.height < <span class="code-number">0</span> {
+                        <span class="code-keyword">self</span>.dragOffset = value.translation.height
+                    }
+                }
+                .<span class="code-function">onEnded</span> { value <span class="code-keyword">in</span>
+                    <span class="code-keyword">if</span> value.translation.height < -<span class="code-number">80</span> {
+                        <span class="code-function">onGetStarted</span>()
+                    } <span class="code-keyword">else</span> {
+                        <span class="code-function">withAnimation</span>(.<span class="code-function">spring</span>()) {
+                            <span class="code-keyword">self</span>.dragOffset = <span class="code-number">0</span>
+                        }
+                    }
+                }
+        )
+        .<span class="code-function">onReceive</span>(timer) { _ <span class="code-keyword">in</span>
+            <span class="code-comment">// Manage motes lifecycle</span>
+            motes.<span class="code-function">append</span>(<span class="code-type">MoteData</span>())
+            <span class="code-keyword">if</span> motes.count > maxMotes {
+                motes.<span class="code-function">removeFirst</span>(motes.count - maxMotes)
+            }
+        }
+        .<span class="code-function">onAppear</span> {
+            <span class="code-comment">// Initialize with starting motes</span>
+            <span class="code-keyword">for</span> _ <span class="code-keyword">in</span> <span class="code-number">0</span>..<<span class="code-number">5</span> {
+                motes.<span class="code-function">append</span>(<span class="code-type">MoteData</span>())
+            }
+        }
+        .<span class="code-function">sheet</span>(isPresented: $showAuthView) {
+            <span class="code-type">AuthView</span>()
+                .<span class="code-function">environmentObject</span>(supabaseService)
+        }
+        .<span class="code-function">sheet</span>(isPresented: $showUserProfile) {
+            <span class="code-type">UserProfileView</span>()
+                .<span class="code-function">environmentObject</span>(supabaseService)
+        }
+    }
+}</pre>
+                </div>
+            </div>
+
+            <!-- Component Breakdown Section -->
+            <div class="component-breakdown">
+                <h4 class="breakdown-title">Component Breakdown</h4>
+                <p class="breakdown-subtitle">Explore individual components that make up the landing experience</p>
+                
+                <div class="breakdown-container">
+                    <div class="component-list">
+                        <div class="component-item active" onclick="showComponent('background')" id="backgroundItem">
+                            <i class="fas fa-sparkles"></i>
+                            <span>Background Animation</span>
+                        </div>
+                        <div class="component-item" onclick="showComponent('button')" id="buttonItem">
+                            <i class="fas fa-hand-pointer"></i>
+                            <span>Sign In Button</span>
+                        </div>
+                        <div class="component-item" onclick="showComponent('logo')" id="logoItem">
+                            <i class="fas fa-yin-yang"></i>
+                            <span>QÌ Logo Text</span>
+                        </div>
+                    </div>
+                    
+                    <div class="component-code">
+                        <div class="code-header">
+                            <span class="code-title" id="componentTitle">Background Animation</span>
+                            <button class="copy-button" onclick="copyCode('componentCode')">Copy Code</button>
+                        </div>
+                        <pre id="componentCode"><span class="code-comment">// MoteData Struct - Defines floating background elements</span>
+<span class="code-keyword">struct</span> <span class="code-type">MoteData</span>: <span class="code-type">Identifiable</span> {
+    <span class="code-keyword">let</span> id = <span class="code-type">UUID</span>()
+    <span class="code-keyword">let</span> position: <span class="code-type">UnitPoint</span> = .<span class="code-function">init</span>(x: .<span class="code-function">random</span>(in: <span class="code-number">0</span>...<span class="code-number">1</span>), y: .<span class="code-function">random</span>(in: <span class="code-number">0</span>...<span class="code-number">1</span>))
+    <span class="code-keyword">let</span> size: <span class="code-type">CGFloat</span> = .<span class="code-function">random</span>(in: <span class="code-number">50</span>...<span class="code-number">150</span>)
+    <span class="code-keyword">let</span> color: <span class="code-type">Color</span> = [
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.1</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.6</span>, saturation: <span class="code-number">0.25</span>, brightness: <span class="code-number">0.9</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.8</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.95</span>, saturation: <span class="code-number">0.25</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.3</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.9</span>)
+    ].<span class="code-function">randomElement</span>()!.<span class="code-function">opacity</span>(<span class="code-type">Double</span>.<span class="code-function">random</span>(in: <span class="code-number">0.4</span>...<span class="code-number">0.7</span>))
+}
+
+<span class="code-comment">// State management for motes animation</span>
+<span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> motes: [<span class="code-type">MoteData</span>] = []
+<span class="code-keyword">let</span> timer = <span class="code-type">Timer</span>.<span class="code-function">publish</span>(every: <span class="code-number">0.6</span>, tolerance: <span class="code-number">0.2</span>, on: .main, in: .common).<span class="code-function">autoconnect</span>()
+<span class="code-keyword">let</span> maxMotes = <span class="code-number">15</span>
+<span class="code-keyword">let</span> moteLifetime: <span class="code-type">TimeInterval</span> = <span class="code-number">4.0</span>
+
+<span class="code-comment">// Background Motes Layer - Rendered in body</span>
+<span class="code-type">ZStack</span> {
+    <span class="code-type">ForEach</span>(motes) { mote <span class="code-keyword">in</span>
+        <span class="code-type">Circle</span>()
+            .<span class="code-function">fill</span>(mote.color)
+            .<span class="code-function">frame</span>(width: mote.size, height: mote.size)
+            .<span class="code-function">position</span>(x: mote.position.x * geometry.size.width, 
+                      y: mote.position.y * geometry.size.height)
+            .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>.<span class="code-function">animation</span>(.<span class="code-function">easeInOut</span>(duration: <span class="code-number">1.5</span>)))
+            .<span class="code-function">id</span>(mote.id)
+    }
+}
+.<span class="code-function">blur</span>(radius: <span class="code-number">20</span>)
+.<span class="code-function">ignoresSafeArea</span>()
+
+<span class="code-comment">// Motes lifecycle management</span>
+.<span class="code-function">onReceive</span>(timer) { _ <span class="code-keyword">in</span>
+    <span class="code-comment">// Add new mote</span>
+    motes.<span class="code-function">append</span>(<span class="code-type">MoteData</span>())
+    <span class="code-comment">// Remove excess motes</span>
+    <span class="code-keyword">if</span> motes.count > maxMotes {
+        motes.<span class="code-function">removeFirst</span>(motes.count - maxMotes)
+    }
+}
+.<span class="code-function">onAppear</span> {
+    <span class="code-comment">// Initialize with starting motes</span>
+    <span class="code-keyword">for</span> _ <span class="code-keyword">in</span> <span class="code-number">0</span>..<<span class="code-number">5</span> {
+        motes.<span class="code-function">append</span>(<span class="code-type">MoteData</span>())
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prototype Divider -->
+        <div class="prototype-divider">
+            <div class="divider-line"></div>
+            <div class="divider-text">Next Prototype</div>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- QÌ Signed In Prototype Section -->
+        <section id="signed-in-prototype" class="section">
+            <!-- QÌ Visualization Prototype -->
+            <div class="prototype-description">
+                <h3 class="prototype-title">QÌ Visualization Interface</h3>
+                <p class="prototype-subtitle">An immersive interface for users to define and visualize their personal QÌ energy through interactive gradient animations and Chinese typography</p>
+                
+                <div class="design-principles">
+                    <div class="principle-item">
+                        <div class="principle-icon">🎨</div>
+                        <div class="principle-text">Adaptive Colors</div>
+                    </div>
+                    <div class="principle-item">
+                        <div class="principle-icon">✨</div>
+                        <div class="principle-text">Fluid Animation</div>
+                    </div>
+                    <div class="principle-item">
+                        <div class="principle-icon">🈳</div>
+                        <div class="principle-text">Chinese Typography</div>
+                    </div>
+                    <div class="principle-item">
+                        <div class="principle-icon">☁️</div>
+                        <div class="principle-text">Cloud Sync</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prototype-showcase">
+                <div class="prototype-image">
+                    <img src="./img/qi_signed_in.PNG" alt="QÌ Signed In Interface" />
+                </div>
+                <div class="prototype-code">
+                    <div class="code-header">
+                        <span class="code-title">QiVisualizationView.swift</span>
+                        <button class="copy-button" onclick="copyCode('signedInCode')">Copy Code</button>
+                    </div>
+                    <pre id="signedInCode"><span class="code-keyword">import</span> <span class="code-type">SwiftUI</span>
+<span class="code-keyword">import</span> <span class="code-type">UIKit</span>
+
+<span class="code-keyword">struct</span> <span class="code-type">QiVisualizationView</span>: <span class="code-type">View</span> {
+    <span class="code-keyword">let</span> gradientColors: [<span class="code-type">Color</span>]
+    <span class="code-keyword">var</span> existingQiData: <span class="code-type">QiData</span>? = <span class="code-keyword">nil</span>
+    
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> qiName: <span class="code-type">String</span> = <span class="code-string">""</span>
+    <span class="code-keyword">@Environment</span>(\.<span class="code-type">presentationMode</span>) <span class="code-keyword">var</span> presentationMode
+    <span class="code-keyword">@AppStorage</span>(<span class="code-string">"hasDefinedQi"</span>) <span class="code-keyword">private</span> <span class="code-keyword">var</span> hasDefinedQi: <span class="code-type">Bool</span> = <span class="code-keyword">false</span>
+    <span class="code-keyword">@AppStorage</span>(<span class="code-string">"qiData"</span>) <span class="code-keyword">private</span> <span class="code-keyword">var</span> qiDataStore: <span class="code-type">Data</span>?
+    
+    <span class="code-keyword">@EnvironmentObject</span> <span class="code-keyword">var</span> supabaseService: <span class="code-type">SupabaseService</span>
+    <span class="code-keyword">@FocusState</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> isNameFieldFocused: <span class="code-type">Bool</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> isQiDefinedAndSaved: <span class="code-type">Bool</span> = <span class="code-keyword">false</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> savedQiName: <span class="code-type">String</span> = <span class="code-string">""</span>
+    <span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> mainContentOpacity: <span class="code-type">Double</span> = <span class="code-number">1.0</span>
+
+    <span class="code-keyword">var</span> displayableGradientColors: [<span class="code-type">Color</span>] {
+        <span class="code-keyword">if</span> gradientColors.count == <span class="code-number">1</span>, <span class="code-keyword">let</span> firstColor = gradientColors.first {
+            <span class="code-keyword">return</span> [firstColor, <span class="code-type">Color</span>.jtSecondaryText.<span class="code-function">opacity</span>(<span class="code-number">0.5</span>)]
+        }
+        <span class="code-keyword">return</span> gradientColors.isEmpty ? [<span class="code-type">Color</span>.jtBackground, <span class="code-type">Color</span>.jtDisabled] : gradientColors
+    }
+    
+    <span class="code-keyword">var</span> keyColor1: <span class="code-type">Color</span> { displayableGradientColors.first ?? <span class="code-type">Color</span>.jtAccent }
+    <span class="code-keyword">var</span> keyColor2: <span class="code-type">Color</span> { displayableGradientColors.count > <span class="code-number">1</span> ? displayableGradientColors[<span class="code-number">1</span>] : <span class="code-type">Color</span>.jtBackground.<span class="code-function">opacity</span>(<span class="code-number">0.7</span>) }
+    <span class="code-keyword">var</span> keyColor3: <span class="code-type">Color</span> { displayableGradientColors.count > <span class="code-number">2</span> ? displayableGradientColors[<span class="code-number">2</span>] : <span class="code-type">Color</span>.jtSecondaryText.<span class="code-function">opacity</span>(<span class="code-number">0.5</span>) }
+
+    <span class="code-keyword">private</span> <span class="code-keyword">let</span> chineseFontName = <span class="code-string">"STKaiti"</span>
+    <span class="code-keyword">private</span> <span class="code-keyword">var</span> adaptiveTextColor: <span class="code-type">Color</span> {
+        <span class="code-keyword">let</span> avgLuminance = displayableGradientColors.<span class="code-function">map</span> { $0.luminance }.<span class="code-function">reduce</span>(<span class="code-number">0</span>, +) / <span class="code-type">Double</span>(displayableGradientColors.count)
+        <span class="code-keyword">return</span> avgLuminance > <span class="code-number">0.5</span> ? <span class="code-type">Color</span>.jtPrimaryText : <span class="code-type">Color</span>.jtBackground
+    }
+    <span class="code-keyword">private</span> <span class="code-keyword">var</span> panelBackgroundColor: <span class="code-type">Color</span> {
+        adaptiveTextColor == <span class="code-type">Color</span>.jtPrimaryText ? <span class="code-type">Color</span>.jtBackground.<span class="code-function">opacity</span>(<span class="code-number">0.6</span>) : <span class="code-type">Color</span>.jtPrimaryText.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>)
+    }
+
+    <span class="code-keyword">var</span> body: <span class="code-keyword">some</span> <span class="code-type">View</span> {
+        <span class="code-type">ZStack</span> {
+            <span class="code-type">Color</span>.jtBackground.<span class="code-function">ignoresSafeArea</span>()
+
+            <span class="code-type">ZStack</span> {
+                (keyColor1.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>)).<span class="code-function">ignoresSafeArea</span>()
+
+                <span class="code-type">CoreAnimationQiView</span>(colors: displayableGradientColors, animationSpeed: <span class="code-number">1.8</span>)
+                    .<span class="code-function">ignoresSafeArea</span>()
+                    .<span class="code-function">onAppear</span> {
+                        <span class="code-keyword">if</span> <span class="code-keyword">let</span> qiData = existingQiData {
+                            qiName = qiData.name
+                            savedQiName = qiData.name
+                            isQiDefinedAndSaved = <span class="code-keyword">true</span>
+                        }
+                    }
+
+                <span class="code-type">VStack</span>(spacing: <span class="code-number">20</span>) {
+                    <span class="code-type">Text</span>(<span class="code-string">"QI"</span>)
+                        .<span class="code-function">font</span>(.<span class="code-function">custom</span>(<span class="code-string">"ZenTokyoZoo-Regular"</span>, size: <span class="code-number">70</span>))
+                        .<span class="code-function">foregroundColor</span>(adaptiveTextColor.<span class="code-function">opacity</span>(<span class="code-number">0.85</span>))
+                        .<span class="code-function">shadow</span>(color: adaptiveTextColor == <span class="code-type">Color</span>.jtPrimaryText ? <span class="code-type">Color</span>.jtBackground.<span class="code-function">opacity</span>(<span class="code-number">0.5</span>) : <span class="code-type">Color</span>.jtPrimaryText.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>) , radius: <span class="code-number">3</span>, y: <span class="code-number">2</span>)
+                        .<span class="code-function">padding</span>(.<span class="code-function">bottom</span>, <span class="code-number">5</span>)
+                    
+                    <span class="code-keyword">if</span> isQiDefinedAndSaved {
+                        <span class="code-type">Text</span>(savedQiName)
+                            .<span class="code-function">font</span>(.<span class="code-function">custom</span>(chineseFontName, size: <span class="code-number">30</span>))
+                            .<span class="code-function">foregroundColor</span>(adaptiveTextColor)
+                            .<span class="code-function">multilineTextAlignment</span>(.<span class="code-function">center</span>)
+                            .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">30</span>)
+                            .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>)
+                    } <span class="code-keyword">else</span> {
+                        <span class="code-type">Text</span>(<span class="code-string">"为您的气命名"</span>)
+                            .<span class="code-function">font</span>(.<span class="code-function">custom</span>(chineseFontName, size: <span class="code-number">22</span>))
+                            .<span class="code-function">foregroundColor</span>(adaptiveTextColor)
+                        
+                        <span class="code-type">TextField</span>(<span class="code-string">"气的名称 (最多20字)"</span>, text: $qiName)
+                            .<span class="code-function">font</span>(.<span class="code-function">custom</span>(chineseFontName, size: <span class="code-number">18</span>))
+                            .<span class="code-function">foregroundColor</span>(adaptiveTextColor)
+                            .<span class="code-function">multilineTextAlignment</span>(.<span class="code-function">center</span>)
+                            .<span class="code-function">padding</span>(.<span class="code-function">vertical</span>, <span class="code-number">12</span>)
+                            .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">20</span>)
+                            .<span class="code-function">background</span>(
+                                <span class="code-type">RoundedRectangle</span>(cornerRadius: <span class="code-number">12</span>)
+                                    .<span class="code-function">fill</span>(panelBackgroundColor)
+                                    .<span class="code-function">stroke</span>(adaptiveTextColor.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>), lineWidth: <span class="code-number">1</span>)
+                            )
+                            .<span class="code-function">accentColor</span>(<span class="code-type">Color</span>.jtAccent)
+                            .<span class="code-function">focused</span>($isNameFieldFocused)
+                            .<span class="code-function">onChange</span>(of: qiName) { newValue <span class="code-keyword">in</span>
+                                <span class="code-keyword">if</span> newValue.count > <span class="code-number">20</span> { qiName = <span class="code-type">String</span>(newValue.<span class="code-function">prefix</span>(<span class="code-number">20</span>)) }
+                            }
+                            .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">50</span>)
+                            .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>)
+                    }
+                    
+                    <span class="code-keyword">if</span> !isQiDefinedAndSaved {
+                        <span class="code-type">Button</span>(action: { <span class="code-function">saveQiData</span>() }) {
+                            <span class="code-type">Image</span>(systemName: <span class="code-string">"checkmark.circle"</span>)
+                                .<span class="code-function">font</span>(.<span class="code-function">system</span>(size: <span class="code-number">28</span>, weight: .<span class="code-function">medium</span>))
+                                .<span class="code-function">foregroundColor</span>(qiName.<span class="code-function">trimmingCharacters</span>(in: .<span class="code-function">whitespacesAndNewlines</span>).<span class="code-function">isEmpty</span> ? <span class="code-type">Color</span>.black.<span class="code-function">opacity</span>(<span class="code-number">0.4</span>) : <span class="code-type">Color</span>.black.<span class="code-function">opacity</span>(<span class="code-number">0.7</span>))
+                        }
+                        .<span class="code-function">padding</span>(<span class="code-number">18</span>)
+                        .<span class="code-function">background</span>(<span class="code-type">Material</span>.thinMaterial)
+                        .<span class="code-function">clipShape</span>(<span class="code-type">Circle</span>())
+                        .<span class="code-function">shadow</span>(color: .<span class="code-function">black</span>.<span class="code-function">opacity</span>(<span class="code-number">0.15</span>), radius: <span class="code-number">5</span>, x: <span class="code-number">0</span>, y: <span class="code-number">3</span>)
+                        .<span class="code-function">disabled</span>(qiName.<span class="code-function">trimmingCharacters</span>(in: .<span class="code-function">whitespacesAndNewlines</span>).<span class="code-function">isEmpty</span>)
+                        .<span class="code-function">padding</span>(.<span class="code-function">bottom</span>, <span class="code-number">40</span>) 
+                        .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>)
+                    }
+                }
+            }
+            .<span class="code-function">opacity</span>(mainContentOpacity)
+        }
+        .<span class="code-function">navigationBarHidden</span>(<span class="code-keyword">true</span>)
+    }
+    
+    <span class="code-keyword">private</span> <span class="code-keyword">func</span> <span class="code-function">saveQiData</span>() {
+        <span class="code-keyword">let</span> trimmedName = qiName.<span class="code-function">trimmingCharacters</span>(in: .<span class="code-function">whitespacesAndNewlines</span>)
+        <span class="code-keyword">guard</span> !trimmedName.isEmpty <span class="code-keyword">else</span> { <span class="code-keyword">return</span> }
+        
+        <span class="code-keyword">let</span> newQiData = <span class="code-type">QiData</span>(name: trimmedName, swiftUIColors: gradientColors)
+        <span class="code-keyword">guard</span> <span class="code-keyword">let</span> dataToSave = <span class="code-keyword">try</span>? <span class="code-type">JSONEncoder</span>().<span class="code-function">encode</span>(newQiData) <span class="code-keyword">else</span> {
+            <span class="code-function">print</span>(<span class="code-string">"Failed to encode Qi Data before saving."</span>)
+            <span class="code-keyword">return</span>
+        }
+        
+        isNameFieldFocused = <span class="code-keyword">false</span>
+        savedQiName = trimmedName
+        
+        <span class="code-function">withAnimation</span> {
+            isQiDefinedAndSaved = <span class="code-keyword">true</span>
+        }
+
+        <span class="code-function">withAnimation</span>(.<span class="code-function">easeInOut</span>(duration: <span class="code-number">0.3</span>)) {
+            mainContentOpacity = <span class="code-number">0.0</span>
+        }
+
+        <span class="code-type">Task</span> {
+            <span class="code-keyword">await</span> <span class="code-type">MainActor</span>.<span class="code-function">run</span> {
+                qiDataStore = dataToSave
+                hasDefinedQi = <span class="code-keyword">true</span>
+            }
+            
+            <span class="code-keyword">if</span> supabaseService.isAuthenticated, <span class="code-keyword">let</span> userId = supabaseService.currentUser?.id {
+                <span class="code-comment">// Cloud synchronization logic...</span>
+            }
+        }
+    }
+}
+
+<span class="code-keyword">extension</span> <span class="code-type">Color</span> {
+    <span class="code-keyword">var</span> luminance: <span class="code-type">Double</span> {
+        <span class="code-keyword">let</span> uiColor = <span class="code-type">UIColor</span>(<span class="code-keyword">self</span>)
+        <span class="code-keyword">var</span> red: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        <span class="code-keyword">var</span> green: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        <span class="code-keyword">var</span> blue: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        <span class="code-keyword">var</span> alpha: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        uiColor.<span class="code-function">getRed</span>(&red, green: &green, blue: &blue, alpha: &alpha)
+        <span class="code-keyword">return</span> <span class="code-number">0.2126</span> * <span class="code-type">Double</span>(red) + <span class="code-number">0.7152</span> * <span class="code-type">Double</span>(green) + <span class="code-number">0.0722</span> * <span class="code-type">Double</span>(blue)
+    }
+}</pre>
+                </div>
+            </div>
+
+            <!-- Component Breakdown Section -->
+            <div class="component-breakdown">
+                <h4 class="breakdown-title">Component Breakdown</h4>
+                <p class="breakdown-subtitle">Explore individual components that make up the QÌ visualization interface</p>
+                
+                <div class="breakdown-container">
+                    <div class="component-list">
+                        <div class="component-item active" onclick="showQiComponent('qi-background')" id="qiBackgroundItem">
+                            <i class="fas fa-magic"></i>
+                            <span>Background Animation</span>
+                        </div>
+                        <div class="component-item" onclick="showQiComponent('qi-title')" id="qiTitleItem">
+                            <i class="fas fa-yin-yang"></i>
+                            <span>QÌ Title Display</span>
+                        </div>
+                        <div class="component-item" onclick="showQiComponent('qi-input')" id="qiInputItem">
+                            <i class="fas fa-edit"></i>
+                            <span>Name Input Field</span>
+                        </div>
+                        <div class="component-item" onclick="showQiComponent('qi-save')" id="qiSaveItem">
+                            <i class="fas fa-save"></i>
+                            <span>Save Button</span>
+                        </div>
+                    </div>
+                    
+                    <div class="component-code">
+                        <div class="code-header">
+                            <span class="code-title" id="qiComponentTitle">Background Animation System</span>
+                            <button class="copy-button" onclick="copyCode('qiComponentCode')">Copy Code</button>
+                        </div>
+                        <pre id="qiComponentCode"><span class="code-comment">// Core Animation QÌ Background System</span>
+<span class="code-keyword">struct</span> <span class="code-type">CoreAnimationQiView</span>: <span class="code-type">UIViewRepresentable</span> {
+    <span class="code-keyword">let</span> colors: [<span class="code-type">Color</span>]
+    <span class="code-keyword">let</span> animationSpeed: <span class="code-type">Double</span>
+    
+    <span class="code-keyword">init</span>(colors: [<span class="code-type">Color</span>], animationSpeed: <span class="code-type">Double</span> = <span class="code-number">1.5</span>) {
+        <span class="code-keyword">self</span>.colors = colors
+        <span class="code-keyword">self</span>.animationSpeed = animationSpeed
+    }
+    
+    <span class="code-keyword">func</span> <span class="code-function">makeUIView</span>(context: <span class="code-type">Context</span>) -> <span class="code-type">QiAnimationContainerView</span> {
+        <span class="code-keyword">let</span> containerView = <span class="code-type">QiAnimationContainerView</span>()
+        containerView.<span class="code-function">setupAnimation</span>(colors: colors, speed: animationSpeed)
+        <span class="code-keyword">return</span> containerView
+    }
+    
+    <span class="code-keyword">func</span> <span class="code-function">updateUIView</span>(_ uiView: <span class="code-type">QiAnimationContainerView</span>, context: <span class="code-type">Context</span>) {
+        uiView.<span class="code-function">updateColors</span>(colors: colors, speed: animationSpeed)
+    }
+}
+
+<span class="code-comment">// Animation Container with Multiple Gradient Layers</span>
+<span class="code-keyword">class</span> <span class="code-type">QiAnimationContainerView</span>: <span class="code-type">UIView</span> {
+    <span class="code-keyword">private</span> <span class="code-keyword">var</span> gradientLayers: [<span class="code-type">CAGradientLayer</span>] = []
+    <span class="code-keyword">private</span> <span class="code-keyword">var</span> animationGroups: [<span class="code-type">CAAnimationGroup</span>] = []
+    <span class="code-keyword">private</span> <span class="code-keyword">let</span> numberOfLayers = <span class="code-number">3</span>
+    
+    <span class="code-keyword">private</span> <span class="code-keyword">func</span> <span class="code-function">setupLayers</span>() {
+        <span class="code-comment">// Create multiple radial gradient layers</span>
+        <span class="code-keyword">for</span> i <span class="code-keyword">in</span> <span class="code-number">0</span>..<<span class="code-function">numberOfLayers</span> {
+            <span class="code-keyword">let</span> gradientLayer = <span class="code-type">CAGradientLayer</span>()
+            gradientLayer.type = .<span class="code-function">radial</span>
+            gradientLayer.startPoint = <span class="code-type">CGPoint</span>(x: <span class="code-number">0.5</span>, y: <span class="code-number">0.5</span>)
+            gradientLayer.endPoint = <span class="code-type">CGPoint</span>(x: <span class="code-number">1.0</span>, y: <span class="code-number">1.0</span>)
+            
+            <span class="code-comment">// Apply gaussian blur for organic, flowing effect</span>
+            <span class="code-keyword">let</span> blurRadius: <span class="code-type">Float</span> = [<span class="code-number">80</span>, <span class="code-number">90</span>, <span class="code-number">70</span>][i]
+            gradientLayer.shouldRasterize = <span class="code-keyword">true</span>
+            gradientLayer.rasterizationScale = <span class="code-type">UIScreen</span>.main.scale
+            
+            <span class="code-keyword">let</span> filter = <span class="code-type">CIFilter</span>(name: <span class="code-string">"CIGaussianBlur"</span>)
+            filter?.<span class="code-function">setValue</span>(blurRadius, forKey: kCIInputRadiusKey)
+            gradientLayer.filters = [filter].<span class="code-function">compactMap</span> { $0 }
+            
+            layer.<span class="code-function">addSublayer</span>(gradientLayer)
+            gradientLayers.<span class="code-function">append</span>(gradientLayer)
+        }
+    }
+    
+    <span class="code-keyword">private</span> <span class="code-keyword">func</span> <span class="code-function">startAnimations</span>(speed: <span class="code-type">Double</span>) {
+        <span class="code-comment">// Create breathing, organic movements</span>
+        <span class="code-keyword">let</span> baseDurations: [<span class="code-type">Double</span>] = [<span class="code-number">12.0</span>, <span class="code-number">15.0</span>, <span class="code-number">14.0</span>]
+        <span class="code-keyword">let</span> delays: [<span class="code-type">Double</span>] = [<span class="code-number">0.0</span>, <span class="code-number">1.0</span>, <span class="code-number">0.5</span>]
+        
+        <span class="code-keyword">for</span> (index, gradientLayer) <span class="code-keyword">in</span> gradientLayers.<span class="code-function">enumerated</span>() {
+            <span class="code-keyword">let</span> duration = baseDurations[index] / speed
+            
+            <span class="code-keyword">let</span> animationGroup = <span class="code-type">CAAnimationGroup</span>()
+            animationGroup.animations = <span class="code-function">createAnimationsForLayer</span>(index: index)
+            animationGroup.duration = duration
+            animationGroup.repeatCount = <span class="code-type">Float</span>.infinity
+            animationGroup.autoreverses = <span class="code-keyword">true</span>
+            animationGroup.timingFunction = <span class="code-type">CAMediaTimingFunction</span>(name: .<span class="code-function">easeInEaseOut</span>)
+            
+            gradientLayer.<span class="code-function">add</span>(animationGroup, forKey: <span class="code-string">"qiAnimation\\(index)"</span>)
+        }
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        Color copied to clipboard!
+    </div>
+
+    <script>
+        // Color palette data
+        const colors = [
+            { name: 'Background', hex: '#DCD7CD', var: '--qi-background', description: 'Primary background color - Fressprige' },
+            { name: 'Primary Text', hex: '#2E2E2E', var: '--qi-primary-text', description: 'Main text color - Charposom Pink' },
+            { name: 'Secondary Text', hex: '#4A4A4A', var: '--qi-secondary-text', description: 'Supporting text - Charcoal Pink' },
+            { name: 'Accent', hex: '#A39788', var: '--qi-accent', description: 'Accent color - Stom Beige' },
+            { name: 'Card Background', hex: '#7A7A7A', var: '--qi-card-background', description: 'Card surface - Moss Gray' },
+            { name: 'Selected Card', hex: '#A39788', var: '--qi-selected-card-background', description: 'Selected state - Stom Beige' },
+            { name: 'Selected Border', hex: '#A39788', var: '--qi-card-selected-border', description: 'Selection border - Stom Beige' },
+            { name: 'Disabled', hex: '#9E9E9E', var: '--qi-disabled', description: 'Disabled state - Lightened Moss Gray' },
+            { name: 'Image Placeholder', hex: '#E7E1D7', var: '--qi-image-placeholder', description: 'Placeholder background - Off-white' }
+        ];
+
+        // Initialize the color grid
+        function initializeColorGrid() {
+            const colorGrid = document.getElementById('colorGrid');
+            colorGrid.innerHTML = '';
+            
+            colors.forEach(color => {
+                const colorCard = document.createElement('div');
+                colorCard.className = 'color-card';
+                colorCard.innerHTML = `
+                    <div class="color-swatch" style="background-color: ${color.hex}" onclick="copyColor('${color.hex}')" title="Click to copy"></div>
+                    <div class="color-info">
+                        <div class="color-name">${color.name}</div>
+                        <div class="color-hex">${color.hex}</div>
+                        <div style="font-size: 0.8rem; color: var(--qi-secondary-text); margin-top: 0.5rem;">${color.description}</div>
+                    </div>
+                `;
+                colorGrid.appendChild(colorCard);
+            });
+        }
+
+        // Section navigation - scroll to section
+        function showSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                // Update active nav immediately
+                updateActiveNav(sectionId);
+                
+                // Scroll to section with proper offset for sticky header
+                const headerHeight = 100;
+                const elementPosition = section.offsetTop - headerHeight;
+                
+                window.scrollTo({
+                    top: elementPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Update active navigation tab
+        function updateActiveNav(activeSectionId) {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('href') === `#${activeSectionId}`) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Copy color to clipboard
+        async function copyColor(hex) {
+            try {
+                await navigator.clipboard.writeText(hex);
+                document.getElementById('selectedColor').style.backgroundColor = hex;
+                document.getElementById('selectedColorText').textContent = `Selected: ${hex}`;
+                
+                // Show notification
+                const notification = document.getElementById('copyNotification');
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy color: ', err);
+            }
+        }
+
+        // Copy code to clipboard
+        async function copyCode(codeId) {
+            try {
+                const codeElement = document.getElementById(codeId);
+                const codeText = codeElement.textContent;
+                await navigator.clipboard.writeText(codeText);
+                
+                // Show notification
+                const notification = document.getElementById('copyNotification');
+                notification.textContent = 'Code copied to clipboard!';
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    notification.textContent = 'Color copied to clipboard!';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code: ', err);
+            }
+        }
+
+        // Toggle between image and video
+        function toggleMedia(mediaType) {
+            const image = document.getElementById('prototypeImage');
+            const video = document.getElementById('prototypeVideo');
+            const imageBtn = document.getElementById('imageBtn');
+            const videoBtn = document.getElementById('videoBtn');
+
+            if (mediaType === 'image') {
+                image.style.display = 'block';
+                video.style.display = 'none';
+                video.pause();
+                imageBtn.classList.add('active');
+                videoBtn.classList.remove('active');
+                videoBtn.innerHTML = '<i class="fas fa-play"></i> Animation';
+            } else if (mediaType === 'video') {
+                image.style.display = 'none';
+                video.style.display = 'block';
+                video.play();
+                videoBtn.classList.add('active');
+                imageBtn.classList.remove('active');
+                videoBtn.innerHTML = '<i class="fas fa-pause"></i> Animation';
+            }
+        }
+
+        // Component code definitions
+        const componentCodes = {
+            background: {
+                title: 'Background Animation',
+                code: `<span class="code-comment">// MoteData Struct - Defines floating background elements</span>
+<span class="code-keyword">struct</span> <span class="code-type">MoteData</span>: <span class="code-type">Identifiable</span> {
+    <span class="code-keyword">let</span> id = <span class="code-type">UUID</span>()
+    <span class="code-keyword">let</span> position: <span class="code-type">UnitPoint</span> = .<span class="code-function">init</span>(x: .<span class="code-function">random</span>(in: <span class="code-number">0</span>...<span class="code-number">1</span>), y: .<span class="code-function">random</span>(in: <span class="code-number">0</span>...<span class="code-number">1</span>))
+    <span class="code-keyword">let</span> size: <span class="code-type">CGFloat</span> = .<span class="code-function">random</span>(in: <span class="code-number">50</span>...<span class="code-number">150</span>)
+    <span class="code-keyword">let</span> color: <span class="code-type">Color</span> = [
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.1</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.6</span>, saturation: <span class="code-number">0.25</span>, brightness: <span class="code-number">0.9</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.8</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.95</span>, saturation: <span class="code-number">0.25</span>, brightness: <span class="code-number">0.95</span>),
+        <span class="code-type">Color</span>(hue: <span class="code-number">0.3</span>, saturation: <span class="code-number">0.2</span>, brightness: <span class="code-number">0.9</span>)
+    ].<span class="code-function">randomElement</span>()!.<span class="code-function">opacity</span>(<span class="code-type">Double</span>.<span class="code-function">random</span>(in: <span class="code-number">0.4</span>...<span class="code-number">0.7</span>))
+}
+
+<span class="code-comment">// State management for motes animation</span>
+<span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> motes: [<span class="code-type">MoteData</span>] = []
+<span class="code-keyword">let</span> timer = <span class="code-type">Timer</span>.<span class="code-function">publish</span>(every: <span class="code-number">0.6</span>, tolerance: <span class="code-number">0.2</span>, on: .main, in: .common).<span class="code-function">autoconnect</span>()
+<span class="code-keyword">let</span> maxMotes = <span class="code-number">15</span>
+<span class="code-keyword">let</span> moteLifetime: <span class="code-type">TimeInterval</span> = <span class="code-number">4.0</span>
+
+<span class="code-comment">// Background Motes Layer - Rendered in body</span>
+<span class="code-type">ZStack</span> {
+    <span class="code-type">ForEach</span>(motes) { mote <span class="code-keyword">in</span>
+        <span class="code-type">Circle</span>()
+            .<span class="code-function">fill</span>(mote.color)
+            .<span class="code-function">frame</span>(width: mote.size, height: mote.size)
+            .<span class="code-function">position</span>(x: mote.position.x * geometry.size.width, 
+                      y: mote.position.y * geometry.size.height)
+            .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>.<span class="code-function">animation</span>(.<span class="code-function">easeInOut</span>(duration: <span class="code-number">1.5</span>)))
+            .<span class="code-function">id</span>(mote.id)
+    }
+}
+.<span class="code-function">blur</span>(radius: <span class="code-number">20</span>)
+.<span class="code-function">ignoresSafeArea</span>()
+
+<span class="code-comment">// Motes lifecycle management</span>
+.<span class="code-function">onReceive</span>(timer) { _ <span class="code-keyword">in</span>
+    <span class="code-comment">// Add new mote</span>
+    motes.<span class="code-function">append</span>(<span class="code-type">MoteData</span>())
+    <span class="code-comment">// Remove excess motes</span>
+    <span class="code-keyword">if</span> motes.count > maxMotes {
+        motes.<span class="code-function">removeFirst</span>(motes.count - maxMotes)
+    }
+}
+.<span class="code-function">onAppear</span> {
+    <span class="code-comment">// Initialize with starting motes</span>
+    <span class="code-keyword">for</span> _ <span class="code-keyword">in</span> <span class="code-number">0</span>..<<span class="code-number">5</span> {
+        motes.<span class="code-function">append</span>(<span class="code-type">MoteData</span>())
+    }
+}`
+            },
+            button: {
+                title: 'Sign In Button',
+                code: `<span class="code-comment">// QÌ Design System - Sign In Button Component</span>
+<span class="code-comment">// Elegant button design following QÌ aesthetic principles</span>
+
+<span class="code-type">Button</span>(action: {
+    showAuthView = <span class="code-keyword">true</span>
+}) {
+    <span class="code-type">Text</span>(<span class="code-string">"Already have an account? Sign in"</span>)
+        .<span class="code-function">font</span>(.<span class="code-function">footnote</span>)
+        .<span class="code-function">foregroundColor</span>(<span class="code-type">Color</span>.jtAccent)
+        .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">20</span>)
+        .<span class="code-function">padding</span>(.<span class="code-function">vertical</span>, <span class="code-number">10</span>)
+        .<span class="code-function">background</span>(
+            <span class="code-type">RoundedRectangle</span>(cornerRadius: <span class="code-number">20</span>)
+                .<span class="code-function">fill</span>(<span class="code-type">Color</span>.jtAccent.<span class="code-function">opacity</span>(<span class="code-number">0.1</span>))
+                .<span class="code-function">stroke</span>(<span class="code-type">Color</span>.jtAccent.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>), lineWidth: <span class="code-number">1</span>)
+        )
+}
+
+<span class="code-comment">// Color tokens used from QÌ Design System:</span>
+<span class="code-comment">// jtAccent: #A39788 (Stom Beige)</span>
+<span class="code-comment">// Creates subtle, zen-like interaction with low opacity fills</span>
+<span class="code-comment">// and gentle stroke borders</span>
+
+<span class="code-comment">// Design Principles Applied:</span>
+<span class="code-comment">// • Subtle transparency for visual hierarchy</span>
+<span class="code-comment">// • Rounded corners for soft, welcoming feel</span>
+<span class="code-comment">// • Appropriate padding for touch targets</span>
+<span class="code-comment">// • Color consistency with design system</span>`
+            },
+            logo: {
+                title: 'QÌ Logo Text',
+                code: `<span class="code-comment">// QÌ Logo Component - Eastern Philosophy Meets Modern Design</span>
+<span class="code-comment">// The logo uses Zen Tokyo Zoo font to embody the 氣 (qì) concept</span>
+
+<span class="code-comment">// Logo styling (rendered by parent component)</span>
+<span class="code-type">Text</span>(<span class="code-string">"QÌ"</span>)
+    .<span class="code-function">font</span>(.<span class="code-function">custom</span>(<span class="code-string">"ZenTokyoZoo-Regular"</span>, size: <span class="code-number">48</span>))
+    .<span class="code-function">foregroundColor</span>(.<span class="code-function">primaryText</span>))
+    .<span class="code-function">fontWeight</span>(.<span class="code-function">regular</span>)
+
+<span class="code-comment">// Typography System Integration:</span>
+<span class="code-comment">// Font: Zen Tokyo Zoo - specifically chosen for its zen aesthetic</span>
+<span class="code-comment">// Color: jtPrimaryText (#2E2E2E - Charposom Pink)</span>
+<span class="code-comment">// Weight: Regular to maintain the natural, unforced appearance</span>
+
+<span class="code-comment">// Cultural Significance:</span>
+<span class="code-comment">// QÌ (氣) represents the fundamental life force in Chinese philosophy</span>
+<span class="code-comment">// The typography choice reflects this spiritual connection while</span>
+<span class="code-comment">// maintaining modern app design standards</span>
+
+<span class="code-comment">// Usage Guidelines:</span>
+<span class="code-comment">// • Use consistently across all brand touchpoints</span>
+<span class="code-comment">// • Maintain adequate spacing around the logo</span>
+<span class="code-comment">// • Preserve the font choice for brand recognition</span>
+<span class="code-comment">// • Apply jtPrimaryText color for optimal contrast</span>`
+            }
+        };
+
+        // Show component code
+        function showComponent(componentType) {
+            const componentData = componentCodes[componentType];
+            
+            // Update component list active state
+            document.querySelectorAll('.component-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(componentType + 'Item').classList.add('active');
+            
+            // Update code display
+            document.getElementById('componentTitle').textContent = componentData.title;
+            document.getElementById('componentCode').innerHTML = componentData.code;
+        }
+
+        // QÌ component codes for signed-in prototype
+        const qiComponentCodes = {
+            'qi-background': {
+                title: 'Background Animation System',
+                code: `<span class="code-comment">// Core Animation QÌ Background System</span>
+<span class="code-keyword">struct</span> <span class="code-type">CoreAnimationQiView</span>: <span class="code-type">UIViewRepresentable</span> {
+    <span class="code-keyword">let</span> colors: [<span class="code-type">Color</span>]
+    <span class="code-keyword">let</span> animationSpeed: <span class="code-type">Double</span>
+    
+    <span class="code-keyword">init</span>(colors: [<span class="code-type">Color</span>], animationSpeed: <span class="code-type">Double</span> = <span class="code-number">1.5</span>) {
+        <span class="code-keyword">self</span>.colors = colors
+        <span class="code-keyword">self</span>.animationSpeed = animationSpeed
+    }
+    
+    <span class="code-keyword">func</span> <span class="code-function">makeUIView</span>(context: <span class="code-type">Context</span>) -> <span class="code-type">QiAnimationContainerView</span> {
+        <span class="code-keyword">let</span> containerView = <span class="code-type">QiAnimationContainerView</span>()
+        containerView.<span class="code-function">setupAnimation</span>(colors: colors, speed: animationSpeed)
+        <span class="code-keyword">return</span> containerView
+    }
+    
+    <span class="code-keyword">func</span> <span class="code-function">updateUIView</span>(_ uiView: <span class="code-type">QiAnimationContainerView</span>, context: <span class="code-type">Context</span>) {
+        uiView.<span class="code-function">updateColors</span>(colors: colors, speed: animationSpeed)
+    }
+}
+
+<span class="code-comment">// Animation Container with Multiple Gradient Layers</span>
+<span class="code-keyword">class</span> <span class="code-type">QiAnimationContainerView</span>: <span class="code-type">UIView</span> {
+    <span class="code-keyword">private</span> <span class="code-keyword">var</span> gradientLayers: [<span class="code-type">CAGradientLayer</span>] = []
+    <span class="code-keyword">private</span> <span class="code-keyword">var</span> animationGroups: [<span class="code-type">CAAnimationGroup</span>] = []
+    <span class="code-keyword">private</span> <span class="code-keyword">let</span> numberOfLayers = <span class="code-number">3</span>
+    
+    <span class="code-keyword">private</span> <span class="code-keyword">func</span> <span class="code-function">setupLayers</span>() {
+        <span class="code-comment">// Create multiple radial gradient layers</span>
+        <span class="code-keyword">for</span> i <span class="code-keyword">in</span> <span class="code-number">0</span>..<<span class="code-function">numberOfLayers</span> {
+            <span class="code-keyword">let</span> gradientLayer = <span class="code-type">CAGradientLayer</span>()
+            gradientLayer.type = .<span class="code-function">radial</span>
+            gradientLayer.startPoint = <span class="code-type">CGPoint</span>(x: <span class="code-number">0.5</span>, y: <span class="code-number">0.5</span>)
+            gradientLayer.endPoint = <span class="code-type">CGPoint</span>(x: <span class="code-number">1.0</span>, y: <span class="code-number">1.0</span>)
+            
+            <span class="code-comment">// Apply gaussian blur for organic, flowing effect</span>
+            <span class="code-keyword">let</span> blurRadius: <span class="code-type">Float</span> = [<span class="code-number">80</span>, <span class="code-number">90</span>, <span class="code-number">70</span>][i]
+            gradientLayer.shouldRasterize = <span class="code-keyword">true</span>
+            gradientLayer.rasterizationScale = <span class="code-type">UIScreen</span>.main.scale
+            
+            <span class="code-keyword">let</span> filter = <span class="code-type">CIFilter</span>(name: <span class="code-string">"CIGaussianBlur"</span>)
+            filter?.<span class="code-function">setValue</span>(blurRadius, forKey: kCIInputRadiusKey)
+            gradientLayer.filters = [filter].<span class="code-function">compactMap</span> { $0 }
+            
+            layer.<span class="code-function">addSublayer</span>(gradientLayer)
+            gradientLayers.<span class="code-function">append</span>(gradientLayer)
+        }
+    }
+    
+    <span class="code-keyword">private</span> <span class="code-keyword">func</span> <span class="code-function">startAnimations</span>(speed: <span class="code-type">Double</span>) {
+        <span class="code-comment">// Create breathing, organic movements</span>
+        <span class="code-keyword">let</span> baseDurations: [<span class="code-type">Double</span>] = [<span class="code-number">12.0</span>, <span class="code-number">15.0</span>, <span class="code-number">14.0</span>]
+        <span class="code-keyword">let</span> delays: [<span class="code-type">Double</span>] = [<span class="code-number">0.0</span>, <span class="code-number">1.0</span>, <span class="code-number">0.5</span>]
+        
+        <span class="code-keyword">for</span> (index, gradientLayer) <span class="code-keyword">in</span> gradientLayers.<span class="code-function">enumerated</span>() {
+            <span class="code-keyword">let</span> duration = baseDurations[index] / speed
+            
+            <span class="code-keyword">let</span> animationGroup = <span class="code-type">CAAnimationGroup</span>()
+            animationGroup.animations = <span class="code-function">createAnimationsForLayer</span>(index: index)
+            animationGroup.duration = duration
+            animationGroup.repeatCount = <span class="code-type">Float</span>.infinity
+            animationGroup.autoreverses = <span class="code-keyword">true</span>
+            animationGroup.timingFunction = <span class="code-type">CAMediaTimingFunction</span>(name: .<span class="code-function">easeInEaseOut</span>)
+            
+            gradientLayer.<span class="code-function">add</span>(animationGroup, forKey: <span class="code-string">"qiAnimation\\(index)"</span>)
+        }
+    }
+}`
+            },
+            'qi-title': {
+                title: 'QÌ Title Display',
+                code: `<span class="code-comment">// Adaptive QÌ Title with Dynamic Contrast</span>
+<span class="code-keyword">private</span> <span class="code-keyword">var</span> adaptiveTextColor: <span class="code-type">Color</span> {
+    <span class="code-keyword">let</span> avgLuminance = displayableGradientColors.<span class="code-function">map</span> { $0.luminance }.<span class="code-function">reduce</span>(<span class="code-number">0</span>, +) / <span class="code-type">Double</span>(displayableGradientColors.count)
+    <span class="code-keyword">return</span> avgLuminance > <span class="code-number">0.5</span> ? <span class="code-type">Color</span>.jtPrimaryText : <span class="code-type">Color</span>.jtBackground
+}
+
+<span class="code-comment">// QÌ Title Component - Zen Typography</span>
+<span class="code-type">Text</span>(<span class="code-string">"QI"</span>)
+    .<span class="code-function">font</span>(.<span class="code-function">custom</span>(<span class="code-string">"ZenTokyoZoo-Regular"</span>, size: <span class="code-number">70</span>))
+    .<span class="code-function">foregroundColor</span>(adaptiveTextColor.<span class="code-function">opacity</span>(<span class="code-number">0.85</span>))
+    .<span class="code-function">shadow</span>(
+        color: adaptiveTextColor == <span class="code-type">Color</span>.jtPrimaryText 
+            ? <span class="code-type">Color</span>.jtBackground.<span class="code-function">opacity</span>(<span class="code-number">0.5</span>) 
+            : <span class="code-type">Color</span>.jtPrimaryText.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>), 
+        radius: <span class="code-number">3</span>, 
+        y: <span class="code-number">2</span>
+    )
+    .<span class="code-function">padding</span>(.<span class="code-function">bottom</span>, <span class="code-number">5</span>)
+
+<span class="code-comment">// Color Luminance Calculation for Accessibility</span>
+<span class="code-keyword">extension</span> <span class="code-type">Color</span> {
+    <span class="code-keyword">var</span> luminance: <span class="code-type">Double</span> {
+        <span class="code-keyword">let</span> uiColor = <span class="code-type">UIColor</span>(<span class="code-keyword">self</span>)
+        <span class="code-keyword">var</span> red: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        <span class="code-keyword">var</span> green: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        <span class="code-keyword">var</span> blue: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        <span class="code-keyword">var</span> alpha: <span class="code-type">CGFloat</span> = <span class="code-number">0</span>
+        uiColor.<span class="code-function">getRed</span>(&red, green: &green, blue: &blue, alpha: &alpha)
+        <span class="code-keyword">return</span> <span class="code-number">0.2126</span> * <span class="code-type">Double</span>(red) + <span class="code-number">0.7152</span> * <span class="code-type">Double</span>(green) + <span class="code-number">0.0722</span> * <span class="code-type">Double</span>(blue)
+    }
+}
+
+<span class="code-comment">// Design Principles:</span>
+<span class="code-comment">// • Zen Tokyo Zoo font embodies QÌ philosophy</span>
+<span class="code-comment">// • Adaptive contrast ensures readability</span>
+<span class="code-comment">// • Subtle shadow adds depth without distraction</span>
+<span class="code-comment">// • Large scale creates visual hierarchy</span>`
+            },
+            'qi-input': {
+                title: 'Name Input Field',
+                code: `<span class="code-comment">// Chinese Typography Input with State Management</span>
+<span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> qiName: <span class="code-type">String</span> = <span class="code-string">""</span>
+<span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> isQiDefinedAndSaved: <span class="code-type">Bool</span> = <span class="code-keyword">false</span>
+<span class="code-keyword">@State</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> savedQiName: <span class="code-type">String</span> = <span class="code-string">""</span>
+<span class="code-keyword">@FocusState</span> <span class="code-keyword">private</span> <span class="code-keyword">var</span> isNameFieldFocused: <span class="code-type">Bool</span>
+
+<span class="code-keyword">private</span> <span class="code-keyword">let</span> chineseFontName = <span class="code-string">"STKaiti"</span>
+<span class="code-keyword">private</span> <span class="code-keyword">var</span> panelBackgroundColor: <span class="code-type">Color</span> {
+    adaptiveTextColor == <span class="code-type">Color</span>.jtPrimaryText 
+        ? <span class="code-type">Color</span>.jtBackground.<span class="code-function">opacity</span>(<span class="code-number">0.6</span>) 
+        : <span class="code-type">Color</span>.jtPrimaryText.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>)
+}
+
+<span class="code-comment">// Conditional UI - Saved Name Display or Input Field</span>
+<span class="code-keyword">if</span> isQiDefinedAndSaved {
+    <span class="code-type">Text</span>(savedQiName)
+        .<span class="code-function">font</span>(.<span class="code-function">custom</span>(chineseFontName, size: <span class="code-number">30</span>))
+        .<span class="code-function">foregroundColor</span>(adaptiveTextColor)
+        .<span class="code-function">multilineTextAlignment</span>(.<span class="code-function">center</span>)
+        .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">30</span>)
+        .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>)
+} <span class="code-keyword">else</span> {
+    <span class="code-type">Text</span>(<span class="code-string">"为您的气命名"</span>)
+        .<span class="code-function">font</span>(.<span class="code-function">custom</span>(chineseFontName, size: <span class="code-number">22</span>))
+        .<span class="code-function">foregroundColor</span>(adaptiveTextColor)
+    
+    <span class="code-type">TextField</span>(<span class="code-string">"气的名称 (最多20字)"</span>, text: $qiName)
+        .<span class="code-function">font</span>(.<span class="code-function">custom</span>(chineseFontName, size: <span class="code-number">18</span>))
+        .<span class="code-function">foregroundColor</span>(adaptiveTextColor)
+        .<span class="code-function">multilineTextAlignment</span>(.<span class="code-function">center</span>)
+        .<span class="code-function">padding</span>(.<span class="code-function">vertical</span>, <span class="code-number">12</span>)
+        .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">20</span>)
+        .<span class="code-function">background</span>(
+            <span class="code-type">RoundedRectangle</span>(cornerRadius: <span class="code-number">12</span>)
+                .<span class="code-function">fill</span>(panelBackgroundColor)
+                .<span class="code-function">stroke</span>(adaptiveTextColor.<span class="code-function">opacity</span>(<span class="code-number">0.3</span>), lineWidth: <span class="code-number">1</span>)
+        )
+        .<span class="code-function">accentColor</span>(<span class="code-type">Color</span>.jtAccent)
+        .<span class="code-function">focused</span>($isNameFieldFocused)
+        .<span class="code-function">onChange</span>(of: qiName) { newValue <span class="code-keyword">in</span>
+            <span class="code-comment">// Character limit validation</span>
+            <span class="code-keyword">if</span> newValue.count > <span class="code-number">20</span> { 
+                qiName = <span class="code-type">String</span>(newValue.<span class="code-function">prefix</span>(<span class="code-number">20</span>)) 
+            }
+        }
+        .<span class="code-function">padding</span>(.<span class="code-function">horizontal</span>, <span class="code-number">50</span>)
+        .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>)
+}
+
+<span class="code-comment">// Design Features:</span>
+<span class="code-comment">// • STKaiti font for authentic Chinese typography</span>
+<span class="code-comment">// • Adaptive background based on QÌ colors</span>
+<span class="code-comment">// • Character validation with 20-character limit</span>
+<span class="code-comment">// • Smooth state transitions between input/display</span>
+<span class="code-comment">// • Focus state management for keyboard handling</span>`
+            },
+            'qi-save': {
+                title: 'Save Button',
+                code: `<span class="code-comment">// Elegant Save Button with Material Design</span>
+<span class="code-keyword">if</span> !isQiDefinedAndSaved {
+    <span class="code-type">Button</span>(action: { <span class="code-function">saveQiData</span>() }) {
+        <span class="code-type">Image</span>(systemName: <span class="code-string">"checkmark.circle"</span>)
+            .<span class="code-function">font</span>(.<span class="code-function">system</span>(size: <span class="code-number">28</span>, weight: .<span class="code-function">medium</span>))
+            .<span class="code-function">foregroundColor</span>(
+                qiName.<span class="code-function">trimmingCharacters</span>(in: .<span class="code-function">whitespacesAndNewlines</span>).<span class="code-function">isEmpty</span> 
+                    ? <span class="code-type">Color</span>.black.<span class="code-function">opacity</span>(<span class="code-number">0.4</span>) 
+                    : <span class="code-type">Color</span>.black.<span class="code-function">opacity</span>(<span class="code-number">0.7</span>)
+            )
+    }
+    .<span class="code-function">padding</span>(<span class="code-number">18</span>) <span class="code-comment">// Adequate touch target</span>
+    .<span class="code-function">background</span>(<span class="code-type">Material</span>.thinMaterial)
+    .<span class="code-function">clipShape</span>(<span class="code-type">Circle</span>())
+    .<span class="code-function">shadow</span>(color: .<span class="code-function">black</span>.<span class="code-function">opacity</span>(<span class="code-number">0.15</span>), radius: <span class="code-number">5</span>, x: <span class="code-number">0</span>, y: <span class="code-number">3</span>)
+    .<span class="code-function">disabled</span>(qiName.<span class="code-function">trimmingCharacters</span>(in: .<span class="code-function">whitespacesAndNewlines</span>).<span class="code-function">isEmpty</span>)
+    .<span class="code-function">padding</span>(.<span class="code-function">bottom</span>, <span class="code-number">40</span>) 
+    .<span class="code-function">transition</span>(.<span class="code-function">opacity</span>)
+}
+
+<span class="code-comment">// Save Data Function with Cloud Sync</span>
+<span class="code-keyword">private</span> <span class="code-keyword">func</span> <span class="code-function">saveQiData</span>() {
+    <span class="code-keyword">let</span> trimmedName = qiName.<span class="code-function">trimmingCharacters</span>(in: .<span class="code-function">whitespacesAndNewlines</span>)
+    <span class="code-keyword">guard</span> !trimmedName.isEmpty <span class="code-keyword">else</span> { <span class="code-keyword">return</span> }
+    
+    <span class="code-comment">// Create QÌ data object</span>
+    <span class="code-keyword">let</span> newQiData = <span class="code-type">QiData</span>(name: trimmedName, swiftUIColors: gradientColors)
+    <span class="code-keyword">guard</span> <span class="code-keyword">let</span> dataToSave = <span class="code-keyword">try</span>? <span class="code-type">JSONEncoder</span>().<span class="code-function">encode</span>(newQiData) <span class="code-keyword">else</span> {
+        <span class="code-function">print</span>(<span class="code-string">"Failed to encode Qi Data before saving."</span>)
+        <span class="code-keyword">return</span>
+    }
+    
+    <span class="code-comment">// Dismiss keyboard and update UI</span>
+    isNameFieldFocused = <span class="code-keyword">false</span>
+    savedQiName = trimmedName
+    
+    <span class="code-function">withAnimation</span> {
+        isQiDefinedAndSaved = <span class="code-keyword">true</span>
+    }
+
+    <span class="code-comment">// Fade out animation</span>
+    <span class="code-function">withAnimation</span>(.<span class="code-function">easeInOut</span>(duration: <span class="code-number">0.3</span>)) {
+        mainContentOpacity = <span class="code-number">0.0</span>
+    }
+
+    <span class="code-comment">// Async data persistence</span>
+    <span class="code-type">Task</span> {
+        <span class="code-keyword">await</span> <span class="code-type">MainActor</span>.<span class="code-function">run</span> {
+            qiDataStore = dataToSave
+            hasDefinedQi = <span class="code-keyword">true</span>
+        }
+        
+        <span class="code-comment">// Sync to cloud if authenticated</span>
+        <span class="code-keyword">if</span> supabaseService.isAuthenticated {
+            <span class="code-comment">// Cloud synchronization logic...</span>
+        }
+    }
+}
+
+<span class="code-comment">// Design Features:</span>
+<span class="code-comment">// • Visual feedback based on input validity</span>
+<span class="code-comment">// • Material Design glass morphism effect</span>
+<span class="code-comment">// • Proper touch target size (44+ pts)</span>
+<span class="code-comment">// • Smooth animations and state transitions</span>
+<span class="code-comment">// • Local + cloud data persistence</span>`
+            }
+        };
+
+        // Show QÌ component code
+        function showQiComponent(componentType) {
+            const componentData = qiComponentCodes[componentType];
+            
+            // Update component list active state
+            document.querySelectorAll('#signed-in-prototype .component-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(componentType + 'Item').classList.add('active');
+            
+            // Update code display
+            document.getElementById('qiComponentTitle').textContent = componentData.title;
+            document.getElementById('qiComponentCode').innerHTML = componentData.code;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeColorGrid();
+            
+            // Set up intersection observer for section tracking
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        updateActiveNav(entry.target.id);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '-100px 0px -50% 0px'
+            });
+
+            // Observe all sections
+            document.querySelectorAll('.section').forEach(section => {
+                sectionObserver.observe(section);
+            });
+
+            // Set initial active nav
+            updateActiveNav('overview');
+        });
+
+        // Handle hash navigation
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1);
+            if (hash && document.getElementById(hash)) {
+                showSection(hash);
+            }
+        });
+
+        // Handle initial hash on page load
+        window.addEventListener('load', function() {
+            const hash = window.location.hash.substring(1);
+            if (hash && document.getElementById(hash)) {
+                setTimeout(() => showSection(hash), 100);
+            }
+        });
+
+        // Add scroll listener as backup for navigation highlighting
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const sections = document.querySelectorAll('.section');
+                const scrollPos = window.scrollY + 150; // Account for header
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                        updateActiveNav(section.id);
+                    }
+                });
+            }, 50);
+        });
+    </script>
+</body>
+</html> 
