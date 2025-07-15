@@ -261,7 +261,7 @@ html, body {
     transition: background 0.3s ease;
 }
 
-.company-item:hover .company-logo {
+.company-item:hover {
     background: rgba(0, 255, 249, 0.2);
 }
 
