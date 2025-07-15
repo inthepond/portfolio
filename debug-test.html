@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Debug Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Modal Debug Test</h1>
+    <button onclick="testModal()">Test Modal (Bamai)</button>
+    
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h1 id="modal-project-title">Project Title</h1>
+                <div class="modal-project-image">
+                    <img id="modal-project-logo" src="" alt="Project Logo">
+                </div>
+            </div>
+            <div class="modal-body">
+                <section class="modal-section">
+                    <h2>Project Brief</h2>
+                    <div id="modal-project-brief" class="modal-section-content">
+                        <!-- Project brief content will be inserted here -->
+                    </div>
+                </section>
+                
+                <section class="modal-section">
+                    <h2>Design Philosophy & UI Design</h2>
+                    <div id="modal-design-philosophy" class="modal-section-content">
+                        <!-- Design philosophy content will be inserted here -->
+                    </div>
+                </section>
+                
+                <section class="modal-section">
+                    <h2>UX Strategy</h2>
+                    <div id="modal-ux-strategy" class="modal-section-content">
+                        <!-- UX strategy content will be inserted here -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simplified version of the modal data for testing
+        const projectModalData = {
+            "Bamai": {
+                logo: "img/bamai_logo.png",
+                brief: `<p><strong>Bamai</strong> is a test project for modal functionality.</p>`,
+                designPhilosophy: `<p>This is a test design philosophy section.</p>`,
+                uxStrategy: `<p>This is a test UX strategy section.</p>`
+            }
+        };
+
+        // Modal functionality - simplified for testing
+        const modal = document.getElementById('project-modal');
+        const modalOverlay = document.querySelector('.modal-overlay');
+        const modalClose = document.querySelector('.modal-close');
+        const modalProjectTitle = document.getElementById('modal-project-title');
+        const modalProjectLogo = document.getElementById('modal-project-logo');
+        const modalProjectBrief = document.getElementById('modal-project-brief');
+        const modalDesignPhilosophy = document.getElementById('modal-design-philosophy');
+        const modalUxStrategy = document.getElementById('modal-ux-strategy');
+
+        // Debug: Check if modal elements exist
+        console.log('DEBUG: Modal elements found:', {
+            modal: !!modal,
+            modalOverlay: !!modalOverlay,
+            modalClose: !!modalClose,
+            modalProjectTitle: !!modalProjectTitle,
+            modalProjectLogo: !!modalProjectLogo,
+            modalProjectBrief: !!modalProjectBrief,
+            modalDesignPhilosophy: !!modalDesignPhilosophy,
+            modalUxStrategy: !!modalUxStrategy
+        });
+
+        // Function to open modal with project data
+        function openProjectModal(projectName) {
+            console.log('Opening modal for project:', projectName);
+            
+            const projectData = projectModalData[projectName];
+            if (!projectData) {
+                console.error(`No modal data found for project: ${projectName}`);
+                return;
+            }
+
+            if (!modal) {
+                console.error('Modal element not found!');
+                return;
+            }
+
+            // Populate modal content
+            modalProjectTitle.textContent = projectName;
+            modalProjectLogo.src = projectData.logo;
+            modalProjectLogo.alt = `${projectName} Logo`;
+            modalProjectBrief.innerHTML = projectData.brief;
+            modalDesignPhilosophy.innerHTML = projectData.designPhilosophy;
+            modalUxStrategy.innerHTML = projectData.uxStrategy;
+
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            console.log('Modal should now be visible');
+        }
+
+        // Function to close modal
+        function closeProjectModal() {
+            console.log('Closing modal...');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Test function
+        function testModal() {
+            console.log('Testing modal...');
+            openProjectModal('Bamai');
+        }
+
+        // Event listeners
+        if (modalClose) {
+            modalClose.addEventListener('click', closeProjectModal);
+        }
+
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', closeProjectModal);
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal && modal.classList.contains('active')) {
+                closeProjectModal();
+            }
+        });
+
+        // Make test function available globally
+        window.testModal = testModal;
+    </script>
+</body>
+</html> 

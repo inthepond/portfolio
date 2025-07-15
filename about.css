@@ -1,0 +1,423 @@
+/* About page specific styles */
+body {
+    overflow: auto !important; /* Override the hidden overflow from main styles */
+    overflow-x: hidden; /* Keep horizontal overflow hidden to prevent horizontal scrolling */
+    background: #1C1C1C !important; /* Ensure body background matches */
+}
+
+.about-main {
+    padding-top: 60px;
+    min-height: 100vh;
+    position: relative;
+    z-index: 10;
+    background: rgba(28, 28, 28, 0.95);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    padding-bottom: 0;
+}
+
+/* Ensure full page coverage */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Back link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #00fff9;
+    text-decoration: none;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+    padding: 10px 0;
+}
+
+.back-link:hover {
+    color: white;
+    text-shadow: 0 0 10px #00fff9;
+}
+
+.back-link svg {
+    transition: transform 0.3s ease;
+}
+
+.back-link:hover svg {
+    transform: translateX(-3px);
+}
+
+/* Hero section */
+.hero {
+    text-align: center;
+    margin-bottom: 80px;
+    padding: 40px 0;
+}
+
+.hero h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 2.5rem;
+    color: #00fff9;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(0, 255, 249, 0.3);
+}
+
+.hero-subtitle {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.hero-description {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero-description p {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ccc;
+}
+
+/* Content sections */
+.content-grid {
+    display: grid;
+    gap: 60px;
+    margin-bottom: 80px;
+}
+
+.section {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+}
+
+.section h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.2rem;
+    color: #00fff9;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.section p {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.section blockquote {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #00fff9;
+    border-left: 3px solid #00fff9;
+    padding-left: 20px;
+    margin: 30px 0;
+    background: rgba(0, 255, 249, 0.1);
+    padding: 20px;
+    border-radius: 4px;
+}
+
+/* Skills grid */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.skill-category h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.skill-category ul {
+    list-style: none;
+    padding: 0;
+}
+
+.skill-category li {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #ccc;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    padding-left: 15px;
+}
+
+.skill-category li:before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #00fff9;
+    font-size: 8px;
+}
+
+.skill-category li:last-child {
+    border-bottom: none;
+}
+
+/* Approach steps */
+.approach-steps {
+    display: grid;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.step-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.2rem;
+    color: #00fff9;
+    background: rgba(0, 255, 249, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 60px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.step-content h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.step-content p {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #ccc;
+    margin: 0;
+}
+
+/* Values grid */
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.value-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.value-item:hover {
+    transform: translateY(-5px);
+    background: rgba(0, 255, 249, 0.1);
+}
+
+.value-item h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    color: #00fff9;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.value-item p {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #ccc;
+    margin: 0;
+}
+
+/* Contact section */
+.contact-section {
+    background: rgba(0, 255, 249, 0.1);
+    border: 1px solid rgba(0, 255, 249, 0.3);
+    border-radius: 8px;
+    padding: 50px;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.contact-section h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.5rem;
+    color: #00fff9;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.contact-section p {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.1rem;
+    color: #ccc;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contact-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #00fff9;
+    color: #1C1C1C;
+}
+
+.btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 255, 249, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #00fff9;
+    border: 2px solid #00fff9;
+}
+
+.btn-secondary:hover {
+    background: #00fff9;
+    color: #1C1C1C;
+    box-shadow: 0 0 20px rgba(0, 255, 249, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .about-main {
+        padding-top: 50px;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .hero-description p {
+        font-size: 1rem;
+    }
+    
+    .section {
+        padding: 25px;
+    }
+    
+    .section h2 {
+        font-size: 1rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        min-width: auto;
+        width: 60px;
+        margin: 0 auto;
+    }
+    
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-section {
+        padding: 30px 20px;
+    }
+    
+    .contact-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .back-link {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        margin-bottom: 40px;
+    }
+    
+    .content-grid {
+        gap: 40px;
+    }
+    
+    .section {
+        padding: 20px;
+    }
+    
+    .approach-steps {
+        gap: 20px;
+    }
+    
+    .step {
+        padding: 15px;
+    }
+} 
