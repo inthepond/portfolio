@@ -364,7 +364,111 @@ canvas#bg::after {
         height: 8px;
         margin: 0 3px;
     }
-} 
+}
+
+/* === BOTTOM COMPANY SCROLLING BAR === */
+#bottom-company-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    background: rgba(28, 28, 28, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.company-scroll-container {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.company-scroll-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    animation: scroll-companies 60s linear infinite;
+    white-space: nowrap;
+}
+
+.company-item-scroll {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: white;
+    user-select: none;
+    flex-shrink: 0;
+    transition: color 0.3s ease;
+}
+
+.company-item-scroll:hover {
+    color: #00fff9;
+}
+
+.company-logo-scroll {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 2px;
+    padding: 2px;
+}
+
+.company-name-scroll {
+    white-space: nowrap;
+}
+
+@keyframes scroll-companies {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Responsive adjustments for company bar */
+@media (max-width: 768px) {
+    #bottom-company-bar {
+        height: 36px;
+    }
+
+    .company-item-scroll {
+        font-size: 7px;
+        padding: 0 15px;
+        gap: 6px;
+    }
+
+    .company-logo-scroll {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    #bottom-company-bar {
+        height: 32px;
+    }
+
+    .company-item-scroll {
+        font-size: 6px;
+        padding: 0 12px;
+        gap: 5px;
+    }
+
+    .company-logo-scroll {
+        width: 12px;
+        height: 12px;
+        padding: 1px;
+    }
+}
 
 /* === PROJECT MODAL STYLES === */
 .modal {

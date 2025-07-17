@@ -953,15 +953,25 @@ document.addEventListener('DOMContentLoaded', () => {
          modalDesignPhilosophy.innerHTML = projectData.designPhilosophy;
          modalUxStrategy.innerHTML = projectData.uxStrategy;
 
-         // Show modal
+         // Reset modal scroll position to top
+        const modalBody = document.querySelector('.modal-body');
+        const modalContent = document.querySelector('.modal-content');
+        if (modalBody) {
+            modalBody.scrollTop = 0;
+        }
+        if (modalContent) {
+            modalContent.scrollTop = 0;
+        }
+
+        // Show modal
          console.log('👁️ DEBUG: Showing modal...');
          modal.classList.add('active');
          document.body.style.overflow = 'hidden'; // Prevent background scrolling
-         
+
          // Add global scroll prevention
          document.addEventListener('wheel', preventScroll, { passive: false });
          document.addEventListener('touchmove', preventScroll, { passive: false });
-         
+
          console.log('✅ DEBUG: Modal should now be visible');
      }
 
@@ -1585,4 +1595,27 @@ document.addEventListener('DOMContentLoaded', () => {
         bgMaterial.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
         resizeBackground(); // Resize background on window resize
     });
-}); 
+});
+
+// --- Company Scrolling Bar Functionality ---
+document.addEventListener('DOMContentLoaded', () => {
+    const companyScrollTrack = document.getElementById('company-scroll-track');
+
+    if (companyScrollTrack) {
+        // Clone the company items to create seamless infinite scroll
+        const originalItems = companyScrollTrack.innerHTML;
+
+        // Duplicate the items enough times to ensure the bar is always full
+        // We need at least 2 full sets for seamless looping, but 4 sets ensures coverage for all screen sizes
+        companyScrollTrack.innerHTML = originalItems + originalItems + originalItems + originalItems;
+
+        // Pause animation on hover
+        companyScrollTrack.addEventListener('mouseenter', () => {
+            companyScrollTrack.style.animationPlayState = 'paused';
+        });
+
+        companyScrollTrack.addEventListener('mouseleave', () => {
+            companyScrollTrack.style.animationPlayState = 'running';
+        });
+    }
+});
