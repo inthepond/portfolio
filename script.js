@@ -1372,12 +1372,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Click handling for modal opening - with comprehensive debugging
     window.addEventListener('click', (event) => {
+        // Check if modal is currently active - if so, don't process canvas clicks
+        const modal = document.getElementById('project-modal');
+        if (modal && modal.classList.contains('active')) {
+            console.log('🚫 DEBUG: Modal is active, ignoring canvas click');
+            return;
+        }
+
         console.log('🖱️ DEBUG: Click event triggered', {
             clientX: event.clientX,
             clientY: event.clientY,
             target: event.target.tagName
         });
-        
+
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         
