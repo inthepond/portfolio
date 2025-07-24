@@ -1538,9 +1538,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dragCameraStart.y = cameraTarget.y;
         lastDragTime = performance.now();
 
-        // Change cursor to grabbing
-        document.body.style.cursor = 'grabbing';
-
         // Prevent text selection during drag
         event.preventDefault();
     });
@@ -1583,16 +1580,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateProjectTitle(newProjectIndex, direction);
                 }
             }, 50);
-        } else {
-            // Change cursor when hovering over draggable area
-            document.body.style.cursor = 'grab';
         }
     });
 
     window.addEventListener('mouseup', (event) => {
         if (isDragging) {
             isDragging = false;
-            document.body.style.cursor = 'grab';
 
             // Apply very minimal momentum for smooth deceleration
             dragMomentum.x = dragVelocity.x * 0.005; // Much smaller momentum
@@ -1604,7 +1597,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('mouseleave', () => {
         if (isDragging) {
             isDragging = false;
-            document.body.style.cursor = 'default';
             dragMomentum.x = dragVelocity.x * 0.005; // Much smaller momentum
             dragMomentum.y = dragVelocity.y * 0.005;
         }

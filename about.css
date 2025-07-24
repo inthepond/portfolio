@@ -41,6 +41,7 @@ html, body {
     margin-bottom: 40px;
     transition: all 0.3s ease;
     padding: 10px 0;
+    cursor: pointer;
 }
 
 .back-link:hover {
