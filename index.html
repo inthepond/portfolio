@@ -35,7 +35,29 @@
     </nav>
 
     <div id="loading-overlay">
-        <div id="loading-text"></div>
+        <div class="loading-content">
+            <div id="loading-text"></div>
+            <div class="progress-container">
+                <div class="progress-wave" id="progress-wave">
+                    <svg viewBox="0 0 400 20" class="wave-svg">
+                        <path id="wave-path" d="M0,10 Q100,5 200,10 T400,10" stroke="#00fff9" stroke-width="2" fill="none"/>
+                        <path id="wave-fill" d="M0,10 Q100,5 200,10 T400,10 L400,20 L0,20 Z" fill="url(#waveGradient)" opacity="0.3"/>
+                        <defs>
+                            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#00fff9;stop-opacity:0"/>
+                                <stop offset="50%" style="stop-color:#00fff9;stop-opacity:0.6"/>
+                                <stop offset="100%" style="stop-color:#ff00c1;stop-opacity:0"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="progress-glow"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progress-percentage">0%</span>
+                    <span class="progress-label">Loading Experience</span>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Project Modal -->

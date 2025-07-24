@@ -46,8 +46,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingContent = document.querySelector('.loading-content');
     const loadingText = document.getElementById('loading-text');
+    const progressPercentage = document.getElementById('progress-percentage');
+    const wavePath = document.getElementById('wave-path');
+    const waveFill = document.getElementById('wave-fill');
+    const progressGlow = document.querySelector('.progress-glow');
+    const topNav = document.getElementById('top-nav');
+    const bottomCompanyBar = document.getElementById('bottom-company-bar');
     const canvas = document.getElementById('bg');
+
+    // --- Page Load Animation Sequence ---
+    const initializePageAnimations = () => {
+        // Stagger the animations for a more elegant entrance
+
+        // First: Top navigation slides down
+        setTimeout(() => {
+            topNav.classList.add('animate-in');
+        }, 150);
+
+        // Second: Bottom navigation slides up (slightly delayed)
+        setTimeout(() => {
+            bottomCompanyBar.classList.add('animate-in');
+        }, 300);
+
+        // Third: Loading overlay fades in
+        setTimeout(() => {
+            loadingOverlay.classList.add('animate-in');
+        }, 500);
+
+        // Fourth: Loading content slides up and fades in
+        setTimeout(() => {
+            loadingContent.classList.add('animate-in');
+        }, 700);
+
+        // Finally: Start loading process after all animations
+        setTimeout(() => {
+            startLoadingProcess();
+        }, 900);
+    };
+
+    // Call the animation sequence immediately
+    initializePageAnimations();
 
     // --- Loading Animation ---
     const languages = [
@@ -57,36 +97,103 @@ document.addEventListener('DOMContentLoaded', () => {
     let langIndex = 0;
     const maxLoadingTime = 5000;
     let loadingAnimationFinished = false;
+    let currentProgress = 0;
+    let textChangeInterval;
+    let progressInterval;
 
-    loadingText.textContent = languages[0];
-    loadingText.setAttribute('data-text', languages[0]);
+    const startLoadingProcess = () => {
+        // Initialize loading text
+        loadingText.textContent = languages[0];
+        loadingText.setAttribute('data-text', languages[0]);
 
-    const changeTextWithGlitch = () => {
+    // --- Progress Animation ---
+    const updateProgress = () => {
         if (loadingAnimationFinished) return;
-        
-        loadingText.classList.add('glitching');
-        
-        setTimeout(() => {
-            langIndex = (langIndex + 1) % languages.length;
-            const newText = languages[langIndex];
-            loadingText.textContent = newText;
-            loadingText.setAttribute('data-text', newText);
-            
-            // Let the glitch animation play, then remove the class
-            setTimeout(() => {
-                loadingText.classList.remove('glitching');
-            }, 400); // Must be same duration as animation in CSS
-        }, 200);
+
+        // Simulate irregular progress increments
+        const increment = Math.random() * 2.5 + 0.5; // Random increment between 0.5-3
+        currentProgress = Math.min(currentProgress + increment, 100);
+
+        // Update percentage display
+        const displayProgress = Math.floor(currentProgress);
+        progressPercentage.textContent = displayProgress + '%';
+
+        // Calculate progress ratio (0 to 1)
+        const progressRatio = currentProgress / 100;
+
+        // Update wave path stroke-dashoffset to match progress
+        const totalDashLength = 800;
+        const currentDashOffset = totalDashLength * (1 - progressRatio);
+        if (wavePath) {
+            wavePath.style.strokeDashoffset = currentDashOffset;
+        }
+
+        // Update wave fill opacity based on progress
+        if (waveFill) {
+            const fillOpacity = Math.min(progressRatio * 0.4, 0.3); // Max opacity 0.3
+            waveFill.style.opacity = fillOpacity;
+        }
+
+        // Update glow position to match progress
+        if (progressGlow) {
+            const glowPosition = progressRatio * 100; // 0% to 100%
+            progressGlow.style.left = `calc(${glowPosition}% - 4px)`; // Center the glow dot
+            progressGlow.style.opacity = progressRatio > 0.05 ? 1 : 0; // Show after 5% progress
+        }
+
+        // Update wave path with subtle irregular fluctuations
+        const time = Date.now() * 0.002;
+        const waveVariation = Math.sin(time) * 2;
+        const waveVariation2 = Math.cos(time * 1.3) * 1.5;
+        const waveVariation3 = Math.sin(time * 0.7) * 1;
+        const newPath = `M0,${10 + waveVariation3} Q100,${5 + waveVariation2} 200,${10 - waveVariation} T400,${10 + waveVariation * 0.5}`;
+
+        if (wavePath) {
+            wavePath.setAttribute('d', newPath);
+        }
+
+        if (currentProgress >= 100) {
+            setTimeout(finishLoading, 800); // Slightly longer delay to show 100%
+        }
     };
-    
-    const textChangeInterval = setInterval(changeTextWithGlitch, 800);
+
+        const changeTextWithGlitch = () => {
+            if (loadingAnimationFinished) return;
+
+            loadingText.classList.add('glitching');
+
+            setTimeout(() => {
+                langIndex = (langIndex + 1) % languages.length;
+                const newText = languages[langIndex];
+                loadingText.textContent = newText;
+                loadingText.setAttribute('data-text', newText);
+
+                // Let the glitch animation play, then remove the class
+                setTimeout(() => {
+                    loadingText.classList.remove('glitching');
+                }, 400); // Must be same duration as animation in CSS
+            }, 200);
+        };
+
+        // Start the loading animations
+        textChangeInterval = setInterval(changeTextWithGlitch, 800);
+        progressInterval = setInterval(updateProgress, 100); // Update progress every 100ms
+
+        // Force finish loading after max time
+        setTimeout(finishLoading, maxLoadingTime);
+    };
 
     const finishLoading = () => {
         if (loadingAnimationFinished) return;
         loadingAnimationFinished = true;
-        
+
         clearInterval(textChangeInterval);
-        
+        clearInterval(progressInterval);
+
+        // Ensure progress reaches 100%
+        currentProgress = 100;
+        progressPercentage.textContent = '100%';
+
         loadingOverlay.style.opacity = '0';
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
@@ -488,8 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // The 5-second max timer will handle hiding the overlay.
     };
 
-    // Force hide loading overlay after max time
-    setTimeout(finishLoading, maxLoadingTime);
+    // Loading timer is now handled in startLoadingProcess function
 
     const textureLoader = new THREE.TextureLoader(loadingManager);
 
@@ -576,7 +682,17 @@ document.addEventListener('DOMContentLoaded', () => {
             logo: "img/bamai_logo.png",
             brief: `
                 <p><strong>Bamai</strong> is a revolutionary fitness ecosystem that transforms how people approach health and wellness through intelligent wearable technology and personalized coaching.</p>
-                
+
+                <h3>Design Process & Methodology</h3>
+                <p>Following a <strong>Human-Centered Design (HCD)</strong> approach combined with <strong>Lean UX principles</strong>, the Bamai project employed a comprehensive design thinking methodology:</p>
+                <ul>
+                    <li><strong>Empathize & Research:</strong> Conducted 45+ user interviews with fitness enthusiasts, personal trainers, and health-conscious individuals. Utilized ethnographic studies in gyms and home workout environments to understand pain points and behavioral patterns.</li>
+                    <li><strong>Define & Synthesize:</strong> Applied Jobs-to-be-Done (JTBD) framework to identify core user needs. Created detailed personas and journey maps highlighting emotional and functional requirements throughout the fitness experience.</li>
+                    <li><strong>Ideate & Co-create:</strong> Facilitated design sprints with cross-functional teams including fitness experts, data scientists, and behavioral psychologists. Employed "How Might We" sessions to generate innovative solutions.</li>
+                    <li><strong>Prototype & Test:</strong> Developed rapid prototypes using Figma and Principle, conducting weekly usability testing sessions. Implemented A/B testing for key interaction patterns and information architecture decisions.</li>
+                    <li><strong>Iterate & Scale:</strong> Established continuous feedback loops with beta users, utilizing analytics and user feedback to refine the experience. Applied atomic design principles for scalable component systems.</li>
+                </ul>
+
                 <h3>Problem Statement</h3>
                 <p>Traditional fitness solutions are fragmented, offering either expensive personal training or generic app-based workouts. Users struggle with motivation, proper form, and consistent progress tracking. The market lacks an integrated solution that provides professional guidance at scale while maintaining personalization.</p>
                 
@@ -652,7 +768,17 @@ document.addEventListener('DOMContentLoaded', () => {
              logo: "img/ruce_logo.png",
              brief: `
                  <p><strong>Ruce</strong> - Your Personalized TCM Wellness Companion</p>
-                 
+
+                 <h3>Design Process & Methodology</h3>
+                 <p>Ruce's development followed a <strong>Cultural-Sensitive Design (CSD)</strong> approach integrated with <strong>Service Design principles</strong>, ensuring respectful representation of Traditional Chinese Medicine while meeting modern usability standards:</p>
+                 <ul>
+                     <li><strong>Cultural Research & Immersion:</strong> Collaborated with TCM practitioners and scholars for 6 months to understand authentic practices. Conducted field studies in traditional medicine clinics and modern wellness centers across different cultural contexts.</li>
+                     <li><strong>Participatory Design:</strong> Engaged TCM experts, healthcare professionals, and diverse user groups in co-design workshops. Applied cultural probes to understand daily wellness routines and health tracking behaviors across Eastern and Western users.</li>
+                     <li><strong>Systems Thinking Approach:</strong> Mapped the entire wellness ecosystem including Bamai integration, healthcare providers, and family support systems. Created service blueprints to identify touchpoints and potential cultural friction points.</li>
+                     <li><strong>Inclusive Design Framework:</strong> Implemented accessibility guidelines for diverse age groups and cultural backgrounds. Conducted usability testing with multilingual users to ensure cross-cultural comprehension.</li>
+                     <li><strong>Ethical Design Validation:</strong> Established advisory board with medical professionals and cultural experts to validate health recommendations and cultural sensitivity throughout the design process.</li>
+                 </ul>
+
                  <p>Ruce is a smart health app that integrates Traditional Chinese Medicine (TCM) constitution and pulse analysis to create personalized bowel movement and hydration plans, while also tracking emotional and menstrual cycles. By connecting with our other app, Bamai (a simulated TCM pulse-taking app), Ruce gains a more accurate understanding of your body's condition, providing tailored wellness recommendations.</p>
                  
                  <h3>Key Features</h3>
@@ -725,7 +851,17 @@ document.addEventListener('DOMContentLoaded', () => {
              logo: "img/x6ren_logo.png",
              brief: `
                  <p><strong>X6ren</strong> - Ancient Wisdom Decision-Making Tool</p>
-                 
+
+                 <h3>Design Process & Methodology</h3>
+                 <p>X6ren's development employed a <strong>Research-Through-Design (RTD)</strong> methodology combined with <strong>Speculative Design principles</strong>, bridging historical scholarship with contemporary interaction design:</p>
+                 <ul>
+                     <li><strong>Historical Research & Analysis:</strong> Conducted extensive literature review of Tang and Song dynasty texts, collaborating with historians and sinologists to ensure mathematical accuracy. Analyzed original manuscripts and contemporary interpretations of Xiao Liu Ren systems.</li>
+                     <li><strong>Cognitive Design Research:</strong> Studied decision-making psychology and cognitive biases to understand how ancient frameworks could complement modern thinking patterns. Conducted behavioral experiments to validate the effectiveness of systematic decision tools.</li>
+                     <li><strong>Cross-Cultural Design Translation:</strong> Applied cultural translation methodologies to make ancient concepts accessible to contemporary global audiences. Developed bilingual design systems that maintain cultural authenticity while ensuring universal usability.</li>
+                     <li><strong>Speculative Prototyping:</strong> Created multiple interaction paradigms exploring how ancient wisdom could be meaningfully integrated into digital experiences. Tested various metaphors and mental models through rapid prototyping and user feedback sessions.</li>
+                     <li><strong>Ethical Technology Framework:</strong> Established clear boundaries between cultural appreciation and appropriation. Implemented transparency features to educate users about the historical context and limitations of the digital interpretation.</li>
+                 </ul>
+
                  <p>Experience the ancient wisdom of X6ren, a Chinese decision-making system from the Tang and Song dynasties reimagined for modern life. This mathematical framework offers fresh perspectives on your everyday choices.</p>
                  
                  <h3>Key Features</h3>
@@ -813,7 +949,17 @@ document.addEventListener('DOMContentLoaded', () => {
              logo: "img/qi_logo.png",
              brief: `
                  <p><strong>Qi (Aurae)</strong> - Color-Based Social Entertainment App</p>
-                 
+
+                 <h3>Design Process & Methodology</h3>
+                 <p>Qi's development followed a <strong>Social Innovation Design</strong> approach integrated with <strong>Behavioral Design principles</strong>, focusing on creating authentic human connections through alternative social paradigms:</p>
+                 <ul>
+                     <li><strong>Social Anthropology Research:</strong> Conducted ethnographic studies on modern social interaction patterns, analyzing the psychological impact of image-based social media. Researched color psychology across cultures and its influence on human connection and emotional expression.</li>
+                     <li><strong>Participatory Co-Design:</strong> Facilitated community workshops with diverse age groups and cultural backgrounds to understand authentic connection needs. Applied design fiction techniques to envision alternative social networking paradigms beyond traditional photo-sharing models.</li>
+                     <li><strong>Behavioral Psychology Integration:</strong> Collaborated with social psychologists to design interaction patterns that promote meaningful connections. Implemented time-boxing and scarcity principles to encourage quality over quantity in social interactions.</li>
+                     <li><strong>Philosophy-Informed Design:</strong> Worked with Daoist scholars to respectfully integrate philosophical concepts into digital experiences. Created contemplative interaction patterns that encourage mindful social engagement rather than addictive usage patterns.</li>
+                     <li><strong>Community-Centered Validation:</strong> Established ongoing feedback loops with beta communities to refine matching algorithms and social features. Applied social network analysis to understand connection quality and community health metrics.</li>
+                 </ul>
+
                  <h3>Executive Summary</h3>
                  <p>Qi (Aurae) is an innovative social entertainment application designed to foster unique connections based on individual "auras" represented by colors, and shared through personal artefacts rather than traditional self-photos. The app aims to create a more meaningful and less superficial networking environment, integrating elements of Daoism for daily guidance and facilitating community engagement through timed chats and regular Q&A challenges.</p>
                  
