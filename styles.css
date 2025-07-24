@@ -1,6 +1,16 @@
 body {
     margin: 0;
     overflow: hidden; /* Hide scrollbars */
+    cursor: grab; /* Default cursor for draggable interface */
+    user-select: none; /* Prevent text selection during drag */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: none; /* Prevent default touch behaviors */
+}
+
+body.dragging {
+    cursor: grabbing;
 }
 
 canvas#bg {
@@ -221,13 +231,6 @@ canvas#bg::after {
     font-family: 'Press Start 2P', monospace;
 }
 
-#progress-percentage {
-    font-size: 1.2rem;
-    color: #00fff9;
-    text-shadow: 0 0 10px #00fff9;
-    animation: percentage-glow 2s ease-in-out infinite;
-}
-
 .progress-label {
     font-size: 0.6rem;
     color: #ccc;
@@ -248,23 +251,12 @@ canvas#bg::after {
     }
 }
 
-@keyframes percentage-glow {
-    0%, 100% {
-        text-shadow: 0 0 10px #00fff9;
-    }
-    50% {
-        text-shadow: 0 0 20px #00fff9, 0 0 30px #00fff9;
-    }
-}
+
 
 /* Responsive design for progress bar */
 @media (max-width: 768px) {
     .progress-container {
         width: 300px;
-    }
-
-    #progress-percentage {
-        font-size: 1rem;
     }
 
     .progress-label {
@@ -283,10 +275,6 @@ canvas#bg::after {
         height: 3rem;
         line-height: 3rem;
         min-width: 200px;
-    }
-
-    #progress-percentage {
-        font-size: 0.9rem;
     }
 
     .progress-label {

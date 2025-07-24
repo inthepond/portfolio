@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingContent = document.querySelector('.loading-content');
     const loadingText = document.getElementById('loading-text');
-    const progressPercentage = document.getElementById('progress-percentage');
     const wavePath = document.getElementById('wave-path');
     const waveFill = document.getElementById('wave-fill');
     const progressGlow = document.querySelector('.progress-glow');
@@ -113,10 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Simulate irregular progress increments
         const increment = Math.random() * 2.5 + 0.5; // Random increment between 0.5-3
         currentProgress = Math.min(currentProgress + increment, 100);
-
-        // Update percentage display
-        const displayProgress = Math.floor(currentProgress);
-        progressPercentage.textContent = displayProgress + '%';
 
         // Calculate progress ratio (0 to 1)
         const progressRatio = currentProgress / 100;
@@ -192,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Ensure progress reaches 100%
         currentProgress = 100;
-        progressPercentage.textContent = '100%';
 
         loadingOverlay.style.opacity = '0';
         setTimeout(() => {
@@ -1355,7 +1349,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Interaction & Animation ---
     const cameraTarget = new THREE.Vector2();
-    
+
     // Set initial camera target to show Bamai (first project) on load
     // Use the same Y position as the camera
     cameraTarget.y = camera.position.y;
@@ -1365,12 +1359,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const clock = new THREE.Clock();
     const clickedPlanes = new Map(); // Track clicked planes and their animation progress
     const hoveredPlanes = new Map(); // Track hovered planes for glitch effect
-    
+
     // Scroll tracking for background animation
     let scrollVelocity = 0;
     let scrollIntensity = 0;
     let lastScrollTime = 0;
     let lastCameraPosition = { x: 0, y: 0 };
+
+    // Drag interaction variables
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let dragCameraStart = { x: 0, y: 0 };
+    let dragVelocity = { x: 0, y: 0 };
+    let lastDragTime = 0;
+    let dragMomentum = { x: 0, y: 0 };
+
+    // Touch interaction variables
+    let isTouching = false;
+    let touchStart = { x: 0, y: 0 };
+    let touchCameraStart = { x: 0, y: 0 };
+    let touchVelocity = { x: 0, y: 0 };
+    let lastTouchTime = 0;
+    let touchMomentum = { x: 0, y: 0 };
+    let lastTouchPosition = { x: 0, y: 0 };
     
     // Project title management
     let currentProjectIndex = -1;
@@ -1511,17 +1522,270 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 50);
     }, { passive: false });
 
+    // --- Mouse Drag Interaction ---
+    window.addEventListener('mousedown', (event) => {
+        // Check if modal is active
+        const modal = document.getElementById('project-modal');
+        if (modal && modal.classList.contains('active')) return;
+
+        // Only handle left mouse button
+        if (event.button !== 0) return;
+
+        isDragging = true;
+        dragStart.x = event.clientX;
+        dragStart.y = event.clientY;
+        dragCameraStart.x = cameraTarget.x;
+        dragCameraStart.y = cameraTarget.y;
+        lastDragTime = performance.now();
+
+        // Change cursor to grabbing
+        document.body.style.cursor = 'grabbing';
+
+        // Prevent text selection during drag
+        event.preventDefault();
+    });
+
     window.addEventListener('mousemove', (event) => {
+        // Update mouse position for raycasting
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        if (isDragging) {
+            const currentTime = performance.now();
+            const deltaTime = currentTime - lastDragTime;
+
+            // Calculate drag distance
+            const deltaX = event.clientX - dragStart.x;
+            const deltaY = event.clientY - dragStart.y;
+
+            // Convert to camera movement (inverted for natural feel)
+            const dragSensitivity = 0.03; // Much slower drag sensitivity
+            cameraTarget.x = dragCameraStart.x - deltaX * dragSensitivity;
+            cameraTarget.y = dragCameraStart.y + deltaY * dragSensitivity;
+
+            // Calculate drag velocity for momentum (much reduced)
+            if (deltaTime > 0) {
+                dragVelocity.x = -deltaX * dragSensitivity / deltaTime * 200; // Reduced from 1000
+                dragVelocity.y = deltaY * dragSensitivity / deltaTime * 200;
+            }
+
+            lastDragTime = currentTime;
+
+            // Update scroll intensity for background animation
+            const dragDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            scrollIntensity = Math.min(dragDistance * 0.01, 1.0);
+
+            // Update project title during drag
+            setTimeout(() => {
+                const newProjectIndex = detectCurrentProject();
+                if (newProjectIndex !== currentProjectIndex) {
+                    const direction = deltaY > 0 ? 'down' : 'up';
+                    updateProjectTitle(newProjectIndex, direction);
+                }
+            }, 50);
+        } else {
+            // Change cursor when hovering over draggable area
+            document.body.style.cursor = 'grab';
+        }
+    });
+
+    window.addEventListener('mouseup', (event) => {
+        if (isDragging) {
+            isDragging = false;
+            document.body.style.cursor = 'grab';
+
+            // Apply very minimal momentum for smooth deceleration
+            dragMomentum.x = dragVelocity.x * 0.005; // Much smaller momentum
+            dragMomentum.y = dragVelocity.y * 0.005;
+        }
+    });
+
+    // Handle mouse leave to stop dragging
+    window.addEventListener('mouseleave', () => {
+        if (isDragging) {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+            dragMomentum.x = dragVelocity.x * 0.005; // Much smaller momentum
+            dragMomentum.y = dragVelocity.y * 0.005;
+        }
+    });
+
+    // --- Touch/Mobile Interaction ---
+    window.addEventListener('touchstart', (event) => {
+        // Check if modal is active
+        const modal = document.getElementById('project-modal');
+        if (modal && modal.classList.contains('active')) return;
+
+        // Only handle single touch
+        if (event.touches.length !== 1) return;
+
+        const touch = event.touches[0];
+        isTouching = true;
+        touchStart.x = touch.clientX;
+        touchStart.y = touch.clientY;
+        touchCameraStart.x = cameraTarget.x;
+        touchCameraStart.y = cameraTarget.y;
+        lastTouchTime = performance.now();
+        lastTouchPosition.x = touch.clientX;
+        lastTouchPosition.y = touch.clientY;
+
+        // Prevent default to avoid scrolling
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (event) => {
+        if (!isTouching || event.touches.length !== 1) return;
+
+        const touch = event.touches[0];
+        const currentTime = performance.now();
+        const deltaTime = currentTime - lastTouchTime;
+
+        // Calculate touch movement
+        const deltaX = touch.clientX - touchStart.x;
+        const deltaY = touch.clientY - touchStart.y;
+
+        // Convert to camera movement (inverted for natural feel)
+        const touchSensitivity = 0.04; // Reduced touch sensitivity to match drag
+        cameraTarget.x = touchCameraStart.x - deltaX * touchSensitivity;
+        cameraTarget.y = touchCameraStart.y + deltaY * touchSensitivity;
+
+        // Calculate touch velocity for momentum (reduced)
+        if (deltaTime > 0) {
+            const instantDeltaX = touch.clientX - lastTouchPosition.x;
+            const instantDeltaY = touch.clientY - lastTouchPosition.y;
+            touchVelocity.x = -instantDeltaX * touchSensitivity / deltaTime * 300; // Reduced from 1000
+            touchVelocity.y = instantDeltaY * touchSensitivity / deltaTime * 300;
+        }
+
+        lastTouchTime = currentTime;
+        lastTouchPosition.x = touch.clientX;
+        lastTouchPosition.y = touch.clientY;
+
+        // Update scroll intensity for background animation
+        const touchDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        scrollIntensity = Math.min(touchDistance * 0.015, 1.0);
+
+        // Update project title during touch
+        setTimeout(() => {
+            const newProjectIndex = detectCurrentProject();
+            if (newProjectIndex !== currentProjectIndex) {
+                const direction = deltaY > 0 ? 'down' : 'up';
+                updateProjectTitle(newProjectIndex, direction);
+            }
+        }, 50);
+
+        // Prevent default to avoid scrolling
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchend', (event) => {
+        if (isTouching) {
+            isTouching = false;
+
+            // Apply minimal momentum for smooth deceleration
+            touchMomentum.x = touchVelocity.x * 0.008; // Much smaller momentum
+            touchMomentum.y = touchVelocity.y * 0.008;
+        }
+    });
+
+    // Handle touch cancel
+    window.addEventListener('touchcancel', () => {
+        if (isTouching) {
+            isTouching = false;
+            touchMomentum.x = touchVelocity.x * 0.008; // Much smaller momentum
+            touchMomentum.y = touchVelocity.y * 0.008;
+        }
+    });
+
+    // Touch tap handling for modal opening
+    let touchStartPosition = { x: 0, y: 0 };
+    let touchStartTime = 0;
+
+    window.addEventListener('touchstart', (event) => {
+        if (event.touches.length === 1) {
+            const touch = event.touches[0];
+            touchStartPosition.x = touch.clientX;
+            touchStartPosition.y = touch.clientY;
+            touchStartTime = performance.now();
+        }
+    });
+
+    window.addEventListener('touchend', (event) => {
+        // Check if modal is active
+        const modal = document.getElementById('project-modal');
+        if (modal && modal.classList.contains('active')) return;
+
+        // Only handle single touch tap
+        if (event.changedTouches.length !== 1) return;
+
+        const touch = event.changedTouches[0];
+        const tapDistance = Math.sqrt(
+            Math.pow(touch.clientX - touchStartPosition.x, 2) +
+            Math.pow(touch.clientY - touchStartPosition.y, 2)
+        );
+        const tapDuration = performance.now() - touchStartTime;
+
+        // Check if this was a tap (moved less than 10 pixels and took less than 300ms)
+        if (tapDistance < 10 && tapDuration < 300) {
+            console.log('📱 DEBUG: Touch tap detected');
+
+            // Convert touch position to normalized coordinates
+            mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+
+            // Perform raycasting to detect plane intersection
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planes);
+
+            if (intersects.length > 0) {
+                const clickedPlane = intersects[0].object;
+                const projectName = clickedPlane.userData.projectName;
+
+                console.log('📱 DEBUG: Touch tap on plane:', projectName);
+
+                // Open project modal
+                if (projectName && projectModalData[projectName]) {
+                    openProjectModal(projectName);
+
+                    // Add glitch effect for visual feedback
+                    clickedPlanes.set(clickedPlane, {
+                        startTime: clock.getElapsedTime(),
+                        duration: 1.5,
+                        intensity: 1.0
+                    });
+                }
+            }
+        }
     });
 
     // Click handling for modal opening - with comprehensive debugging
+    let clickStartPosition = { x: 0, y: 0 };
+    let clickStartTime = 0;
+
+    // Track click start position to distinguish from drag
+    window.addEventListener('mousedown', (event) => {
+        clickStartPosition.x = event.clientX;
+        clickStartPosition.y = event.clientY;
+        clickStartTime = performance.now();
+    });
+
     window.addEventListener('click', (event) => {
         // Check if modal is currently active - if so, don't process canvas clicks
         const modal = document.getElementById('project-modal');
         if (modal && modal.classList.contains('active')) {
             console.log('🚫 DEBUG: Modal is active, ignoring canvas click');
+            return;
+        }
+
+        // Check if this was a drag operation (moved more than 5 pixels or took longer than 300ms)
+        const clickDistance = Math.sqrt(
+            Math.pow(event.clientX - clickStartPosition.x, 2) +
+            Math.pow(event.clientY - clickStartPosition.y, 2)
+        );
+        const clickDuration = performance.now() - clickStartTime;
+
+        if (clickDistance > 5 || clickDuration > 300) {
+            console.log('🚫 DEBUG: Ignoring click - was a drag operation');
             return;
         }
 
@@ -1598,11 +1862,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
-        
+
+        // Apply drag momentum (very minimal)
+        if (!isDragging && (Math.abs(dragMomentum.x) > 0.001 || Math.abs(dragMomentum.y) > 0.001)) {
+            cameraTarget.x += dragMomentum.x;
+            cameraTarget.y += dragMomentum.y;
+            dragMomentum.x *= 0.85; // Faster decay for quicker stop
+            dragMomentum.y *= 0.85;
+        }
+
+        // Apply touch momentum (very minimal)
+        if (!isTouching && (Math.abs(touchMomentum.x) > 0.001 || Math.abs(touchMomentum.y) > 0.001)) {
+            cameraTarget.x += touchMomentum.x;
+            cameraTarget.y += touchMomentum.y;
+            touchMomentum.x *= 0.80; // Faster decay for quicker stop
+            touchMomentum.y *= 0.80;
+        }
+
         // Update camera position and track movement for scroll intensity
         const oldCameraX = camera.position.x;
         const oldCameraY = camera.position.y;
-        
+
         camera.position.x += (cameraTarget.x - camera.position.x) * 0.06;
         camera.position.y += (cameraTarget.y - camera.position.y) * 0.06;
         
