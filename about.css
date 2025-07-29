@@ -1,8 +1,15 @@
 /* About page specific styles */
-body {
+html, body {
     overflow: auto !important; /* Override the hidden overflow from main styles */
-    overflow-x: hidden; /* Keep horizontal overflow hidden to prevent horizontal scrolling */
+    overflow-x: hidden !important; /* Keep horizontal overflow hidden to prevent horizontal scrolling */
     background: #1C1C1C !important; /* Ensure body background matches */
+    touch-action: auto !important; /* Allow normal touch behaviors */
+    user-select: text !important; /* Allow text selection */
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    height: auto !important; /* Override any height restrictions */
+    min-height: 100vh !important; /* Ensure minimum height */
 }
 
 .about-main {
@@ -16,12 +23,7 @@ body {
     padding-bottom: 0;
 }
 
-/* Ensure full page coverage */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+/* Ensure full page coverage - already handled above */
 
 .container {
     max-width: 1200px;

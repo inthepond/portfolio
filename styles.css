@@ -4,19 +4,24 @@
 }
 
 /* Override for clickable elements */
-a, button, .underline-link, .email-link, .back-link, .modal-close, .modal-overlay {
+a, button, .underline-link, .email-link, .back-link, .modal-close, .modal-overlay,
+#top-nav, #bottom-company-bar {
     cursor: pointer !important;
 }
 
 body {
     margin: 0;
-    overflow: hidden; /* Hide scrollbars */
     cursor: default; /* Default cursor */
+}
+
+/* Only apply these styles to the main portfolio page (not about page) */
+body:not(.about-page) {
+    overflow: hidden; /* Hide scrollbars */
+    touch-action: none; /* Prevent default touch behaviors */
     user-select: none; /* Prevent text selection during drag */
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    touch-action: none; /* Prevent default touch behaviors */
 }
 
 canvas#bg {

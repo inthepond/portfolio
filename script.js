@@ -40,6 +40,38 @@ function initializeNavigation() {
 document.addEventListener('DOMContentLoaded', initializeNavigation);
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if this is the about page - if so, only run basic scripts
+    if (document.body.classList.contains('about-page')) {
+        console.log('About page detected - running basic scripts only');
+
+        // Initialize time display for about page
+        const timeElement = document.getElementById('current-time');
+        const statusLight = document.getElementById('status-light');
+
+        if (timeElement && statusLight) {
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-AU', {
+                    timeZone: 'Australia/Sydney',
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                timeElement.textContent = timeString;
+
+                // Update status light (green during business hours)
+                const hour = now.getHours();
+                const isBusinessHours = hour >= 9 && hour < 17;
+                statusLight.className = isBusinessHours ? 'status-light online' : 'status-light offline';
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+
+        return;
+    }
+
     if (typeof THREE === 'undefined') {
         console.error('Three.js has not been loaded. See https://threejs.org');
         return;
@@ -87,6 +119,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call the animation sequence immediately
     initializePageAnimations();
+
+    // --- Navigation Bar Event Handling ---
+    const topNavigation = document.getElementById('top-nav');
+    if (topNavigation) {
+        // Prevent navigation bar events from propagating to canvas
+        topNavigation.addEventListener('mousedown', (event) => {
+            event.stopPropagation();
+        });
+
+        topNavigation.addEventListener('mousemove', (event) => {
+            event.stopPropagation();
+        });
+
+        topNavigation.addEventListener('mouseup', (event) => {
+            event.stopPropagation();
+        });
+
+        topNavigation.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+
+        // Touch events for mobile
+        topNavigation.addEventListener('touchstart', (event) => {
+            event.stopPropagation();
+        });
+
+        topNavigation.addEventListener('touchmove', (event) => {
+            event.stopPropagation();
+        });
+
+        topNavigation.addEventListener('touchend', (event) => {
+            event.stopPropagation();
+        });
+    }
+
+    // --- Bottom Company Bar Event Handling ---
+    if (bottomCompanyBar) {
+        // Prevent bottom company bar events from propagating to canvas
+        bottomCompanyBar.addEventListener('mousedown', (event) => {
+            event.stopPropagation();
+        });
+
+        bottomCompanyBar.addEventListener('mousemove', (event) => {
+            event.stopPropagation();
+        });
+
+        bottomCompanyBar.addEventListener('mouseup', (event) => {
+            event.stopPropagation();
+        });
+
+        bottomCompanyBar.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+
+        // Touch events for mobile
+        bottomCompanyBar.addEventListener('touchstart', (event) => {
+            event.stopPropagation();
+        });
+
+        bottomCompanyBar.addEventListener('touchmove', (event) => {
+            event.stopPropagation();
+        });
+
+        bottomCompanyBar.addEventListener('touchend', (event) => {
+            event.stopPropagation();
+        });
+    }
 
     // --- Loading Animation ---
     const languages = [
