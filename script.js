@@ -80,9 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingContent = document.querySelector('.loading-content');
     const loadingText = document.getElementById('loading-text');
-    const wavePath = document.getElementById('wave-path');
-    const waveFill = document.getElementById('wave-fill');
-    const progressGlow = document.querySelector('.progress-glow');
+    const pixelProgressFill = document.getElementById('pixel-progress-fill');
+    const pixelProgressCursor = document.getElementById('pixel-progress-cursor');
+    const pixelSparks = document.getElementById('pixel-sparks');
+    const progressPercentage = document.getElementById('progress-percentage');
     const topNav = document.getElementById('top-nav');
     const bottomCompanyBar = document.getElementById('bottom-company-bar');
     const canvas = document.getElementById('bg');
@@ -187,69 +188,162 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Asset Preloader Class ---
+    class AssetPreloader {
+        constructor() {
+            this.assets = [];
+            this.loadedCount = 0;
+            this.totalCount = 0;
+            this.onProgress = null;
+            this.onComplete = null;
+            this.loadedAssets = new Set();
+        }
+
+        addAsset(src) {
+            if (!this.loadedAssets.has(src)) {
+                this.assets.push(src);
+                this.totalCount++;
+            }
+        }
+
+        loadAll() {
+            if (this.totalCount === 0) {
+                if (this.onComplete) this.onComplete();
+                return;
+            }
+
+            this.assets.forEach(src => {
+                const img = new Image();
+                img.onload = () => this.onAssetLoaded(src);
+                img.onerror = () => this.onAssetLoaded(src); // Count failed loads as complete to avoid blocking
+                img.src = src;
+            });
+        }
+
+        onAssetLoaded(src) {
+            if (!this.loadedAssets.has(src)) {
+                this.loadedAssets.add(src);
+                this.loadedCount++;
+
+                if (this.onProgress) {
+                    const progress = (this.loadedCount / this.totalCount) * 100;
+                    this.onProgress(progress);
+                }
+
+                if (this.loadedCount >= this.totalCount && this.onComplete) {
+                    this.onComplete();
+                }
+            }
+        }
+    }
+
     // --- Loading Animation ---
     const languages = [
         'Hello', '你好', 'こんにちは', '안녕하세요', 'Bonjour', 'Hola',
         'Ciao', 'Hallo', 'Olá', 'Здравствуйте', 'مرحبا', 'नमस्ते'
     ];
     let langIndex = 0;
-    const maxLoadingTime = 5000;
     let loadingAnimationFinished = false;
     let currentProgress = 0;
+    let targetProgress = 0;
     let textChangeInterval;
     let progressInterval;
+    let assetPreloader;
+
+    // --- Pixel Progress Animation ---
+    let lastProgressStep = 0;
+
+    const createPixelSpark = (x, y) => {
+        const spark = document.createElement('div');
+        spark.className = 'pixel-spark';
+        spark.style.left = `${x}px`;
+        spark.style.top = `${y}px`;
+        pixelSparks.appendChild(spark);
+
+        // Remove spark after animation
+        setTimeout(() => {
+            if (spark.parentNode) {
+                spark.parentNode.removeChild(spark);
+            }
+        }, 600);
+    };
+
+    const updateProgress = (newTargetProgress) => {
+        if (loadingAnimationFinished) return;
+
+        // Update target progress if provided
+        if (newTargetProgress !== undefined) {
+            targetProgress = Math.min(newTargetProgress, 100);
+        }
+
+        // Smoothly animate current progress towards target with chunky steps
+        const progressDiff = targetProgress - currentProgress;
+        if (Math.abs(progressDiff) > 0.1) {
+            currentProgress += progressDiff * 0.15; // Slightly faster for chunky feel
+        } else {
+            currentProgress = targetProgress;
+        }
+
+        // Calculate progress ratio (0 to 1)
+        const progressRatio = currentProgress / 100;
+
+        // Update pixel progress fill width
+        if (pixelProgressFill) {
+            pixelProgressFill.style.width = `${currentProgress}%`;
+        }
+
+        // Update progress cursor position
+        if (pixelProgressCursor) {
+            const cursorPosition = progressRatio * 100;
+            pixelProgressCursor.style.right = `${100 - cursorPosition}%`;
+            pixelProgressCursor.style.opacity = progressRatio > 0.02 ? 1 : 0;
+        }
+
+        // Update percentage display
+        if (progressPercentage) {
+            progressPercentage.textContent = `${Math.floor(currentProgress)}%`;
+        }
+
+        // Create pixel sparks at progress milestones
+        const currentStep = Math.floor(currentProgress / 5); // Every 5%
+        if (currentStep > lastProgressStep && progressRatio > 0.05) {
+            const sparkX = Math.random() * (pixelSparks.offsetWidth - 10);
+            const sparkY = Math.random() * (pixelSparks.offsetHeight - 10);
+            createPixelSpark(sparkX, sparkY);
+            lastProgressStep = currentStep;
+        }
+
+        // Check if loading is complete
+        if (currentProgress >= 99.9) {
+            setTimeout(finishLoading, 800); // Slightly longer delay to show 100%
+        }
+    };
 
     const startLoadingProcess = () => {
         // Initialize loading text
         loadingText.textContent = languages[0];
         loadingText.setAttribute('data-text', languages[0]);
 
-    // --- Progress Animation ---
-    const updateProgress = () => {
-        if (loadingAnimationFinished) return;
+        // Initialize asset preloader
+        assetPreloader = new AssetPreloader();
 
-        // Simulate irregular progress increments
-        const increment = Math.random() * 2.5 + 0.5; // Random increment between 0.5-3
-        currentProgress = Math.min(currentProgress + increment, 100);
+        // Collect all assets that need to be preloaded
+        collectAllAssets();
 
-        // Calculate progress ratio (0 to 1)
-        const progressRatio = currentProgress / 100;
+        // Set up progress callback
+        assetPreloader.onProgress = (progress) => {
+            console.log(`Asset loading progress: ${progress.toFixed(1)}% (${assetPreloader.loadedCount}/${assetPreloader.totalCount})`);
+            updateProgress(progress);
+        };
 
-        // Update wave path stroke-dashoffset to match progress
-        const totalDashLength = 800;
-        const currentDashOffset = totalDashLength * (1 - progressRatio);
-        if (wavePath) {
-            wavePath.style.strokeDashoffset = currentDashOffset;
-        }
+        // Set up completion callback
+        assetPreloader.onComplete = () => {
+            console.log('Regular assets loaded');
+            checkAllAssetsLoaded();
+        };
 
-        // Update wave fill opacity based on progress
-        if (waveFill) {
-            const fillOpacity = Math.min(progressRatio * 0.4, 0.3); // Max opacity 0.3
-            waveFill.style.opacity = fillOpacity;
-        }
-
-        // Update glow position to match progress
-        if (progressGlow) {
-            const glowPosition = progressRatio * 100; // 0% to 100%
-            progressGlow.style.left = `calc(${glowPosition}% - 4px)`; // Center the glow dot
-            progressGlow.style.opacity = progressRatio > 0.05 ? 1 : 0; // Show after 5% progress
-        }
-
-        // Update wave path with subtle irregular fluctuations
-        const time = Date.now() * 0.002;
-        const waveVariation = Math.sin(time) * 2;
-        const waveVariation2 = Math.cos(time * 1.3) * 1.5;
-        const waveVariation3 = Math.sin(time * 0.7) * 1;
-        const newPath = `M0,${10 + waveVariation3} Q100,${5 + waveVariation2} 200,${10 - waveVariation} T400,${10 + waveVariation * 0.5}`;
-
-        if (wavePath) {
-            wavePath.setAttribute('d', newPath);
-        }
-
-        if (currentProgress >= 100) {
-            setTimeout(finishLoading, 800); // Slightly longer delay to show 100%
-        }
-    };
+        // Start loading assets
+        assetPreloader.loadAll();
 
         const changeTextWithGlitch = () => {
             if (loadingAnimationFinished) return;
@@ -271,21 +365,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Start the loading animations
         textChangeInterval = setInterval(changeTextWithGlitch, 800);
-        progressInterval = setInterval(updateProgress, 100); // Update progress every 100ms
+        progressInterval = setInterval(() => updateProgress(), 100); // Update progress animation every 100ms
 
-        // Force finish loading after max time
-        setTimeout(finishLoading, maxLoadingTime);
+        // Fallback: Force finish loading after 15 seconds if assets fail to load
+        setTimeout(() => {
+            if (!loadingAnimationFinished) {
+                console.warn('Loading timeout reached, forcing completion');
+                finishLoading();
+            }
+        }, 15000);
+    };
+
+    // Function to collect all assets that need to be preloaded
+    const collectAllAssets = () => {
+        // Add favicon
+        assetPreloader.addAsset('favicon.png');
+
+        // Add all project assets
+        projectAssets.forEach(project => {
+            project.assets.forEach(asset => {
+                if (asset.type === 'image') {
+                    assetPreloader.addAsset(asset.src);
+                }
+            });
+        });
+
+        // Add company logos from the scrolling bar
+        const companyLogos = [
+            'company/oppo.png',
+            'company/huawei.png',
+            'company/tiktok.webp',
+            'company/rednote.webp',
+            'company/dell.png',
+            'company/intel.png',
+            'company/powerhouse_museum.jpeg',
+            'company/tarongazoo.png',
+            'company/thelygongroup.png',
+            'company/unsw.png',
+            'company/uom.png'
+        ];
+
+        companyLogos.forEach(logo => {
+            assetPreloader.addAsset(logo);
+        });
+
+        console.log(`Preloading ${assetPreloader.totalCount} assets...`);
+
+        // Log asset list for debugging
+        console.log('Assets to preload:', assetPreloader.assets);
     };
 
     const finishLoading = () => {
         if (loadingAnimationFinished) return;
         loadingAnimationFinished = true;
 
+        console.log('Loading complete! All assets preloaded.');
+
         clearInterval(textChangeInterval);
         clearInterval(progressInterval);
 
         // Ensure progress reaches 100%
         currentProgress = 100;
+        targetProgress = 100;
+        updateProgress(100);
 
         loadingOverlay.style.opacity = '0';
         setTimeout(() => {
@@ -683,14 +825,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Loading Manager ---
     const loadingManager = new THREE.LoadingManager();
+    let threeJSAssetsLoaded = false;
+
     loadingManager.onLoad = () => {
-        // Assets are loaded, now we can safely start the scene reveal.
-        // The 5-second max timer will handle hiding the overlay.
+        console.log('Three.js assets loaded');
+        threeJSAssetsLoaded = true;
+        // Check if both regular assets and Three.js assets are loaded
+        checkAllAssetsLoaded();
     };
 
-    // Loading timer is now handled in startLoadingProcess function
+    loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+        console.log(`Loading Three.js asset: ${url} (${itemsLoaded}/${itemsTotal})`);
+    };
 
     const textureLoader = new THREE.TextureLoader(loadingManager);
+
+    // Function to check if all assets (regular + Three.js) are loaded
+    const checkAllAssetsLoaded = () => {
+        if (assetPreloader && assetPreloader.loadedCount >= assetPreloader.totalCount && threeJSAssetsLoaded) {
+            console.log('All assets loaded (regular + Three.js)');
+            if (!loadingAnimationFinished) {
+                updateProgress(100);
+            }
+        }
+    };
 
     // --- Background ---
     const bgGeometry = new THREE.PlaneGeometry(1, 1); // Use a 1x1 plane and scale it
