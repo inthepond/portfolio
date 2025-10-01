@@ -3,23 +3,23 @@ function initializeNavigation() {
     // Time display and status light
     function updateTimeAndStatus() {
         const now = new Date();
-        
+
         // Convert to Australian timezone (AEST/AEDT)
         const australianTime = new Date(now.toLocaleString("en-US", {timeZone: "Australia/Sydney"}));
-        
+
         // Format time as HH:MM
         const timeString = australianTime.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false
         });
-        
+
         document.getElementById('current-time').textContent = timeString;
-        
+
         // Update status light based on Australian time
         const hours = australianTime.getHours();
         const statusLight = document.getElementById('status-light');
-        
+
         if (hours >= 9 && hours < 17) {
             // Business hours (9am-5pm) - green
             statusLight.classList.remove('evening');
@@ -28,11 +28,11 @@ function initializeNavigation() {
             statusLight.classList.add('evening');
         }
     }
-    
+
     // Update time immediately and then every second
     updateTimeAndStatus();
     setInterval(updateTimeAndStatus, 1000);
-    
+
     // Note: Modal functionality removed as about page is now standalone
 }
 
@@ -77,45 +77,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const loadingContent = document.querySelector('.loading-content');
-    const loadingText = document.getElementById('loading-text');
-    const pixelProgressFill = document.getElementById('pixel-progress-fill');
-    const pixelProgressCursor = document.getElementById('pixel-progress-cursor');
-    const pixelSparks = document.getElementById('pixel-sparks');
-    const progressPercentage = document.getElementById('progress-percentage');
     const topNav = document.getElementById('top-nav');
-    const bottomCompanyBar = document.getElementById('bottom-company-bar');
+    const macosDock = document.getElementById('macos-dock');
     const canvas = document.getElementById('bg');
 
-    // --- Page Load Animation Sequence ---
+    // --- Page Load Animation Sequence (SIMPLIFIED - NO LOADING SCREEN) ---
     const initializePageAnimations = () => {
-        // Stagger the animations for a more elegant entrance
+        // Immediately show navigation and dock without loading screen
 
         // First: Top navigation slides down
         setTimeout(() => {
             topNav.classList.add('animate-in');
         }, 150);
 
-        // Second: Bottom navigation slides up (slightly delayed)
+        // Second: macOS Dock slides up (slightly delayed)
         setTimeout(() => {
-            bottomCompanyBar.classList.add('animate-in');
+            if (macosDock) {
+                macosDock.classList.add('animate-in');
+            }
         }, 300);
 
-        // Third: Loading overlay fades in
+        // Third: Initialize the scene immediately (no loading overlay)
         setTimeout(() => {
-            loadingOverlay.classList.add('animate-in');
+            initializeSceneWithoutLoading();
         }, 500);
-
-        // Fourth: Loading content slides up and fades in
-        setTimeout(() => {
-            loadingContent.classList.add('animate-in');
-        }, 700);
-
-        // Finally: Start loading process after all animations
-        setTimeout(() => {
-            startLoadingProcess();
-        }, 900);
     };
 
     // Call the animation sequence immediately
@@ -155,349 +140,178 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Bottom Company Bar Event Handling ---
-    if (bottomCompanyBar) {
-        // Prevent bottom company bar events from propagating to canvas
-        bottomCompanyBar.addEventListener('mousedown', (event) => {
+    // --- macOS Dock Event Handling ---
+    const dockIcons = document.querySelectorAll('.dock-icon');
+
+    if (macosDock) {
+        // Prevent dock events from propagating to canvas
+        macosDock.addEventListener('mousedown', (event) => {
             event.stopPropagation();
         });
 
-        bottomCompanyBar.addEventListener('mousemove', (event) => {
+        macosDock.addEventListener('mousemove', (event) => {
             event.stopPropagation();
         });
 
-        bottomCompanyBar.addEventListener('mouseup', (event) => {
+        macosDock.addEventListener('mouseup', (event) => {
             event.stopPropagation();
         });
 
-        bottomCompanyBar.addEventListener('click', (event) => {
+        macosDock.addEventListener('click', (event) => {
             event.stopPropagation();
         });
 
         // Touch events for mobile
-        bottomCompanyBar.addEventListener('touchstart', (event) => {
+        macosDock.addEventListener('touchstart', (event) => {
             event.stopPropagation();
         });
 
-        bottomCompanyBar.addEventListener('touchmove', (event) => {
+        macosDock.addEventListener('touchmove', (event) => {
             event.stopPropagation();
         });
 
-        bottomCompanyBar.addEventListener('touchend', (event) => {
+        macosDock.addEventListener('touchend', (event) => {
             event.stopPropagation();
         });
-    }
 
-    // --- Asset Preloader Class ---
-    class AssetPreloader {
-        constructor() {
-            this.assets = [];
-            this.loadedCount = 0;
-            this.totalCount = 0;
-            this.onProgress = null;
-            this.onComplete = null;
-            this.loadedAssets = new Set();
-        }
+        // Dock hover magnification effect
+        const dockIconsArray = Array.from(dockIcons);
 
-        addAsset(src) {
-            if (!this.loadedAssets.has(src)) {
-                this.assets.push(src);
-                this.totalCount++;
-            }
-        }
+        dockIconsArray.forEach((icon, index) => {
+            icon.addEventListener('mouseenter', () => {
+                // Scale adjacent icons
+                dockIconsArray.forEach((otherIcon, otherIndex) => {
+                    const distance = Math.abs(index - otherIndex);
+                    otherIcon.classList.remove('adjacent-1', 'adjacent-2');
 
-        loadAll() {
-            if (this.totalCount === 0) {
-                if (this.onComplete) this.onComplete();
-                return;
-            }
-
-            this.assets.forEach(src => {
-                const img = new Image();
-                img.onload = () => this.onAssetLoaded(src);
-                img.onerror = () => this.onAssetLoaded(src); // Count failed loads as complete to avoid blocking
-                img.src = src;
-            });
-        }
-
-        onAssetLoaded(src) {
-            if (!this.loadedAssets.has(src)) {
-                this.loadedAssets.add(src);
-                this.loadedCount++;
-
-                if (this.onProgress) {
-                    const progress = (this.loadedCount / this.totalCount) * 100;
-                    this.onProgress(progress);
-                }
-
-                if (this.loadedCount >= this.totalCount && this.onComplete) {
-                    this.onComplete();
-                }
-            }
-        }
-    }
-
-    // --- Loading Animation ---
-    const languages = [
-        'Hello', '你好', 'こんにちは', '안녕하세요', 'Bonjour', 'Hola',
-        'Ciao', 'Hallo', 'Olá', 'Здравствуйте', 'مرحبا', 'नमस्ते'
-    ];
-    let langIndex = 0;
-    let loadingAnimationFinished = false;
-    let currentProgress = 0;
-    let targetProgress = 0;
-    let textChangeInterval;
-    let progressInterval;
-    let assetPreloader;
-
-    // --- Pixel Progress Animation ---
-    let lastProgressStep = 0;
-
-    const createPixelSpark = (x, y) => {
-        const spark = document.createElement('div');
-        spark.className = 'pixel-spark';
-        spark.style.left = `${x}px`;
-        spark.style.top = `${y}px`;
-        pixelSparks.appendChild(spark);
-
-        // Remove spark after animation
-        setTimeout(() => {
-            if (spark.parentNode) {
-                spark.parentNode.removeChild(spark);
-            }
-        }, 600);
-    };
-
-    const updateProgress = (newTargetProgress) => {
-        if (loadingAnimationFinished) return;
-
-        // Update target progress if provided
-        if (newTargetProgress !== undefined) {
-            targetProgress = Math.min(newTargetProgress, 100);
-        }
-
-        // Smoothly animate current progress towards target with chunky steps
-        const progressDiff = targetProgress - currentProgress;
-        if (Math.abs(progressDiff) > 0.1) {
-            currentProgress += progressDiff * 0.15; // Slightly faster for chunky feel
-        } else {
-            currentProgress = targetProgress;
-        }
-
-        // Calculate progress ratio (0 to 1)
-        const progressRatio = currentProgress / 100;
-
-        // Update pixel progress fill width
-        if (pixelProgressFill) {
-            pixelProgressFill.style.width = `${currentProgress}%`;
-        }
-
-        // Update progress cursor position
-        if (pixelProgressCursor) {
-            const cursorPosition = progressRatio * 100;
-            pixelProgressCursor.style.right = `${100 - cursorPosition}%`;
-            pixelProgressCursor.style.opacity = progressRatio > 0.02 ? 1 : 0;
-        }
-
-        // Update percentage display
-        if (progressPercentage) {
-            progressPercentage.textContent = `${Math.floor(currentProgress)}%`;
-        }
-
-        // Create pixel sparks at progress milestones
-        const currentStep = Math.floor(currentProgress / 5); // Every 5%
-        if (currentStep > lastProgressStep && progressRatio > 0.05) {
-            const sparkX = Math.random() * (pixelSparks.offsetWidth - 10);
-            const sparkY = Math.random() * (pixelSparks.offsetHeight - 10);
-            createPixelSpark(sparkX, sparkY);
-            lastProgressStep = currentStep;
-        }
-
-        // Check if loading is complete
-        if (currentProgress >= 99.9) {
-            setTimeout(finishLoading, 800); // Slightly longer delay to show 100%
-        }
-    };
-
-    const startLoadingProcess = () => {
-        // Initialize loading text
-        loadingText.textContent = languages[0];
-        loadingText.setAttribute('data-text', languages[0]);
-
-        // Initialize asset preloader
-        assetPreloader = new AssetPreloader();
-
-        // Collect all assets that need to be preloaded
-        collectAllAssets();
-
-        // Set up progress callback
-        assetPreloader.onProgress = (progress) => {
-            console.log(`Asset loading progress: ${progress.toFixed(1)}% (${assetPreloader.loadedCount}/${assetPreloader.totalCount})`);
-            updateProgress(progress);
-        };
-
-        // Set up completion callback
-        assetPreloader.onComplete = () => {
-            console.log('Regular assets loaded');
-            checkAllAssetsLoaded();
-        };
-
-        // Start loading assets
-        assetPreloader.loadAll();
-
-        const changeTextWithGlitch = () => {
-            if (loadingAnimationFinished) return;
-
-            loadingText.classList.add('glitching');
-
-            setTimeout(() => {
-                langIndex = (langIndex + 1) % languages.length;
-                const newText = languages[langIndex];
-                loadingText.textContent = newText;
-                loadingText.setAttribute('data-text', newText);
-
-                // Let the glitch animation play, then remove the class
-                setTimeout(() => {
-                    loadingText.classList.remove('glitching');
-                }, 400); // Must be same duration as animation in CSS
-            }, 200);
-        };
-
-        // Start the loading animations
-        textChangeInterval = setInterval(changeTextWithGlitch, 800);
-        progressInterval = setInterval(() => updateProgress(), 100); // Update progress animation every 100ms
-
-        // Fallback: Force finish loading after 15 seconds if assets fail to load
-        setTimeout(() => {
-            if (!loadingAnimationFinished) {
-                console.warn('Loading timeout reached, forcing completion');
-                finishLoading();
-            }
-        }, 15000);
-    };
-
-    // Function to collect all assets that need to be preloaded
-    const collectAllAssets = () => {
-        // Add favicon
-        assetPreloader.addAsset('favicon.png');
-
-        // Add all project assets
-        projectAssets.forEach(project => {
-            project.assets.forEach(asset => {
-                if (asset.type === 'image') {
-                    assetPreloader.addAsset(asset.src);
-                }
-            });
-        });
-
-        // Add company logos from the scrolling bar
-        const companyLogos = [
-            'company/oppo.png',
-            'company/huawei.png',
-            'company/tiktok.webp',
-            'company/rednote.webp',
-            'company/dell.png',
-            'company/intel.png',
-            'company/powerhouse_museum.jpeg',
-            'company/tarongazoo.png',
-            'company/thelygongroup.png',
-            'company/unsw.png',
-            'company/uom.png'
-        ];
-
-        companyLogos.forEach(logo => {
-            assetPreloader.addAsset(logo);
-        });
-
-        console.log(`Preloading ${assetPreloader.totalCount} assets...`);
-
-        // Log asset list for debugging
-        console.log('Assets to preload:', assetPreloader.assets);
-    };
-
-    const finishLoading = () => {
-        if (loadingAnimationFinished) return;
-        loadingAnimationFinished = true;
-
-        console.log('Loading complete! All assets preloaded.');
-
-        clearInterval(textChangeInterval);
-        clearInterval(progressInterval);
-
-        // Ensure progress reaches 100%
-        currentProgress = 100;
-        targetProgress = 100;
-        updateProgress(100);
-
-        loadingOverlay.style.opacity = '0';
-        setTimeout(() => {
-            loadingOverlay.style.display = 'none';
-        }, 500);
-
-        // Grid intro animation
-        let completedAnimations = 0;
-        const totalAnimations = planes.length;
-
-        // Initialize project title immediately if no planes to animate
-        if (totalAnimations === 0) {
-            setTimeout(() => {
-                console.log('Initializing project title after loading (no planes)...');
-                const initialProjectIndex = detectCurrentProject();
-                if (initialProjectIndex >= 0) {
-                    projectTitleElement.textContent = projectAssets[initialProjectIndex].name;
-                    currentProjectIndex = initialProjectIndex;
-                    console.log('Set initial project title:', projectAssets[initialProjectIndex].name);
-                }
-            }, 200);
-        }
-
-        planes.forEach((plane, index) => {
-            const targetScale = plane.scale.clone();
-            // Set minimum scale to maintain raycasting capability
-            const minScale = 0.01; // Small but non-zero scale
-            plane.scale.set(minScale, minScale, minScale);
-            plane.rotation.z = (Math.random() - 0.5) * Math.PI;
-
-            let progress = { value: 0 };
-
-            const animation = () => {
-                progress.value += 0.05;
-                const easeOutQuart = 1 - Math.pow(1 - progress.value, 4);
-
-                // Scale from minScale to targetScale instead of 0 to targetScale
-                plane.scale.x = minScale + (targetScale.x - minScale) * easeOutQuart;
-                plane.scale.y = minScale + (targetScale.y - minScale) * easeOutQuart;
-                plane.rotation.z = (1 - easeOutQuart) * plane.rotation.z;
-
-                if (progress.value < 1) {
-                    requestAnimationFrame(animation);
-                } else {
-                    plane.material.uniforms.u_intensity.value = 1;
-                    completedAnimations++;
-                    
-                    // Initialize project title after all animations complete
-                    if (completedAnimations === totalAnimations) {
-                        setTimeout(() => {
-                            console.log('Initializing project title after loading...');
-                            console.log('Project title element:', projectTitleElement);
-                            console.log('Project assets:', projectAssets);
-                            
-                            const initialProjectIndex = detectCurrentProject();
-                            console.log('Initial project index:', initialProjectIndex);
-                            
-                            if (initialProjectIndex >= 0) {
-                                projectTitleElement.textContent = projectAssets[initialProjectIndex].name;
-                                currentProjectIndex = initialProjectIndex;
-                                console.log('Set initial project title:', projectAssets[initialProjectIndex].name);
-                            }
-                        }, 200); // Small delay to ensure everything is fully loaded
+                    if (distance === 1) {
+                        otherIcon.classList.add('adjacent-1');
+                    } else if (distance === 2) {
+                        otherIcon.classList.add('adjacent-2');
                     }
-                }
-            };
-            setTimeout(() => requestAnimationFrame(animation), index * 100);
+                });
+            });
+
+            icon.addEventListener('mouseleave', () => {
+                // Remove adjacent scaling after a delay
+                setTimeout(() => {
+                    if (!icon.matches(':hover')) {
+                        dockIconsArray.forEach(otherIcon => {
+                            otherIcon.classList.remove('adjacent-1', 'adjacent-2');
+                        });
+                    }
+                }, 100);
+            });
+
+            // Click handlers for dock icons
+            icon.addEventListener('click', () => {
+                const app = icon.getAttribute('data-app');
+                handleDockIconClick(app);
+            });
         });
+    }
+
+    // Handle dock icon clicks
+    function handleDockIconClick(app) {
+        console.log('Dock icon clicked:', app);
+
+        switch(app) {
+            case 'xcode':
+                openProjectModal('Xcode');
+                break;
+            case 'figma':
+                openProjectModal('Figma');
+                break;
+            case 'spline':
+                // Placeholder - could link to Spline projects
+                console.log('Spline clicked - no action defined');
+                break;
+            case 'bamai':
+                openProjectModal('Bamai');
+                break;
+            case 'qi':
+                openProjectModal('Qi');
+                break;
+            case 'x6ren':
+                openProjectModal('X6ren');
+                break;
+            case 'ruce':
+                openProjectModal('Ruce');
+                break;
+            case 'mail':
+                window.location.href = 'mailto:inthepond.etangs@outlook.com?subject=Work%20with%20me';
+                break;
+            case 'docker':
+                // Placeholder - could link to Docker Hub
+                console.log('Docker clicked - no action defined');
+                break;
+            case 'ollama':
+                // Placeholder - could link to AI projects
+                console.log('Ollama clicked - no action defined');
+                break;
+            case 'userbilitylab':
+                // Placeholder - could link to UX research projects
+                console.log('Userbility Lab clicked - no action defined');
+                break;
+        }
+    }
+
+    // Function to open project modal (will be connected to existing modal system)
+    function openProjectModal(projectName) {
+        // This will be connected to the existing modal system
+        console.log('Opening project:', projectName);
+
+        // Find the project in projectModalData
+        if (typeof projectModalData !== 'undefined' && projectModalData[projectName]) {
+            const modal = document.getElementById('project-modal');
+            if (modal) {
+                // Populate modal with project data
+                document.getElementById('modal-project-title').textContent = projectName;
+                document.getElementById('modal-project-logo').src = projectModalData[projectName].logo;
+
+                // Set content based on type
+                if (projectModalData[projectName].contentType === 'pdf') {
+                    document.getElementById('modal-project-brief').innerHTML = `
+                        <div class="pdf-viewer-container">
+                            <iframe src="${projectModalData[projectName].pdfPath}"
+                                    width="100%"
+                                    height="800px"
+                                    style="border: none; border-radius: 8px;">
+                            </iframe>
+                        </div>
+                        ${projectModalData[projectName].brief || ''}
+                    `;
+                } else {
+                    document.getElementById('modal-project-brief').innerHTML = projectModalData[projectName].brief || '';
+                }
+
+                document.getElementById('modal-design-philosophy').innerHTML = projectModalData[projectName].designPhilosophy || '';
+                document.getElementById('modal-ux-strategy').innerHTML = projectModalData[projectName].uxStrategy || '';
+
+                // Show modal
+                modal.classList.add('active');
+            }
+        }
+    }
+
+
+
+    // New function to initialize scene without loading screen
+    const initializeSceneWithoutLoading = () => {
+        console.log('Initializing scene without loading screen...');
+
+        // Make canvas visible immediately
         canvas.style.opacity = '1';
+
+        // Project title initialization removed (canvas interaction removed)
+
+        // Planes are already visible, no need for intro animation
+        planes.forEach((plane) => {
+            plane.material.uniforms.u_intensity.value = 1;
+        });
     };
+
+
 
     // --- Shaders (Vertex shader updated for the intro animation) ---
     const planeVertexShader = `
@@ -509,93 +323,93 @@ document.addEventListener('DOMContentLoaded', () => {
         uniform float u_hover_intensity; // For hover color effect
         varying vec2 vUv;
         varying float vFade;
-        
+
         void main() {
             vUv = uv;
             vec3 pos = position;
-            
+
             // Ripple effect
             float distance = length(uv - u_mouse);
             float ripple1 = sin(distance * 15.0 - u_time * 4.0) * 0.02;
             float ripple2 = sin(distance * 25.0 - u_time * 6.0) * 0.01;
-            
+
             float totalRipple = (ripple1 + ripple2) * u_intensity;
             pos.z += totalRipple;
-            
+
             // Subtle 3D perspective effect - gentle edge disappearance
             float perspectiveIntensity = 0.4; // Reduced from 0.8
             float disappearanceDistance = 8.0; // Reduced from 15.0
-            
+
             // Calculate edge proximity with smoother transitions
             float leftEdge = smoothstep(-0.6, -1.0, u_viewport_pos.x);
             float rightEdge = smoothstep(0.6, 1.0, u_viewport_pos.x);
             float topEdge = smoothstep(0.6, 1.0, u_viewport_pos.y);
             float bottomEdge = smoothstep(-0.6, -1.0, u_viewport_pos.y);
-            
+
             // Calculate overall edge distance for combined effects
             float edgeDistance = max(max(leftEdge, rightEdge), max(topEdge, bottomEdge));
-            
+
             // Apply subtle 3D perspective transformations
             // Left edge: gentle tumble and fall away to the left
             if (leftEdge > 0.0) {
                 float rotationAngle = leftEdge * perspectiveIntensity * 0.8; // Reduced from 1.5
                 float fallAngle = leftEdge * perspectiveIntensity * 0.4; // Reduced from 0.8
-                
+
                 // Rotate around Y-axis (gentle tumbling sideways)
                 pos.x = pos.x * cos(rotationAngle) - pos.z * sin(rotationAngle);
                 pos.z = pos.x * sin(rotationAngle) + pos.z * cos(rotationAngle);
-                
+
                 // Tilt and move away from camera
                 pos.x -= leftEdge * 4.0; // Reduced from 8.0
                 pos.z -= leftEdge * disappearanceDistance; // Move away from camera
                 pos.y += pos.x * sin(fallAngle) * 0.15; // Reduced from 0.3
             }
-            
+
             // Right edge: gentle tumble and fall away to the right
             if (rightEdge > 0.0) {
                 float rotationAngle = rightEdge * perspectiveIntensity * 0.8; // Reduced from 1.5
                 float fallAngle = rightEdge * perspectiveIntensity * 0.4; // Reduced from 0.8
-                
+
                 // Rotate around Y-axis (gentle tumbling sideways)
                 pos.x = pos.x * cos(-rotationAngle) - pos.z * sin(-rotationAngle);
                 pos.z = pos.x * sin(-rotationAngle) + pos.z * cos(-rotationAngle);
-                
+
                 // Tilt and move away from camera
                 pos.x += rightEdge * 4.0; // Reduced from 8.0
                 pos.z -= rightEdge * disappearanceDistance; // Move away from camera
                 pos.y += pos.x * sin(fallAngle) * 0.15; // Reduced from 0.3
             }
-            
+
             // Top edge: gentle tumble backward and fall away upward
             if (topEdge > 0.0) {
                 float rotationAngle = topEdge * perspectiveIntensity * 0.6; // Reduced from 1.2
                 float fallAngle = topEdge * perspectiveIntensity * 0.5; // Reduced from 1.0
-                
+
                 // Rotate around X-axis (gentle tumbling backward)
                 pos.y = pos.y * cos(rotationAngle) - pos.z * sin(rotationAngle);
                 pos.z = pos.y * sin(rotationAngle) + pos.z * cos(rotationAngle);
-                
+
                 // Move away from camera and upward
                 pos.y += topEdge * 3.0; // Reduced from 6.0
                 pos.z -= topEdge * disappearanceDistance; // Reduced multiplier
                 pos.x += sin(u_time + topEdge * 10.0) * topEdge * 0.8; // Reduced from 2.0
             }
-            
+
             // Bottom edge: gentle tumble forward and fall away downward
             if (bottomEdge > 0.0) {
                 float rotationAngle = bottomEdge * perspectiveIntensity * 0.6; // Reduced from 1.2
                 float fallAngle = bottomEdge * perspectiveIntensity * 0.5; // Reduced from 1.0
-                
+
                 // Rotate around X-axis (gentle tumbling forward)
                 pos.y = pos.y * cos(-rotationAngle) - pos.z * sin(-rotationAngle);
                 pos.z = pos.y * sin(-rotationAngle) + pos.z * cos(-rotationAngle);
-                
+
                 // Move away from camera and downward
                 pos.y -= bottomEdge * 3.0; // Reduced from 6.0
                 pos.z -= bottomEdge * disappearanceDistance; // Reduced multiplier
                 pos.x += sin(u_time + bottomEdge * 10.0) * bottomEdge * 0.8; // Reduced from 2.0
             }
-            
+
             // Add subtle corner effects for diagonal disappearance
             float cornerEffect = leftEdge * topEdge + rightEdge * topEdge + leftEdge * bottomEdge + rightEdge * bottomEdge;
             if (cornerEffect > 0.0) {
@@ -605,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pos.x += sin(u_time * 3.0 + spinAngle) * cornerEffect * 0.6; // Reduced from 1.5
                 pos.y += cos(u_time * 2.0 + spinAngle) * cornerEffect * 0.6; // Reduced from 1.5
             }
-            
+
             // Glitch effect on click
             if (u_glitch_intensity > 0.0) {
                 float glitchTime = u_time * 10.0;
@@ -614,13 +428,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 pos.y += sin(glitchTime + pos.x * 10.0) * u_glitch_intensity * 0.3;
                 pos.z += cos(glitchTime + pos.y * 25.0) * u_glitch_intensity * 0.2;
             }
-            
+
             // Calculate fade factor based on distance from viewport edges
             float fadeDistance = 1.2; // Distance from edge where fade starts
             float fadeEdge = max(abs(u_viewport_pos.x), abs(u_viewport_pos.y));
             vFade = 1.0 - smoothstep(0.8, fadeDistance, fadeEdge);
             vFade = max(0.0, vFade);
-            
+
             gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
         }
     `;
@@ -665,42 +479,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Remap the UVs to sample the texture correctly
             vec2 uv = (vUv - offset) / final_size;
-            
+
             // Apply effects based on intensity types
             vec4 texColor = texture2D(u_texture, uv);
             vec3 finalColor = texColor.rgb;
-            
+
             // Apply full glitch effect for clicks
             if (u_glitch_intensity > 0.0) {
                 float glitchTime = u_time * 8.0;
-                
+
                 // Digital noise distortion
                 float noise = random(vec2(floor(uv.y * 100.0), glitchTime)) * 2.0 - 1.0;
                 float glitchOffset = noise * u_glitch_intensity * 0.1;
-                
+
                 // Horizontal scan lines
                 float scanLine = step(0.5, random(vec2(floor(uv.y * 50.0), glitchTime)));
                 glitchOffset += scanLine * u_glitch_intensity * 0.05;
-                
+
                 // Sample texture with glitch distortion
                 vec4 glitchedTexColor = texture2D(u_texture, uv + vec2(glitchOffset, 0.0));
-                
+
                 // RGB channel separation
                 float r = texture2D(u_texture, uv + vec2(glitchOffset + u_glitch_intensity * 0.02, 0.0)).r;
                 float g = texture2D(u_texture, uv + vec2(glitchOffset, 0.0)).g;
                 float b = texture2D(u_texture, uv + vec2(glitchOffset - u_glitch_intensity * 0.02, 0.0)).b;
-                
+
                 // Combine with original color
                 vec3 glitchedColor = vec3(r, g, b);
-                
+
                 // Add digital artifacts
                 float artifact = step(0.95, random(vec2(uv.x * 10.0, glitchTime)));
                 glitchedColor += artifact * vec3(1.0, 0.0, 1.0) * u_glitch_intensity;
-                
+
                 // Blend between original and glitched color
                 finalColor = mix(texColor.rgb, glitchedColor, u_glitch_intensity);
             }
-            
+
             // Apply subtle color separation for hover (no distortion, only color shift)
             if (u_hover_intensity > 0.0) {
                 // Add a very subtle glitch distortion for hover
@@ -712,13 +526,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 float r = texture2D(u_texture, uv + vec2(hoverGlitchOffset + u_hover_intensity * 0.008, 0.0)).r;
                 float g = texture2D(u_texture, uv + vec2(hoverGlitchOffset, 0.0)).g;
                 float b = texture2D(u_texture, uv + vec2(hoverGlitchOffset - u_hover_intensity * 0.008, 0.0)).b;
-                
+
                 vec3 hoverColor = vec3(r, g, b);
-                
+
                 // Blend with existing color
                 finalColor = mix(finalColor, hoverColor, u_hover_intensity * 0.8);
             }
-            
+
             gl_FragColor = vec4(finalColor, texColor.a * vFade);
         }
     `;
@@ -728,71 +542,71 @@ document.addEventListener('DOMContentLoaded', () => {
         uniform vec2 u_resolution;
         uniform float u_scroll_velocity;
         uniform float u_scroll_intensity;
-        
+
         // Random function
         float random(vec2 st) {
             return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
         }
-        
+
         // Hash function for better randomness
         float hash(vec2 p) {
             vec3 p3 = fract(vec3(p.xyx) * 0.1031);
             p3 += dot(p3, p3.yzx + 33.33);
             return fract((p3.x + p3.y) * p3.z);
         }
-        
+
         // Digital glitch effect
         vec3 digitalGlitch(vec2 uv, float time, float intensity) {
             vec3 color = vec3(0.0);
-            
+
             // Horizontal scan lines
             float scanLine = sin(uv.y * 800.0 + time * 10.0) * 0.5 + 0.5;
-            
+
             // RGB channel separation
             vec2 offset = vec2(intensity * 0.02, 0.0);
             color.r = step(0.5, hash(uv + offset + time));
             color.g = step(0.5, hash(uv + time));
             color.b = step(0.5, hash(uv - offset + time));
-            
+
             // Add scan line effect
             color *= scanLine * 0.8 + 0.2;
-            
+
             // Add digital noise
             float noise = hash(uv + time * 5.0);
             color += noise * intensity * 0.3;
-            
+
             return color;
         }
-        
+
         void main() {
             vec2 st = gl_FragCoord.xy / u_resolution.xy;
-            
+
             // Dark background
             vec3 backgroundColor = vec3(0.05, 0.05, 0.05);
-            
+
             // Create dot grid with very low density
             float dotSpacing = 80.0; // Further increased spacing (was 60.0)
             vec2 gridPos = st * dotSpacing;
             vec2 gridCell = floor(gridPos);
             vec2 cellPos = fract(gridPos);
-            
+
             // Calculate dot with very low opacity
             float dotSize = 0.06; // Even smaller dots
             float dist = length(cellPos - 0.5);
             float dot = smoothstep(dotSize, dotSize - 0.02, dist);
-            
+
             // Random properties for each dot
             float cellRandom = hash(gridCell);
             float glitchChance = 0.001; // Further reduced to 0.1% chance
             float isGlitching = step(1.0 - glitchChance, cellRandom + sin(u_time * 0.8 + cellRandom * 100.0) * 0.5 + 0.5); // Much slower timing
-            
+
             // Glitch timing for each dot - much slower and less frequent
             float glitchTime = u_time * 2.0 + cellRandom * 50.0; // Further reduced from 4.0
             float glitchIntensity = isGlitching * (sin(glitchTime) * 0.5 + 0.5);
-            
+
             // Base dot color with very low opacity
             vec3 dotColor = vec3(0.2); // Further reduced opacity (was 0.4)
-            
+
             // Apply glitch effect to dots
             if (isGlitching > 0.5 && dot > 0.1) {
                 dotColor = digitalGlitch(st, glitchTime, glitchIntensity);
@@ -801,16 +615,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 dist = length(cellPos - 0.5);
                 dot = smoothstep(dotSize, dotSize - 0.02, dist);
             }
-            
+
             // Final color mixing with very subtle dot presence
             vec3 finalColor = mix(backgroundColor, dotColor, dot * 0.5); // Further reduced overall dot visibility
-            
-            // Add subtle scroll response - slight flicker during scrolling
-            if (u_scroll_intensity > 0.1) {
-                float scrollFlicker = sin(u_time * 15.0) * u_scroll_intensity * 0.05;
-                finalColor += vec3(scrollFlicker);
-            }
-            
+
+            // Removed scroll flicker effect to prevent background flickering during transitions
+            // The background now remains stable during scrolling and sliding animations
+
             gl_FragColor = vec4(finalColor, 1.0);
         }
     `;
@@ -823,38 +634,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.position.z = 40;
 
-    // --- Loading Manager ---
-    const loadingManager = new THREE.LoadingManager();
-    let threeJSAssetsLoaded = false;
-
-    loadingManager.onLoad = () => {
-        console.log('Three.js assets loaded');
-        threeJSAssetsLoaded = true;
-        // Check if both regular assets and Three.js assets are loaded
-        checkAllAssetsLoaded();
-    };
-
-    loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
-        console.log(`Loading Three.js asset: ${url} (${itemsLoaded}/${itemsTotal})`);
-    };
-
-    const textureLoader = new THREE.TextureLoader(loadingManager);
-
-    // Function to check if all assets (regular + Three.js) are loaded
-    const checkAllAssetsLoaded = () => {
-        if (assetPreloader && assetPreloader.loadedCount >= assetPreloader.totalCount && threeJSAssetsLoaded) {
-            console.log('All assets loaded (regular + Three.js)');
-            if (!loadingAnimationFinished) {
-                updateProgress(100);
-            }
-        }
-    };
+    // --- Texture Loader ---
+    const textureLoader = new THREE.TextureLoader();
 
     // --- Background ---
     const bgGeometry = new THREE.PlaneGeometry(1, 1); // Use a 1x1 plane and scale it
     const bgMaterial = new THREE.ShaderMaterial({
-        uniforms: { 
-            u_time: { value: 0 }, 
+        uniforms: {
+            u_time: { value: 0 },
             u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
             u_scroll_velocity: { value: 0.0 },
             u_scroll_intensity: { value: 0.0 }
@@ -957,7 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  </ul>
 
                  <p>Ruce is a smart health app that integrates Traditional Chinese Medicine (TCM) constitution and pulse analysis to create personalized bowel movement and hydration plans, while also tracking emotional and menstrual cycles. By connecting with our other app, Bamai (a simulated TCM pulse-taking app), Ruce gains a more accurate understanding of your body's condition, providing tailored wellness recommendations.</p>
-                 
+
                  <h3>Key Features</h3>
                  <ul>
                      <li><strong>Personalized Bowel Movement Plan:</strong> Based on your constitution and pulse characteristics, Ruce intelligently recommends the most suitable timing and frequency for bowel movements, helping you develop healthy habits.</li>
@@ -970,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
              designPhilosophy: `
                  <h3>Design Philosophy</h3>
                  <p>Ruce's design philosophy embraces <em>"Harmonious Wellness"</em>, drawing inspiration from traditional Chinese medicine principles while creating a modern, intuitive interface that respects both Eastern wisdom and Western usability standards.</p>
-                 
+
                  <h3>Visual Identity</h3>
                  <p>The brand leverages a <strong>calm, nurturing aesthetic</strong> that reflects TCM's holistic approach:</p>
                  <ul>
@@ -979,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Iconography:</strong> Minimalist icons inspired by Chinese medicine symbols, featuring circular motifs representing wholeness and cyclical nature</li>
                      <li><strong>Motion Design:</strong> Gentle, flowing animations that mirror the concept of qi (vital energy) flow through the body</li>
                  </ul>
-                 
+
                  <h3>UI Design Principles</h3>
                  <p><strong>Holistic Harmony:</strong> All interface elements work together to create a sense of balance and well-being, avoiding overwhelming users with too much information at once.</p>
                  <p><strong>Cultural Sensitivity:</strong> Respectful integration of TCM concepts with modern UI patterns, ensuring accessibility for both Eastern and Western users.</p>
@@ -989,7 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
              uxStrategy: `
                  <h3>User Experience Strategy</h3>
                  <p>The UX strategy focuses on creating <strong>intuitive wellness journeys</strong> that seamlessly blend traditional Chinese medicine wisdom with modern health tracking capabilities.</p>
-                 
+
                  <h3>Onboarding Journey</h3>
                  <p>New users experience a <strong>culturally-aware introduction</strong>:</p>
                  <ul>
@@ -998,12 +785,12 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Step 3:</strong> Personalized wellness plan creation based on individual constitution</li>
                      <li><strong>Step 4:</strong> Gentle introduction to daily tracking features</li>
                  </ul>
-                 
+
                  <h3>Engagement Loops</h3>
                  <p><strong>Daily Rhythm:</strong> Morning constitution check-ins, timely hydration reminders, and evening wellness reflections create natural engagement touchpoints.</p>
                  <p><strong>Cyclical Insights:</strong> Weekly pattern analysis and monthly constitutional adjustments based on tracked data and seasonal changes.</p>
                  <p><strong>Community Support:</strong> Optional sharing of wellness journeys with like-minded individuals while maintaining privacy.</p>
-                 
+
                  <h3>Behavioral Design</h3>
                  <p>The platform incorporates TCM-inspired behavioral principles:</p>
                  <ul>
@@ -1012,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Mind-Body Connection:</strong> Tracking emotional states alongside physical symptoms for holistic wellness</li>
                      <li><strong>Personalized Adaptation:</strong> Continuous learning from user feedback and physiological responses</li>
                  </ul>
-                 
+
                  <h3>Success Metrics</h3>
                  <p>UX success is measured through:</p>
                  <ul>
@@ -1040,7 +827,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  </ul>
 
                  <p>Experience the ancient wisdom of X6ren, a Chinese decision-making system from the Tang and Song dynasties reimagined for modern life. This mathematical framework offers fresh perspectives on your everyday choices.</p>
-                 
+
                  <h3>Key Features</h3>
                  <ul>
                      <li><strong>Systematic Decision Framework:</strong> Based on temporal-spatial mathematical models with consistent results</li>
@@ -1050,7 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Detailed Analysis:</strong> Multi-faceted interpretations for each result</li>
                      <li><strong>Bilingual Support:</strong> Full Chinese and English experience</li>
                  </ul>
-                 
+
                  <h3>Perfect for</h3>
                  <ul>
                      <li>Professionals facing difficult choices</li>
@@ -1059,16 +846,16 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li>Efficiency enthusiasts looking for thinking tools</li>
                      <li>Cross-cultural exchange enthusiasts</li>
                  </ul>
-                 
+
                  <h3>Important Note</h3>
                  <p>X6ren is not fortune-telling or divination, but a systematic thinking tool. It presents a mathematical decision-making model in a modern format, creating a unique decision-making experience.</p>
-                 
+
                  <p>This app provides only a basic experience of the Xiao Liu Ren system and is not a complete explanation of its rich cultural context and complex mathematical model. Users genuinely interested in this cultural tradition are encouraged to research related classical texts and academic materials for a more comprehensive understanding.</p>
              `,
              designPhilosophy: `
                  <h3>Design Philosophy</h3>
                  <p>X6ren's design philosophy centers on <em>"Timeless Wisdom in Modern Form"</em>, bridging the gap between ancient Chinese wisdom and contemporary digital design principles.</p>
-                 
+
                  <h3>Visual Identity</h3>
                  <p>The brand leverages a <strong>sophisticated, scholarly aesthetic</strong> that honors traditional Chinese culture:</p>
                  <ul>
@@ -1077,7 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Iconography:</strong> Geometric symbols derived from ancient Chinese divination systems, featuring hexagonal patterns and flowing lines</li>
                      <li><strong>Motion Design:</strong> Subtle animations inspired by the flow of time and cosmic energy, with gentle transitions that reflect contemplative decision-making</li>
                  </ul>
-                 
+
                  <h3>UI Design Principles</h3>
                  <p><strong>Cultural Authenticity:</strong> Respectful representation of traditional Chinese concepts without appropriation, maintaining scholarly accuracy.</p>
                  <p><strong>Cognitive Clarity:</strong> Complex ancient systems are presented through clear, modern interfaces that don't oversimplify the underlying mathematics.</p>
@@ -1087,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
              uxStrategy: `
                  <h3>User Experience Strategy</h3>
                  <p>The UX strategy focuses on creating <strong>meaningful decision-making journeys</strong> that honor the depth of traditional Chinese wisdom while providing practical value for modern users.</p>
-                 
+
                  <h3>Onboarding Journey</h3>
                  <p>New users experience a <strong>culturally-rich introduction</strong>:</p>
                  <ul>
@@ -1096,12 +883,12 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Step 3:</strong> Practice session with sample decisions</li>
                      <li><strong>Step 4:</strong> Personalization of interface language and cultural preferences</li>
                  </ul>
-                 
+
                  <h3>Decision-Making Flow</h3>
                  <p><strong>Question Framing:</strong> Guided question formulation helps users articulate their decisions clearly and appropriately.</p>
                  <p><strong>Contextual Input:</strong> Time, location, and situational factors are incorporated into the analysis framework.</p>
                  <p><strong>Result Interpretation:</strong> Multi-layered explanations provide both immediate guidance and deeper cultural context.</p>
-                 
+
                  <h3>Engagement Strategy</h3>
                  <p>The platform incorporates principles of contemplative technology:</p>
                  <ul>
@@ -1110,7 +897,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Cultural Learning:</strong> Gradual introduction to deeper concepts for users interested in learning more</li>
                      <li><strong>Community Wisdom:</strong> Optional sharing of decision-making insights while maintaining privacy</li>
                  </ul>
-                 
+
                  <h3>Success Metrics</h3>
                  <p>UX success is measured through:</p>
                  <ul>
@@ -1139,11 +926,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                  <h3>Executive Summary</h3>
                  <p>Qi (Aurae) is an innovative social entertainment application designed to foster unique connections based on individual "auras" represented by colors, and shared through personal artefacts rather than traditional self-photos. The app aims to create a more meaningful and less superficial networking environment, integrating elements of Daoism for daily guidance and facilitating community engagement through timed chats and regular Q&A challenges.</p>
-                 
+
                  <h3>Vision & Mission</h3>
                  <p><strong>Vision:</strong> To redefine social networking by emphasizing authentic connections through shared interests, personal expressions via artefacts, and intuitive "aura" matching, guided by ancient wisdom.</p>
                  <p><strong>Mission:</strong> To provide a platform where individuals can connect, learn, and grow by discovering like-minded people based on their self-defined aura colors and the stories told by their everyday objects, fostering a supportive and engaging community.</p>
-                 
+
                  <h3>Target Audience</h3>
                  <ul>
                      <li>Individuals aged 18-35 seeking alternative, more meaningful social connections beyond traditional dating or broad social media platforms</li>
@@ -1151,7 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li>Those open to philosophical guidance and community-based learning</li>
                      <li>People looking for quick, low-pressure ways to initiate conversations and discover shared interests</li>
                  </ul>
-                 
+
                  <h3>Key Features</h3>
                  <p><strong>Aura Definition (Color-Based Profile):</strong> Users select a primary color that represents their "aura" or current state/personality, with intuitive color picker interface and matching algorithm based on color compatibility.</p>
                  <p><strong>Artefact-Oriented Profiles:</strong> Instead of personal photos, users upload images of everyday objects/artefacts that hold personal significance, creating curated galleries that offer deeper insights into their lives and interests.</p>
@@ -1162,7 +949,7 @@ document.addEventListener('DOMContentLoaded', () => {
              designPhilosophy: `
                  <h3>Design Philosophy</h3>
                  <p>Qi's design philosophy centers on <em>"Authentic Connections Through Color and Story"</em>, creating an interface that celebrates individual expression while fostering genuine human connections through shared experiences and meaningful objects.</p>
-                 
+
                  <h3>Visual Identity</h3>
                  <p>The brand leverages a <strong>vibrant, inclusive aesthetic</strong> that celebrates diversity and personal expression:</p>
                  <ul>
@@ -1171,7 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Iconography:</strong> Organic, flowing icons inspired by natural elements and energy flows, featuring circular motifs representing wholeness and connection</li>
                      <li><strong>Motion Design:</strong> Gentle, breathing animations that mirror the concept of life energy (qi), with color transitions that reflect aura interactions</li>
                  </ul>
-                 
+
                  <h3>UI Design Principles</h3>
                  <p><strong>Color-First Design:</strong> Interface elements respond to and celebrate user's chosen aura colors, creating personalized visual experiences.</p>
                  <p><strong>Object-Centered Storytelling:</strong> Visual hierarchy emphasizes artefact imagery and associated stories over traditional profile elements.</p>
@@ -1181,7 +968,7 @@ document.addEventListener('DOMContentLoaded', () => {
              uxStrategy: `
                  <h3>User Experience Strategy</h3>
                  <p>The UX strategy focuses on creating <strong>meaningful social discoveries</strong> that prioritize authentic connections over superficial interactions through color psychology and personal storytelling.</p>
-                 
+
                  <h3>Onboarding Journey</h3>
                  <p>New users experience a <strong>color-guided introduction</strong>:</p>
                  <ul>
@@ -1190,12 +977,12 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Step 3:</strong> Matching preferences setup based on color compatibility and interest alignment</li>
                      <li><strong>Step 4:</strong> First guided chat experience with ice-breaker prompts</li>
                  </ul>
-                 
+
                  <h3>Engagement Loops</h3>
                  <p><strong>Daily Rhythms:</strong> Morning aura check-ins, midday Qi insights, and evening reflection prompts create natural engagement touchpoints.</p>
                  <p><strong>Social Discovery:</strong> Algorithm surfaces compatible auras and intriguing artefacts, encouraging exploration of diverse perspectives.</p>
                  <p><strong>Community Events:</strong> Tri-weekly Q&A challenges create shared experiences and conversation starters.</p>
-                 
+
                  <h3>Behavioral Design</h3>
                  <p>The platform incorporates principles of mindful social interaction:</p>
                  <ul>
@@ -1204,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li><strong>Story-Driven Engagement:</strong> Artefact-based profiles encourage deeper, more meaningful conversations</li>
                      <li><strong>Philosophical Grounding:</strong> Daily Daoist insights provide contemplative framework for social interactions</li>
                  </ul>
-                 
+
                  <h3>Success Metrics</h3>
                  <p>UX success is measured through:</p>
                  <ul>
@@ -1215,240 +1002,819 @@ document.addEventListener('DOMContentLoaded', () => {
                      <li>User retention and satisfaction with authentic connection quality</li>
                  </ul>
              `
+         },
+         "Portfolio": {
+             logo: "img/bamai_logo.png", // Placeholder logo
+             contentType: "pdf",
+             pdfPath: "Portfolio-dekkoshi.pdf#toolbar=0&navpanes=0",
+             brief: `
+                 <p><strong>Portfolio</strong> - Dekko Shi's Design Portfolio</p>
+                 <p>View the complete portfolio in the PDF viewer below, or <a href="Portfolio-dekkoshi.pdf" download style="color: #00fff9; text-decoration: underline;">download the PDF</a>.</p>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
+         },
+         "Xcode": {
+             logo: "macos_icons/xcode.png",
+             contentType: "video-prototype",
+             videoPath: "xcode.mp4",
+             mockupPath: "iPhone-15-Pro.png",
+             brief: `
+                 <p><strong>Xcode Prototype</strong> - Interactive iOS App Demo</p>
+                 <p>This is an interactive prototype demonstrating an iOS application running on iPhone 15 Pro.</p>
+                 <p>Click the play button to start the demo. The app will request audio permissions before playing.</p>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
+         },
+         "Figma": {
+             logo: "macos_icons/figma.png",
+             contentType: "static-image",
+             imagePath: "figma.png",
+             brief: `
+                 <p><strong>Figma Design</strong> - Design System & Prototypes</p>
+                 <p>View the complete design work below.</p>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
          }
      };
 
-     // Modal functionality with comprehensive debugging
-     console.log('🔍 DEBUG: Initializing modal functionality...');
-     
-     const modal = document.getElementById('project-modal');
-     const modalOverlay = document.querySelector('.modal-overlay');
-     const modalClose = document.querySelector('.modal-close');
-     const modalProjectTitle = document.getElementById('modal-project-title');
-     const modalProjectLogo = document.getElementById('modal-project-logo');
-     const modalProjectBrief = document.getElementById('modal-project-brief');
-     const modalDesignPhilosophy = document.getElementById('modal-design-philosophy');
-     const modalUxStrategy = document.getElementById('modal-ux-strategy');
+     // ===== macOS WINDOW MANAGEMENT SYSTEM =====
+     const DEBUG = false; // Set to true to enable debug logging
+     if (DEBUG) console.log('🪟 DEBUG: Initializing macOS window management system...');
 
-     // Debug: Check if modal elements exist
-     console.log('🔍 DEBUG: Modal elements found:', {
-         modal: !!modal,
-         modalOverlay: !!modalOverlay,
-         modalClose: !!modalClose,
-         modalProjectTitle: !!modalProjectTitle,
-         modalProjectLogo: !!modalProjectLogo,
-         modalProjectBrief: !!modalProjectBrief,
-         modalDesignPhilosophy: !!modalDesignPhilosophy,
-         modalUxStrategy: !!modalUxStrategy
-     });
+     const desktopArea = document.getElementById('desktop-area');
+     const openWindows = new Map(); // Track open windows by project name
+     let highestZIndex = 2000;
+     let focusedWindow = null;
 
-     // Global scroll prevention functions
-     const preventScroll = (event) => {
-         // Only prevent scroll if the target is not within the modal content
-         if (!event.target.closest('.modal-content')) {
-             event.preventDefault();
-         }
-     };
+     // Window dragging state
+     let isDraggingWindow = false;
+     let draggedWindow = null;
+     let dragOffset = { x: 0, y: 0 };
 
-     // Function to open modal with project data
-     function openProjectModal(projectName) {
-         console.log('🚀 DEBUG: Opening modal for project:', projectName);
-         console.log('🔍 DEBUG: Modal element exists:', !!modal);
-         console.log('🔍 DEBUG: Project modal data:', projectModalData[projectName]);
-
+     // Create a new project window
+     function createProjectWindow(projectName) {
          const projectData = projectModalData[projectName];
          if (!projectData) {
-             console.error(`❌ No modal data found for project: ${projectName}`);
-             return;
+             console.error(`❌ No data found for project: ${projectName}`);
+             return null;
          }
 
-         if (!modal) {
-             console.error('❌ Modal element not found!');
-             return;
-         }
+         // Get project images from projectAssets (skip for Portfolio PDF)
+         const project = projectAssets.find(p => p.name === projectName);
+         const projectImages = project ? project.assets.filter(asset => asset.type === 'image').map(asset => asset.src) : [];
 
-         // Populate modal content
-         console.log('📝 DEBUG: Populating modal content...');
-         modalProjectTitle.textContent = projectName;
-         modalProjectLogo.src = projectData.logo;
-         modalProjectLogo.alt = `${projectName} Logo`;
-
-         // Check if this project should display a PDF
-         if (projectData.contentType === 'pdf' && projectData.pdfPath) {
-             console.log('📄 DEBUG: Displaying PDF content for:', projectName);
-
-             // Create PDF viewer container
-             const pdfContainer = `
-                 <div class="pdf-viewer-container">
-                     <iframe
-                         src="${projectData.pdfPath}"
-                         class="pdf-iframe"
-                         title="${projectName} Case Study PDF"
-                         frameborder="0">
-                     </iframe>
-                     <div class="pdf-fallback">
-                         <p>Your browser does not support inline PDF viewing.</p>
-                         <a href="${projectData.pdfPath}" download class="pdf-download-link">
-                             📥 Download ${projectName} Case Study PDF
-                         </a>
+         // Generate waterfall/masonry image gallery HTML
+         const imageGalleryHTML = projectImages.length > 0 ? `
+             <div class="project-image-masonry">
+                 ${projectImages.map(imgSrc => `
+                     <div class="masonry-item">
+                         <img src="${imgSrc}" alt="${projectName} preview" loading="lazy">
                      </div>
+                 `).join('')}
+             </div>
+         ` : '';
+
+         // Generate PDF viewer HTML if contentType is pdf
+         const pdfViewerHTML = projectData.contentType === 'pdf' ? `
+             <div class="pdf-viewer-container">
+                 <iframe src="${projectData.pdfPath}"
+                         width="100%"
+                         height="100%"
+                         style="border: none; border-radius: 8px;">
+                 </iframe>
+             </div>
+         ` : '';
+
+        // Generate video prototype HTML if contentType is video-prototype
+        const videoProtoHTML = projectData.contentType === 'video-prototype' ? `
+            <div class="video-prototype-container">
+                <img src="${projectData.mockupPath}" alt="iPhone Mockup" class="iphone-mockup">
+                <div class="video-overlay-container">
+                    <video id="prototype-video" class="prototype-video" preload="auto">
+                        <source src="${projectData.videoPath}" type="video/mp4">
+                    </video>
+                    <div class="video-controls">
+                        <button class="play-button" id="play-button">
+                            <svg viewBox="0 0 24 24" fill="white" width="48" height="48">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="ios-alert" id="ios-alert" style="display: none;">
+                    <div class="ios-alert-content">
+                        <div class="ios-alert-title">Allow this app to play audio?</div>
+                        <div class="ios-alert-buttons">
+                            <button class="ios-alert-button" id="dont-allow-btn">Don't Allow</button>
+                            <button class="ios-alert-button primary" id="allow-btn">Allow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ` : '';
+
+        // Generate static image HTML if contentType is static-image
+        const staticImageHTML = projectData.contentType === 'static-image' ? `
+            <div class="static-image-container">
+                <img src="${projectData.imagePath}" alt="${projectName}" class="static-image" id="static-image">
+                <div class="permission-warning" id="permission-warning" style="display: none;">
+                    <div class="warning-content">
+                        <div class="warning-icon">⚠️</div>
+                        <div class="warning-text">Warning: Permission denied, please invite for an interview.</div>
+                        <button class="warning-close" id="warning-close">OK</button>
+                    </div>
+                </div>
+            </div>
+        ` : '';
+
+         // Create window container
+         const windowEl = document.createElement('div');
+         windowEl.className = 'project-window';
+         windowEl.dataset.project = projectName;
+
+         // Create window content with macOS native layout
+         windowEl.innerHTML = `
+             <div class="modal-content">
+                 <!-- Resize Handles -->
+                 <div class="resize-handle corner nw"></div>
+                 <div class="resize-handle corner ne"></div>
+                 <div class="resize-handle corner sw"></div>
+                 <div class="resize-handle corner se"></div>
+                 <div class="resize-handle edge n"></div>
+                 <div class="resize-handle edge s"></div>
+                 <div class="resize-handle edge e"></div>
+                 <div class="resize-handle edge w"></div>
+
+                 <!-- macOS Native Title Bar -->
+                 <div class="macos-title-bar">
+                     <div class="macos-window-controls">
+                         <button class="window-control close" aria-label="Close window"></button>
+                         <button class="window-control minimize" aria-label="Minimize window"></button>
+                         <button class="window-control maximize" aria-label="Maximize window"></button>
+                     </div>
+                     <div class="window-title">${projectName}</div>
                  </div>
-             `;
 
-             // Replace modal body content with PDF viewer
-             modalProjectBrief.innerHTML = pdfContainer;
-             modalDesignPhilosophy.innerHTML = '';
-             modalUxStrategy.innerHTML = '';
+                 <!-- Content Area -->
+                 <div class="modal-body">
+                     <!-- Section 1: Image Gallery FIRST (for Qi, X6ren, Ruce) or Special Content (PDF, Video, Static Image) -->
+                     ${projectData.contentType === 'pdf' ? `
+                         <section class="modal-section project-pdf-section">
+                             ${pdfViewerHTML}
+                         </section>
+                     ` : projectData.contentType === 'video-prototype' ? `
+                         <section class="modal-section project-video-section">
+                             ${videoProtoHTML}
+                         </section>
+                     ` : projectData.contentType === 'static-image' ? `
+                         <section class="modal-section project-static-image-section">
+                             ${staticImageHTML}
+                         </section>
+                     ` : imageGalleryHTML ? `
+                         <section class="modal-section project-gallery-section">
+                             ${imageGalleryHTML}
+                         </section>
+                     ` : ''}
 
-             // Hide the section headers for PDF view
-             const sections = document.querySelectorAll('.modal-section');
-             sections.forEach((section, index) => {
-                 if (index === 0) {
-                     // Keep first section visible for PDF
-                     const header = section.querySelector('h2');
-                     if (header) header.style.display = 'none';
-                 } else {
-                     // Hide other sections
-                     section.style.display = 'none';
-                 }
-             });
-         } else {
-             // Display regular HTML content
-             modalProjectBrief.innerHTML = projectData.brief;
-             modalDesignPhilosophy.innerHTML = projectData.designPhilosophy;
-             modalUxStrategy.innerHTML = projectData.uxStrategy;
+                     <!-- Section 2: Project Introduction (shown AFTER images for Qi, X6ren, Ruce) -->
+                     ${(projectData.contentType !== 'video-prototype' && projectData.contentType !== 'static-image' && projectData.brief) ? `
+                         <section class="modal-section project-intro-section">
+                             <div class="project-brief-content">
+                                 ${projectData.brief || ''}
+                             </div>
+                         </section>
+                     ` : ''}
 
-             // Show all sections for regular content
-             const sections = document.querySelectorAll('.modal-section');
-             sections.forEach(section => {
-                 section.style.display = 'block';
-                 const header = section.querySelector('h2');
-                 if (header) header.style.display = 'block';
-             });
-         }
+                     <!-- Section 3: Detailed Text Content -->
+                     ${(projectData.designPhilosophy || projectData.uxStrategy) ? `
+                         <section class="modal-section project-details-section">
+                             ${projectData.designPhilosophy ? `
+                                 <div class="detail-content">
+                                     ${projectData.designPhilosophy}
+                                 </div>
+                             ` : ''}
+                             ${projectData.uxStrategy ? `
+                                 <div class="detail-content">
+                                     ${projectData.uxStrategy}
+                                 </div>
+                             ` : ''}
+                         </section>
+                     ` : ''}
+                 </div>
+             </div>
+         `;
 
-         // Reset modal scroll position to top
-        const modalBody = document.querySelector('.modal-body');
-        const modalContent = document.querySelector('.modal-content');
-        if (modalBody) {
-            modalBody.scrollTop = 0;
-        }
-        if (modalContent) {
-            modalContent.scrollTop = 0;
-        }
-
-        // Show modal
-         console.log('👁️ DEBUG: Showing modal...');
-         modal.classList.add('active');
-         document.body.style.overflow = 'hidden'; // Prevent background scrolling
-
-         // Add global scroll prevention
-         document.addEventListener('wheel', preventScroll, { passive: false });
-         document.addEventListener('touchmove', preventScroll, { passive: false });
-
-         console.log('✅ DEBUG: Modal should now be visible');
+         return windowEl;
      }
 
-     // Function to close modal
-     function closeProjectModal() {
-         console.log('🔒 DEBUG: Closing modal...');
-         if (modal) {
-             modal.classList.remove('active');
-             document.body.style.overflow = ''; // Restore background scrolling
-             
-             // Remove global scroll prevention
-             document.removeEventListener('wheel', preventScroll, { passive: false });
-             document.removeEventListener('touchmove', preventScroll, { passive: false });
+     // Function to open/focus project window
+     function openProjectModal(projectName) {
+         if (DEBUG) console.log('🪟 DEBUG: Opening window for project:', projectName);
+
+         // If window already exists, bring it to front
+         if (openWindows.has(projectName)) {
+             const existingWindow = openWindows.get(projectName);
+             bringWindowToFront(existingWindow);
+             return;
          }
+
+         // Create new window
+         const windowEl = createProjectWindow(projectName);
+         if (!windowEl) return;
+
+         // Calculate initial position (cascade from center)
+         const windowCount = openWindows.size;
+         const offsetX = windowCount * 30;
+         const offsetY = windowCount * 30;
+
+         // Center window in desktop area
+         const desktopRect = desktopArea.getBoundingClientRect();
+         const windowWidth = 800;
+         const windowHeight = 600;
+         const initialX = (desktopRect.width - windowWidth) / 2 + offsetX;
+         const initialY = (desktopRect.height - windowHeight) / 2 + offsetY;
+
+         windowEl.style.left = `${initialX}px`;
+         windowEl.style.top = `${initialY}px`;
+         windowEl.style.zIndex = ++highestZIndex;
+
+         // Add to desktop
+         desktopArea.appendChild(windowEl);
+         openWindows.set(projectName, windowEl);
+
+         // Show window with animation
+         setTimeout(() => {
+             windowEl.classList.add('active');
+             bringWindowToFront(windowEl);
+         }, 10);
+
+         // Setup window controls
+         setupWindowControls(windowEl, projectName);
+
+         // Setup window dragging
+         setupWindowDragging(windowEl);
+
+         // Setup window resizing (only for non-video-prototype windows)
+         const projectData = projectModalData[projectName];
+         if (projectData && projectData.contentType !== 'video-prototype') {
+             setupWindowResizing(windowEl);
+         } else if (projectData && projectData.contentType === 'video-prototype') {
+             // Make window non-resizable by removing resize handles
+             windowEl.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
+             // Set fixed size for video prototype window
+             // Sized to show scaled-down iPhone mockup with proper aspect ratio
+             windowEl.style.width = '450px';  // Narrower to match scaled mockup
+             windowEl.style.height = '850px'; // Tall enough for iPhone aspect ratio (2:1 roughly)
+         }
+
+         // Setup video prototype controls if applicable
+         if (projectData && projectData.contentType === 'video-prototype') {
+             setupVideoPrototypeControls(windowEl);
+         }
+
+         // Setup static image controls if applicable
+         if (projectData && projectData.contentType === 'static-image') {
+             setupStaticImageControls(windowEl);
+         }
+
+         // Update dock icon active state
+         updateDockIconState(projectName, true);
+
+         if (DEBUG) console.log('✅ DEBUG: Window opened for:', projectName);
      }
 
-     // Event listeners for modal - with error checking
-     if (modalClose) {
-         modalClose.addEventListener('click', (event) => {
-             event.stopPropagation();
-             closeProjectModal();
+     // Bring window to front
+     function bringWindowToFront(windowEl) {
+         // Remove focused class from all windows
+         document.querySelectorAll('.project-window').forEach(w => {
+             w.classList.remove('focused');
          });
-         console.log('✅ DEBUG: Modal close button event listener added');
-     } else {
-         console.error('❌ DEBUG: Modal close button not found');
+
+         // Add focused class and update z-index
+         windowEl.classList.add('focused');
+         windowEl.style.zIndex = ++highestZIndex;
+         focusedWindow = windowEl;
      }
 
-     if (modalOverlay) {
-         modalOverlay.addEventListener('click', closeProjectModal);
-         console.log('✅ DEBUG: Modal overlay event listener added');
-     } else {
-         console.error('❌ DEBUG: Modal overlay not found');
+     // Close project window
+     function closeProjectWindow(windowEl, projectName) {
+         if (DEBUG) console.log('🔒 DEBUG: Closing window for:', projectName);
+
+         windowEl.classList.remove('active');
+
+         setTimeout(() => {
+             windowEl.remove();
+             openWindows.delete(projectName);
+
+             // Update dock icon state
+             updateDockIconState(projectName, false);
+
+             // Focus another window if available
+             if (openWindows.size > 0) {
+                 const lastWindow = Array.from(openWindows.values()).pop();
+                 bringWindowToFront(lastWindow);
+             } else {
+                 focusedWindow = null;
+             }
+         }, 300);
      }
 
-     // Allow scrolling only within modal body and content
-     const modalBody = document.querySelector('.modal-body');
-     const modalContent = document.querySelector('.modal-content');
-     
-     if (modalBody) {
-         modalBody.addEventListener('wheel', (event) => {
-             event.stopPropagation();
-             // Allow scrolling within modal body
-             const { scrollTop, scrollHeight, clientHeight } = modalBody;
-             const isScrollingUp = event.deltaY < 0;
-             const isScrollingDown = event.deltaY > 0;
-             
-             // Prevent default only if we're at the scroll boundaries
-             if ((isScrollingUp && scrollTop === 0) || 
-                 (isScrollingDown && scrollTop + clientHeight >= scrollHeight)) {
-                 event.preventDefault();
+     // Setup window controls (traffic lights)
+     function setupWindowControls(windowEl, projectName) {
+         const closeBtn = windowEl.querySelector('.window-control.close');
+         const minimizeBtn = windowEl.querySelector('.window-control.minimize');
+         const maximizeBtn = windowEl.querySelector('.window-control.maximize');
+
+         if (closeBtn) {
+             closeBtn.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 closeProjectWindow(windowEl, projectName);
+             });
+         }
+
+         if (minimizeBtn) {
+             minimizeBtn.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 // Minimize = close for now
+                 closeProjectWindow(windowEl, projectName);
+             });
+         }
+
+         if (maximizeBtn) {
+             maximizeBtn.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 windowEl.classList.toggle('maximized');
+             });
+         }
+
+         // Click anywhere on window to bring to front
+         windowEl.addEventListener('mousedown', () => {
+             if (!isDraggingWindow) {
+                 bringWindowToFront(windowEl);
              }
          });
-         
-         modalBody.addEventListener('touchmove', (event) => {
-             event.stopPropagation();
-         });
-         
-         console.log('✅ DEBUG: Modal body scroll event listeners added');
-     }
-     
-     if (modalContent) {
-         modalContent.addEventListener('wheel', (event) => {
-             event.stopPropagation();
-         });
-         
-         modalContent.addEventListener('touchmove', (event) => {
-             event.stopPropagation();
-         });
-         
-         console.log('✅ DEBUG: Modal content scroll event listeners added');
      }
 
-     // Close modal on escape key
-     document.addEventListener('keydown', (event) => {
-         if (event.key === 'Escape' && modal && modal.classList.contains('active')) {
-             closeProjectModal();
+     // Setup window dragging - use macOS native title bar
+     function setupWindowDragging(windowEl) {
+         const titleBar = windowEl.querySelector('.macos-title-bar');
+
+         if (!titleBar) return;
+
+         titleBar.addEventListener('mousedown', (e) => {
+             // Don't drag if clicking on window controls
+             if (e.target.closest('.macos-window-controls')) return;
+             if (e.target.closest('.window-control')) return;
+
+             isDraggingWindow = true;
+             draggedWindow = windowEl;
+
+             const rect = windowEl.getBoundingClientRect();
+
+             dragOffset.x = e.clientX - rect.left;
+             dragOffset.y = e.clientY - rect.top;
+
+             windowEl.classList.add('dragging');
+             bringWindowToFront(windowEl);
+
+             e.preventDefault();
+         });
+     }
+
+     // Global mouse move for window dragging
+     document.addEventListener('mousemove', (e) => {
+         if (!isDraggingWindow || !draggedWindow) return;
+
+         const desktopRect = desktopArea.getBoundingClientRect();
+         const windowRect = draggedWindow.getBoundingClientRect();
+
+         let newX = e.clientX - desktopRect.left - dragOffset.x;
+         let newY = e.clientY - desktopRect.top - dragOffset.y;
+
+         // Keep window within desktop boundaries
+         newX = Math.max(0, Math.min(newX, desktopRect.width - windowRect.width));
+         newY = Math.max(0, Math.min(newY, desktopRect.height - windowRect.height));
+
+         draggedWindow.style.left = `${newX}px`;
+         draggedWindow.style.top = `${newY}px`;
+     });
+
+     // Global mouse up for window dragging
+     document.addEventListener('mouseup', () => {
+         if (isDraggingWindow && draggedWindow) {
+             draggedWindow.classList.remove('dragging');
+             isDraggingWindow = false;
+             draggedWindow = null;
+         }
+         if (isResizingWindow && resizedWindow) {
+             resizedWindow.classList.remove('resizing');
+             isResizingWindow = false;
+             resizedWindow = null;
+             resizeDirection = null;
          }
      });
-     
-     console.log('✅ DEBUG: Modal functionality initialization complete');
 
-     // Global test function for manual testing
-     window.testModal = function() {
-         console.log('🧪 DEBUG: Testing modal manually...');
-         openProjectModal('Bamai');
+     // Setup window resizing
+     let isResizingWindow = false;
+     let resizedWindow = null;
+     let resizeDirection = null;
+     let resizeStartPos = { x: 0, y: 0 };
+     let resizeStartSize = { width: 0, height: 0 };
+     let resizeStartWindowPos = { x: 0, y: 0 };
+
+     function setupWindowResizing(windowEl) {
+         const resizeHandles = windowEl.querySelectorAll('.resize-handle');
+         const modalContent = windowEl.querySelector('.modal-content');
+
+         if (!modalContent) return;
+
+         resizeHandles.forEach(handle => {
+             handle.addEventListener('mousedown', (e) => {
+                 e.stopPropagation();
+                 e.preventDefault();
+
+                 isResizingWindow = true;
+                 resizedWindow = windowEl;
+
+                 // Determine resize direction from handle classes
+                 if (handle.classList.contains('nw')) resizeDirection = 'nw';
+                 else if (handle.classList.contains('ne')) resizeDirection = 'ne';
+                 else if (handle.classList.contains('sw')) resizeDirection = 'sw';
+                 else if (handle.classList.contains('se')) resizeDirection = 'se';
+                 else if (handle.classList.contains('n')) resizeDirection = 'n';
+                 else if (handle.classList.contains('s')) resizeDirection = 's';
+                 else if (handle.classList.contains('e')) resizeDirection = 'e';
+                 else if (handle.classList.contains('w')) resizeDirection = 'w';
+
+                 const windowRect = windowEl.getBoundingClientRect();
+                 const contentRect = modalContent.getBoundingClientRect();
+
+                 resizeStartPos.x = e.clientX;
+                 resizeStartPos.y = e.clientY;
+                 resizeStartSize.width = contentRect.width;
+                 resizeStartSize.height = contentRect.height;
+                 resizeStartWindowPos.x = windowRect.left - desktopArea.getBoundingClientRect().left;
+                 resizeStartWindowPos.y = windowRect.top - desktopArea.getBoundingClientRect().top;
+
+                 windowEl.classList.add('resizing');
+                 bringWindowToFront(windowEl);
+             });
+         });
+     }
+
+     // Global mouse move for window resizing
+     document.addEventListener('mousemove', (e) => {
+         if (!isResizingWindow || !resizedWindow || !resizeDirection) return;
+
+         const modalContent = resizedWindow.querySelector('.modal-content');
+         if (!modalContent) return;
+
+         const deltaX = e.clientX - resizeStartPos.x;
+         const deltaY = e.clientY - resizeStartPos.y;
+
+         const minWidth = 400;
+         const minHeight = 300;
+         const desktopRect = desktopArea.getBoundingClientRect();
+         const maxWidth = desktopRect.width - 40;
+         const maxHeight = desktopRect.height - 40;
+
+         let newWidth = resizeStartSize.width;
+         let newHeight = resizeStartSize.height;
+         let newX = resizeStartWindowPos.x;
+         let newY = resizeStartWindowPos.y;
+
+         // Handle different resize directions
+         switch(resizeDirection) {
+             case 'se': // Southeast (bottom-right)
+                 newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStartSize.width + deltaX));
+                 newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStartSize.height + deltaY));
+                 break;
+             case 'sw': // Southwest (bottom-left)
+                 newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStartSize.width - deltaX));
+                 newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStartSize.height + deltaY));
+                 newX = resizeStartWindowPos.x + (resizeStartSize.width - newWidth);
+                 break;
+             case 'ne': // Northeast (top-right)
+                 newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStartSize.width + deltaX));
+                 newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStartSize.height - deltaY));
+                 newY = resizeStartWindowPos.y + (resizeStartSize.height - newHeight);
+                 break;
+             case 'nw': // Northwest (top-left)
+                 newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStartSize.width - deltaX));
+                 newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStartSize.height - deltaY));
+                 newX = resizeStartWindowPos.x + (resizeStartSize.width - newWidth);
+                 newY = resizeStartWindowPos.y + (resizeStartSize.height - newHeight);
+                 break;
+             case 'e': // East (right)
+                 newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStartSize.width + deltaX));
+                 break;
+             case 'w': // West (left)
+                 newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStartSize.width - deltaX));
+                 newX = resizeStartWindowPos.x + (resizeStartSize.width - newWidth);
+                 break;
+             case 's': // South (bottom)
+                 newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStartSize.height + deltaY));
+                 break;
+             case 'n': // North (top)
+                 newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStartSize.height - deltaY));
+                 newY = resizeStartWindowPos.y + (resizeStartSize.height - newHeight);
+                 break;
+         }
+
+         // Apply new dimensions and position
+         modalContent.style.width = `${newWidth}px`;
+         modalContent.style.height = `${newHeight}px`;
+         resizedWindow.style.left = `${newX}px`;
+         resizedWindow.style.top = `${newY}px`;
+     });
+
+     // Setup video prototype controls
+     function setupVideoPrototypeControls(windowEl) {
+         const video = windowEl.querySelector('#prototype-video');
+         const playButton = windowEl.querySelector('#play-button');
+         const iosAlert = windowEl.querySelector('#ios-alert');
+         const allowBtn = windowEl.querySelector('#allow-btn');
+         const dontAllowBtn = windowEl.querySelector('#dont-allow-btn');
+
+         if (!video || !playButton || !iosAlert) return;
+
+         let hasShownAlert = false;
+
+         // Play button click handler
+         playButton.addEventListener('click', () => {
+             if (!hasShownAlert) {
+                 // First time: Show iOS alert
+                 iosAlert.style.display = 'flex';
+             } else {
+                 // After permission granted: Toggle play/pause
+                 if (video.paused) {
+                     video.play();
+                 } else {
+                     video.pause();
+                 }
+             }
+         });
+
+         // Video click handler - toggle play/pause
+         video.addEventListener('click', () => {
+             if (hasShownAlert) {
+                 if (video.paused) {
+                     video.play();
+                 } else {
+                     video.pause();
+                 }
+             }
+         });
+
+         // Allow button handler
+         allowBtn.addEventListener('click', () => {
+             iosAlert.style.display = 'none';
+             hasShownAlert = true;
+             playButton.style.display = 'none';
+             video.play();
+         });
+
+         // Don't Allow button handler
+         dontAllowBtn.addEventListener('click', () => {
+             iosAlert.style.display = 'none';
+             hasShownAlert = true;
+             // Keep video paused
+         });
+
+         // Hide play button when video is playing
+         video.addEventListener('play', () => {
+             playButton.style.display = 'none';
+         });
+
+         // Show play button when video is paused
+         video.addEventListener('pause', () => {
+             playButton.style.display = 'flex';
+         });
+
+         // Show play button when video ends
+         video.addEventListener('ended', () => {
+             playButton.style.display = 'flex';
+             video.currentTime = 0;
+         });
+     }
+
+     // Setup static image controls
+     function setupStaticImageControls(windowEl) {
+         const staticImage = windowEl.querySelector('#static-image');
+         const permissionWarning = windowEl.querySelector('#permission-warning');
+         const warningClose = windowEl.querySelector('#warning-close');
+
+         if (!staticImage || !permissionWarning) return;
+
+         // Show warning when image is clicked
+         staticImage.addEventListener('click', (e) => {
+             e.preventDefault();
+             permissionWarning.style.display = 'flex';
+         });
+
+         // Close warning button handler
+         if (warningClose) {
+             warningClose.addEventListener('click', () => {
+                 permissionWarning.style.display = 'none';
+             });
+         }
+
+         // Close warning when clicking outside the warning content
+         permissionWarning.addEventListener('click', (e) => {
+             if (e.target === permissionWarning) {
+                 permissionWarning.style.display = 'none';
+             }
+         });
+     }
+
+     // Update dock icon active state
+     function updateDockIconState(projectName, isActive) {
+         const appName = projectName.toLowerCase();
+         const dockIcon = document.querySelector(`.dock-icon[data-app="${appName}"]`);
+
+         if (dockIcon) {
+             if (isActive) {
+                 dockIcon.classList.add('active');
+             } else {
+                 dockIcon.classList.remove('active');
+             }
+         }
+     }
+
+     // Close window on Escape key
+     document.addEventListener('keydown', (event) => {
+         if (event.key === 'Escape' && focusedWindow) {
+             const projectName = focusedWindow.dataset.project;
+             closeProjectWindow(focusedWindow, projectName);
+         }
+     });
+
+     if (DEBUG) console.log('✅ DEBUG: Window management system initialized');
+
+     // ===== PDF THUMBNAIL RENDERING =====
+     async function renderPDFThumbnail() {
+         const canvas = document.getElementById('pdf-thumbnail-canvas');
+         if (!canvas) return;
+
+         try {
+             // Check if PDF.js is loaded
+             if (typeof pdfjsLib === 'undefined') {
+                 console.error('PDF.js library not loaded');
+                 return;
+             }
+
+             // Set worker source
+             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+             // Load the PDF
+             const loadingTask = pdfjsLib.getDocument('Portfolio-dekkoshi.pdf');
+             const pdf = await loadingTask.promise;
+
+             // Get the first page
+             const page = await pdf.getPage(1);
+
+             // Set canvas dimensions to match icon size
+             const scale = 0.5; // Adjust scale for thumbnail size
+             const viewport = page.getViewport({ scale: scale });
+
+             canvas.width = 80;
+             canvas.height = 100;
+
+             const context = canvas.getContext('2d');
+
+             // Calculate scaling to fit the canvas while maintaining aspect ratio
+             const scaleX = canvas.width / viewport.width;
+             const scaleY = canvas.height / viewport.height;
+             const renderScale = Math.min(scaleX, scaleY);
+
+             const scaledViewport = page.getViewport({ scale: scale * renderScale });
+
+             // Render the page
+             const renderContext = {
+                 canvasContext: context,
+                 viewport: scaledViewport
+             };
+
+             await page.render(renderContext).promise;
+             console.log('✅ PDF thumbnail rendered successfully');
+         } catch (error) {
+             console.error('Error rendering PDF thumbnail:', error);
+             // Fallback: draw a simple PDF icon
+             const context = canvas.getContext('2d');
+             canvas.width = 80;
+             canvas.height = 100;
+
+             // Draw a simple red PDF icon as fallback
+             context.fillStyle = '#EF4444';
+             context.fillRect(10, 5, 60, 90);
+             context.fillStyle = '#FFFFFF';
+             context.font = 'bold 16px Arial';
+             context.textAlign = 'center';
+             context.fillText('PDF', 40, 55);
+         }
+     }
+
+     // Render PDF thumbnail when page loads
+     renderPDFThumbnail();
+
+     // ===== DESKTOP PDF ICON MANAGEMENT =====
+     // Setup draggable PDF icons
+     function setupDesktopIcon(iconId, projectName) {
+         const icon = document.getElementById(iconId);
+         if (!icon) return;
+
+         let isDragging = false;
+         let hasDragged = false; // Track if icon was actually dragged
+         let dragOffset = { x: 0, y: 0 };
+         let dragStartPos = { x: 0, y: 0 }; // Track starting position
+
+         // Click to open PDF - only if not dragged
+         icon.addEventListener('click', () => {
+             if (!hasDragged) {
+                 openProjectModal(projectName);
+             }
+             // Reset drag flag after click
+             hasDragged = false;
+         });
+
+         // Drag functionality
+         icon.addEventListener('mousedown', (e) => {
+             isDragging = true;
+             hasDragged = false; // Reset drag flag
+             const rect = icon.getBoundingClientRect();
+             dragOffset.x = e.clientX - rect.left;
+             dragOffset.y = e.clientY - rect.top;
+             dragStartPos.x = e.clientX;
+             dragStartPos.y = e.clientY;
+             e.preventDefault();
+         });
+
+         document.addEventListener('mousemove', (e) => {
+             if (!isDragging) return;
+
+             // Calculate drag distance from start position
+             const dragDistance = Math.sqrt(
+                 Math.pow(e.clientX - dragStartPos.x, 2) +
+                 Math.pow(e.clientY - dragStartPos.y, 2)
+             );
+
+             // If dragged more than 5 pixels, mark as dragged
+             if (dragDistance > 5) {
+                 hasDragged = true;
+             }
+
+             const desktopRect = desktopArea.getBoundingClientRect();
+             const iconRect = icon.getBoundingClientRect();
+
+             let newX = e.clientX - desktopRect.left - dragOffset.x;
+             let newY = e.clientY - desktopRect.top - dragOffset.y;
+
+             // Keep icon within desktop boundaries
+             newX = Math.max(0, Math.min(newX, desktopRect.width - iconRect.width));
+             newY = Math.max(0, Math.min(newY, desktopRect.height - iconRect.height));
+
+             icon.style.left = `${newX}px`;
+             icon.style.top = `${newY}px`;
+             icon.style.right = 'auto'; // Override initial right positioning
+         });
+
+         document.addEventListener('mouseup', () => {
+             if (isDragging) {
+                 isDragging = false;
+                 // Don't reset hasDragged here - let click handler check it
+             }
+         });
+     }
+
+     // Setup both PDF icons
+     setupDesktopIcon('desktop-portfolio-icon', 'Portfolio');
+     setupDesktopIcon('desktop-bamai-icon', 'Bamai');
+
+     // Global test function
+     window.testWindow = function(projectName = 'Bamai') {
+         if (DEBUG) console.log('🧪 DEBUG: Testing window for:', projectName);
+         openProjectModal(projectName);
      };
-     
+
      // Test function to check raycasting
      window.testRaycasting = function() {
-         console.log('🧪 DEBUG: Testing raycasting...');
+         if (DEBUG) console.log('🧪 DEBUG: Testing raycasting...');
          console.log('Camera position:', { x: camera.position.x, y: camera.position.y, z: camera.position.z });
          console.log('Total planes:', planes.length);
-         
+
          // Test intersection from camera center
          const centerMouse = new THREE.Vector2(0, 0);
          raycaster.setFromCamera(centerMouse, camera);
          const centerIntersects = raycaster.intersectObjects(planes);
          console.log('Center raycaster intersects:', centerIntersects.length);
-         
+
          // Test intersection with all objects in scene
          const allIntersects = raycaster.intersectObjects(scene.children, true);
          console.log('All scene intersects:', allIntersects.length);
-         
+
          if (planes.length > 0) {
              console.log('First plane details:', {
                  position: planes[0].position,
@@ -1457,15 +1823,15 @@ document.addEventListener('DOMContentLoaded', () => {
                  userData: planes[0].userData
              });
          }
-         
+
          // Test if scale is zero (the original problem)
-         const zeroScalePlanes = planes.filter(plane => 
+         const zeroScalePlanes = planes.filter(plane =>
              plane.scale.x === 0 || plane.scale.y === 0 || plane.scale.z === 0
          );
          console.log('⚠️ Planes with zero scale (should be 0):', zeroScalePlanes.length);
      };
-     
-     console.log('🧪 DEBUG: Test functions available - run testModal() or testRaycasting() in console');
+
+     if (DEBUG) console.log('🧪 DEBUG: Test functions available - run testModal() or testRaycasting() in console');
 
      const gridConfig = {
         maxCols: 8, // Maximum columns per row
@@ -1483,13 +1849,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const planes = [];
 
     const setupPlane = (texture, position, projectName, assetIndex) => {
-        console.log('🛠️ DEBUG: Setting up plane:', {
+        if (DEBUG) console.log('🛠️ DEBUG: Setting up plane:', {
             projectName: projectName,
             assetIndex: assetIndex,
             position: position,
             textureImage: texture.image
         });
-        
+
         const media = texture.image;
         const mediaWidth = media.videoWidth || media.width;
         const mediaHeight = media.videoHeight || media.height;
@@ -1520,27 +1886,27 @@ document.addEventListener('DOMContentLoaded', () => {
         plane.userData.projectName = projectName;
         plane.userData.assetIndex = assetIndex;
 
-        console.log('✅ DEBUG: Plane created with userData:', plane.userData);
+        if (DEBUG) console.log('✅ DEBUG: Plane created with userData:', plane.userData);
 
         scene.add(plane);
         planes.push(plane);
-        
-        console.log('📊 DEBUG: Total planes now:', planes.length);
+
+        if (DEBUG) console.log('📊 DEBUG: Total planes now:', planes.length);
     };
 
     // Create planes organized by project rows
     projectAssets.forEach((project, rowIndex) => {
         const numAssets = project.assets.length;
         const actualCols = Math.min(numAssets, gridConfig.maxCols);
-        
+
         // Calculate starting X position to center the row
         const rowWidth = (actualCols - 1) * gridConfig.spacingX;
         const startX = -rowWidth / 2;
-        
+
         // Calculate Y position for this row (center vertically)
         const totalHeight = (gridConfig.rows - 1) * gridConfig.spacingY;
         const rowY = totalHeight / 2 - (rowIndex * gridConfig.spacingY);
-        
+
         project.assets.forEach((asset, assetIndex) => {
             if (assetIndex < gridConfig.maxCols) { // Only show up to maxCols per row
                 const position = new THREE.Vector3(
@@ -1565,7 +1931,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const texture = new THREE.VideoTexture(video);
                     setupPlane(texture, position, project.name, assetIndex);
 
-                    video.play().catch(e => {
+                    video.play().catch(() => {
                         console.log(`User interaction needed to play: ${asset.src}`);
                         // Video will start on first click/interaction if autoplay fails
                         const playHandler = () => {
@@ -1594,550 +1960,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickedPlanes = new Map(); // Track clicked planes and their animation progress
     const hoveredPlanes = new Map(); // Track hovered planes for glitch effect
 
-    // Scroll tracking for background animation
-    let scrollVelocity = 0;
-    let scrollIntensity = 0;
-    let lastScrollTime = 0;
-    let lastCameraPosition = { x: 0, y: 0 };
+    // Canvas interaction variables removed (wheel, drag, touch)
 
-    // Drag interaction variables
-    let isDragging = false;
-    let dragStart = { x: 0, y: 0 };
-    let dragCameraStart = { x: 0, y: 0 };
-    let dragVelocity = { x: 0, y: 0 };
-    let lastDragTime = 0;
-    let dragMomentum = { x: 0, y: 0 };
+    // Project title management removed (canvas interaction removed)
 
-    // Touch interaction variables
-    let isTouching = false;
-    let touchStart = { x: 0, y: 0 };
-    let touchCameraStart = { x: 0, y: 0 };
-    let touchVelocity = { x: 0, y: 0 };
-    let lastTouchTime = 0;
-    let touchMomentum = { x: 0, y: 0 };
-    let lastTouchPosition = { x: 0, y: 0 };
-    
-    // Project title management
-    let currentProjectIndex = -1;
-    let isAnimating = false;
-    const projectTitleElement = document.getElementById('project-title');
-    
-    // Note: Project detection now uses actual plane positions to handle infinite scrolling
-    
-    function updateProjectTitle(newProjectIndex, direction = 'up') {
-        if (newProjectIndex === currentProjectIndex || isAnimating) return;
-        
-        console.log('Updating project title:', newProjectIndex, projectAssets[newProjectIndex]?.name, 'direction:', direction);
-        
-        isAnimating = true;
-        const newTitle = newProjectIndex >= 0 ? projectAssets[newProjectIndex].name : '';
-        
-        if (currentProjectIndex >= 0) {
-            // Exit animation for current title
-            projectTitleElement.classList.add(`slide-${direction}-exit`);
-            projectTitleElement.classList.add(`slide-${direction}-exit-active`);
-            
-            setTimeout(() => {
-                projectTitleElement.textContent = newTitle;
-                projectTitleElement.classList.remove(`slide-${direction}-exit`, `slide-${direction}-exit-active`);
-                
-                if (newTitle) {
-                    // Enter animation for new title
-                    projectTitleElement.classList.add(`slide-${direction}-enter`);
-                    
-                    requestAnimationFrame(() => {
-                        projectTitleElement.classList.add(`slide-${direction}-enter-active`);
-                        
-                        setTimeout(() => {
-                            projectTitleElement.classList.remove(`slide-${direction}-enter`, `slide-${direction}-enter-active`);
-                            isAnimating = false;
-                        }, 400);
-                    });
-                } else {
-                    isAnimating = false;
-                }
-            }, 400);
-        } else if (newTitle) {
-            // First time showing a title
-            projectTitleElement.textContent = newTitle;
-            projectTitleElement.classList.add(`slide-${direction}-enter`);
-            
-            requestAnimationFrame(() => {
-                projectTitleElement.classList.add(`slide-${direction}-enter-active`);
-                
-                setTimeout(() => {
-                    projectTitleElement.classList.remove(`slide-${direction}-enter`, `slide-${direction}-enter-active`);
-                    isAnimating = false;
-                }, 400);
-            });
-        }
-        
-        currentProjectIndex = newProjectIndex;
-    }
-    
-    function detectCurrentProject() {
-        const cameraY = camera.position.y;
-        let closestProjectIndex = -1;
-        let minDistance = Infinity;
-        
-        // Group planes by project and find the closest row for each project
-        const projectRows = new Map();
-        
-        planes.forEach(plane => {
-            const projectName = plane.userData.projectName;
-            const projectIndex = projectAssets.findIndex(p => p.name === projectName);
-            
-            if (projectIndex >= 0) {
-                if (!projectRows.has(projectIndex)) {
-                    projectRows.set(projectIndex, []);
-                }
-                projectRows.get(projectIndex).push(plane.position.y);
-            }
-        });
-        
-        // Find the average Y position for each project row (to handle multiple planes per row)
-        projectRows.forEach((yPositions, projectIndex) => {
-            const avgY = yPositions.reduce((sum, y) => sum + y, 0) / yPositions.length;
-            const distance = Math.abs(cameraY - avgY);
-            const threshold = gridConfig.spacingY / 2;
-            
-            if (distance < threshold && distance < minDistance) {
-                minDistance = distance;
-                closestProjectIndex = projectIndex;
-            }
-        });
-        
-        // If no project is close enough, find the closest one anyway
-        if (closestProjectIndex === -1) {
-            projectRows.forEach((yPositions, projectIndex) => {
-                const avgY = yPositions.reduce((sum, y) => sum + y, 0) / yPositions.length;
-                const distance = Math.abs(cameraY - avgY);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestProjectIndex = projectIndex;
-                }
-            });
-        }
-        
-        console.log('Camera Y:', cameraY, 'Detected project index:', closestProjectIndex, 'min distance:', minDistance);
-        return closestProjectIndex;
-    }
-    
-    // Project title will be initialized after loading completes
-    
-    window.addEventListener('wheel', (event) => {
-        event.preventDefault();
-        const oldCameraTargetY = cameraTarget.y;
-        
-        cameraTarget.x += event.deltaX * 0.03;
-        cameraTarget.y -= event.deltaY * 0.03;
-        
-        // Calculate scroll velocity for background animation
-        const currentTime = performance.now();
-        const deltaTime = currentTime - lastScrollTime;
-        const scrollDistance = Math.sqrt(event.deltaX * event.deltaX + event.deltaY * event.deltaY);
-        
-        if (deltaTime > 0) {
-            scrollVelocity = scrollDistance / deltaTime;
-            scrollIntensity = Math.min(scrollVelocity * 0.05, 1.0); // Reduced multiplier and cap
-        }
-        
-        lastScrollTime = currentTime;
-        
-        // Detect scroll direction for title animation
-        const scrollDirection = cameraTarget.y > oldCameraTargetY ? 'down' : 'up';
-        
-        // Detect current project after a small delay to allow smooth scrolling
-        setTimeout(() => {
-            const newProjectIndex = detectCurrentProject();
-            if (newProjectIndex !== currentProjectIndex) {
-                updateProjectTitle(newProjectIndex, scrollDirection);
-            }
-        }, 50);
-    }, { passive: false });
+    // Project detection removed (canvas interaction removed)
+    // Canvas wheel interaction removed
 
     // --- Mouse Drag Interaction ---
-    window.addEventListener('mousedown', (event) => {
-        // Check if modal is active
-        const modal = document.getElementById('project-modal');
-        if (modal && modal.classList.contains('active')) return;
-
-        // Only handle left mouse button
-        if (event.button !== 0) return;
-
-        isDragging = true;
-        dragStart.x = event.clientX;
-        dragStart.y = event.clientY;
-        dragCameraStart.x = cameraTarget.x;
-        dragCameraStart.y = cameraTarget.y;
-        lastDragTime = performance.now();
-
-        // Prevent text selection during drag
-        event.preventDefault();
-    });
-
-    window.addEventListener('mousemove', (event) => {
-        // Update mouse position for raycasting
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        if (isDragging) {
-            const currentTime = performance.now();
-            const deltaTime = currentTime - lastDragTime;
-
-            // Calculate drag distance
-            const deltaX = event.clientX - dragStart.x;
-            const deltaY = event.clientY - dragStart.y;
-
-            // Convert to camera movement (inverted for natural feel)
-            const dragSensitivity = 0.03; // Much slower drag sensitivity
-            cameraTarget.x = dragCameraStart.x - deltaX * dragSensitivity;
-            cameraTarget.y = dragCameraStart.y + deltaY * dragSensitivity;
-
-            // Calculate drag velocity for momentum (much reduced)
-            if (deltaTime > 0) {
-                dragVelocity.x = -deltaX * dragSensitivity / deltaTime * 200; // Reduced from 1000
-                dragVelocity.y = deltaY * dragSensitivity / deltaTime * 200;
-            }
-
-            lastDragTime = currentTime;
-
-            // Update scroll intensity for background animation
-            const dragDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            scrollIntensity = Math.min(dragDistance * 0.01, 1.0);
-
-            // Update project title during drag
-            setTimeout(() => {
-                const newProjectIndex = detectCurrentProject();
-                if (newProjectIndex !== currentProjectIndex) {
-                    const direction = deltaY > 0 ? 'down' : 'up';
-                    updateProjectTitle(newProjectIndex, direction);
-                }
-            }, 50);
-        }
-    });
-
-    window.addEventListener('mouseup', (event) => {
-        if (isDragging) {
-            isDragging = false;
-
-            // Apply very minimal momentum for smooth deceleration
-            dragMomentum.x = dragVelocity.x * 0.005; // Much smaller momentum
-            dragMomentum.y = dragVelocity.y * 0.005;
-        }
-    });
-
-    // Handle mouse leave to stop dragging
-    window.addEventListener('mouseleave', () => {
-        if (isDragging) {
-            isDragging = false;
-            dragMomentum.x = dragVelocity.x * 0.005; // Much smaller momentum
-            dragMomentum.y = dragVelocity.y * 0.005;
-        }
-    });
+    // Canvas mouse drag interaction removed
 
     // --- Touch/Mobile Interaction ---
-    window.addEventListener('touchstart', (event) => {
-        // Check if modal is active
-        const modal = document.getElementById('project-modal');
-        if (modal && modal.classList.contains('active')) return;
+    // Canvas touch interaction removed
 
-        // Only handle single touch
-        if (event.touches.length !== 1) return;
-
-        const touch = event.touches[0];
-        isTouching = true;
-        touchStart.x = touch.clientX;
-        touchStart.y = touch.clientY;
-        touchCameraStart.x = cameraTarget.x;
-        touchCameraStart.y = cameraTarget.y;
-        lastTouchTime = performance.now();
-        lastTouchPosition.x = touch.clientX;
-        lastTouchPosition.y = touch.clientY;
-
-        // Prevent default to avoid scrolling
-        event.preventDefault();
-    }, { passive: false });
-
-    window.addEventListener('touchmove', (event) => {
-        if (!isTouching || event.touches.length !== 1) return;
-
-        const touch = event.touches[0];
-        const currentTime = performance.now();
-        const deltaTime = currentTime - lastTouchTime;
-
-        // Calculate touch movement
-        const deltaX = touch.clientX - touchStart.x;
-        const deltaY = touch.clientY - touchStart.y;
-
-        // Convert to camera movement (inverted for natural feel)
-        const touchSensitivity = 0.04; // Reduced touch sensitivity to match drag
-        cameraTarget.x = touchCameraStart.x - deltaX * touchSensitivity;
-        cameraTarget.y = touchCameraStart.y + deltaY * touchSensitivity;
-
-        // Calculate touch velocity for momentum (reduced)
-        if (deltaTime > 0) {
-            const instantDeltaX = touch.clientX - lastTouchPosition.x;
-            const instantDeltaY = touch.clientY - lastTouchPosition.y;
-            touchVelocity.x = -instantDeltaX * touchSensitivity / deltaTime * 300; // Reduced from 1000
-            touchVelocity.y = instantDeltaY * touchSensitivity / deltaTime * 300;
-        }
-
-        lastTouchTime = currentTime;
-        lastTouchPosition.x = touch.clientX;
-        lastTouchPosition.y = touch.clientY;
-
-        // Update scroll intensity for background animation
-        const touchDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        scrollIntensity = Math.min(touchDistance * 0.015, 1.0);
-
-        // Update project title during touch
-        setTimeout(() => {
-            const newProjectIndex = detectCurrentProject();
-            if (newProjectIndex !== currentProjectIndex) {
-                const direction = deltaY > 0 ? 'down' : 'up';
-                updateProjectTitle(newProjectIndex, direction);
-            }
-        }, 50);
-
-        // Prevent default to avoid scrolling
-        event.preventDefault();
-    }, { passive: false });
-
-    window.addEventListener('touchend', (event) => {
-        if (isTouching) {
-            isTouching = false;
-
-            // Apply minimal momentum for smooth deceleration
-            touchMomentum.x = touchVelocity.x * 0.008; // Much smaller momentum
-            touchMomentum.y = touchVelocity.y * 0.008;
-        }
-    });
-
-    // Handle touch cancel
-    window.addEventListener('touchcancel', () => {
-        if (isTouching) {
-            isTouching = false;
-            touchMomentum.x = touchVelocity.x * 0.008; // Much smaller momentum
-            touchMomentum.y = touchVelocity.y * 0.008;
-        }
-    });
-
-    // Touch tap handling for modal opening
-    let touchStartPosition = { x: 0, y: 0 };
-    let touchStartTime = 0;
-
-    window.addEventListener('touchstart', (event) => {
-        if (event.touches.length === 1) {
-            const touch = event.touches[0];
-            touchStartPosition.x = touch.clientX;
-            touchStartPosition.y = touch.clientY;
-            touchStartTime = performance.now();
-        }
-    });
-
-    window.addEventListener('touchend', (event) => {
-        // Check if modal is active
-        const modal = document.getElementById('project-modal');
-        if (modal && modal.classList.contains('active')) return;
-
-        // Only handle single touch tap
-        if (event.changedTouches.length !== 1) return;
-
-        const touch = event.changedTouches[0];
-        const tapDistance = Math.sqrt(
-            Math.pow(touch.clientX - touchStartPosition.x, 2) +
-            Math.pow(touch.clientY - touchStartPosition.y, 2)
-        );
-        const tapDuration = performance.now() - touchStartTime;
-
-        // Check if this was a tap (moved less than 10 pixels and took less than 300ms)
-        if (tapDistance < 10 && tapDuration < 300) {
-            console.log('📱 DEBUG: Touch tap detected');
-
-            // Convert touch position to normalized coordinates
-            mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
-
-            // Perform raycasting to detect plane intersection
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planes);
-
-            if (intersects.length > 0) {
-                const clickedPlane = intersects[0].object;
-                const projectName = clickedPlane.userData.projectName;
-
-                console.log('📱 DEBUG: Touch tap on plane:', projectName);
-
-                // Open project modal
-                if (projectName && projectModalData[projectName]) {
-                    openProjectModal(projectName);
-
-                    // Add glitch effect for visual feedback
-                    clickedPlanes.set(clickedPlane, {
-                        startTime: clock.getElapsedTime(),
-                        duration: 1.5,
-                        intensity: 1.0
-                    });
-                }
-            }
-        }
-    });
-
-    // Click handling for modal opening - with comprehensive debugging
-    let clickStartPosition = { x: 0, y: 0 };
-    let clickStartTime = 0;
-
-    // Track click start position to distinguish from drag
-    window.addEventListener('mousedown', (event) => {
-        clickStartPosition.x = event.clientX;
-        clickStartPosition.y = event.clientY;
-        clickStartTime = performance.now();
-    });
-
-    window.addEventListener('click', (event) => {
-        // Check if modal is currently active - if so, don't process canvas clicks
-        const modal = document.getElementById('project-modal');
-        if (modal && modal.classList.contains('active')) {
-            console.log('🚫 DEBUG: Modal is active, ignoring canvas click');
-            return;
-        }
-
-        // Check if this was a drag operation (moved more than 5 pixels or took longer than 300ms)
-        const clickDistance = Math.sqrt(
-            Math.pow(event.clientX - clickStartPosition.x, 2) +
-            Math.pow(event.clientY - clickStartPosition.y, 2)
-        );
-        const clickDuration = performance.now() - clickStartTime;
-
-        if (clickDistance > 5 || clickDuration > 300) {
-            console.log('🚫 DEBUG: Ignoring click - was a drag operation');
-            return;
-        }
-
-        console.log('🖱️ DEBUG: Click event triggered', {
-            clientX: event.clientX,
-            clientY: event.clientY,
-            target: event.target.tagName
-        });
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        
-        console.log('🎯 DEBUG: Mouse coordinates:', { x: mouse.x, y: mouse.y });
-        
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(planes);
-        
-                 console.log('📐 DEBUG: Raycaster results:', {
-             intersectsLength: intersects.length,
-             planesLength: planes.length,
-             cameraPosition: { x: camera.position.x, y: camera.position.y, z: camera.position.z }
-         });
-         
-         // Debug: Log scale issues (only if raycasting fails)
-         if (intersects.length === 0 && planes.length > 0) {
-             const zeroScalePlanes = planes.filter(plane => 
-                 plane.scale.x === 0 || plane.scale.y === 0 || plane.scale.z === 0
-             );
-             if (zeroScalePlanes.length > 0) {
-                 console.log('⚠️ DEBUG: Found planes with zero scale:', zeroScalePlanes.length);
-             }
-             
-             // Show first plane for debugging
-             console.log('🔍 DEBUG: First plane:', {
-                 position: { x: planes[0].position.x, y: planes[0].position.y, z: planes[0].position.z },
-                 scale: { x: planes[0].scale.x, y: planes[0].scale.y, z: planes[0].scale.z },
-                 projectName: planes[0].userData.projectName
-             });
-         }
-        
-        if (intersects.length > 0) {
-            const clickedPlane = intersects[0].object;
-            const projectName = clickedPlane.userData.projectName;
-            
-            console.log('🎯 DEBUG: Plane clicked!', {
-                projectName: projectName,
-                planePosition: clickedPlane.position,
-                userData: clickedPlane.userData
-            });
-            
-            // Test modal opening with simple alert first
-            console.log('🚀 DEBUG: Attempting to open modal...');
-            
-            // Open project modal
-            if (projectName && projectModalData[projectName]) {
-                console.log('✅ DEBUG: Project data found, opening modal...');
-                openProjectModal(projectName);
-            } else {
-                console.error('❌ DEBUG: No project data found for:', projectName);
-                console.log('🔍 DEBUG: Available projects:', Object.keys(projectModalData));
-            }
-            
-            // Also apply glitch effect for visual feedback
-            clickedPlanes.set(clickedPlane, {
-                startTime: clock.getElapsedTime(),
-                duration: 1.5, // 1.5 seconds of glitch effect
-                intensity: 1.0
-            });
-        } else {
-            console.log('❌ DEBUG: No planes intersected');
-        }
-    });
+    // Click handling for modal opening removed
+    // Canvas click interaction removed
 
     function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
 
-        // Apply drag momentum (very minimal)
-        if (!isDragging && (Math.abs(dragMomentum.x) > 0.001 || Math.abs(dragMomentum.y) > 0.001)) {
-            cameraTarget.x += dragMomentum.x;
-            cameraTarget.y += dragMomentum.y;
-            dragMomentum.x *= 0.85; // Faster decay for quicker stop
-            dragMomentum.y *= 0.85;
-        }
-
-        // Apply touch momentum (very minimal)
-        if (!isTouching && (Math.abs(touchMomentum.x) > 0.001 || Math.abs(touchMomentum.y) > 0.001)) {
-            cameraTarget.x += touchMomentum.x;
-            cameraTarget.y += touchMomentum.y;
-            touchMomentum.x *= 0.80; // Faster decay for quicker stop
-            touchMomentum.y *= 0.80;
-        }
-
-        // Update camera position and track movement for scroll intensity
-        const oldCameraX = camera.position.x;
-        const oldCameraY = camera.position.y;
-
+        // Canvas interaction removed - camera is now static
+        // Update camera position smoothly
         camera.position.x += (cameraTarget.x - camera.position.x) * 0.06;
         camera.position.y += (cameraTarget.y - camera.position.y) * 0.06;
-        
-        // Calculate additional scroll intensity from camera movement
-        const cameraMovement = Math.sqrt(
-            Math.pow(camera.position.x - oldCameraX, 2) + 
-            Math.pow(camera.position.y - oldCameraY, 2)
-        );
-        
-        // Add camera movement to scroll intensity - more subtle
-        scrollIntensity += cameraMovement * 1.0; // Reduced from 2.0
-        scrollIntensity = Math.min(scrollIntensity, 1.0); // Cap at 1.0
-        
-        // Apply smoother decay to scroll intensity over time
-        scrollIntensity *= 0.95; // Smoother decay (was 0.92)
-        scrollVelocity *= 0.96;
-        
-        // Update project title based on camera position
-        if (Math.abs(camera.position.y - oldCameraY) > 0.1) {
-            const newProjectIndex = detectCurrentProject();
-            if (newProjectIndex !== currentProjectIndex) {
-                const direction = camera.position.y > oldCameraY ? 'down' : 'up';
-                updateProjectTitle(newProjectIndex, direction);
-            }
-        }
 
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(planes);
-        
+
         if (intersects.length > 0) {
             const intersection = intersects[0];
             const object = intersection.object;
@@ -2151,7 +2001,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         hoveredPlanes.delete(currentHoveredPlane);
                     }
                     currentHoveredPlane = object;
-                    
+
                     // Add new plane to hover glitch effect with subtle intensity
                     hoveredPlanes.set(object, {
                         startTime: elapsedTime,
@@ -2172,53 +2022,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update time uniforms for all materials
         bgMaterial.uniforms.u_time.value = elapsedTime;
-        bgMaterial.uniforms.u_scroll_velocity.value = scrollVelocity;
-        bgMaterial.uniforms.u_scroll_intensity.value = scrollIntensity;
-        
+        bgMaterial.uniforms.u_scroll_velocity.value = 0; // Canvas interaction removed
+        bgMaterial.uniforms.u_scroll_intensity.value = 0; // Canvas interaction removed
+
         planes.forEach(plane => {
             if (plane.material.uniforms) {
                 plane.material.uniforms.u_time.value = elapsedTime;
-                
+
                 // Calculate viewport position for periphery skew effect
                 const screenPos = plane.position.clone();
                 screenPos.project(camera);
-                
+
                 // Normalize to [-1, 1] range
                 const viewportPos = new THREE.Vector2(screenPos.x, screenPos.y);
                 plane.material.uniforms.u_viewport_pos.value = viewportPos;
-                
+
                 // Handle glitch effect for clicked and hovered planes
                 let totalGlitchIntensity = 0;
                 let totalHoverIntensity = 0;
-                
+
                 // Handle click glitch effect
                 if (clickedPlanes.has(plane)) {
                     const glitchData = clickedPlanes.get(plane);
                     const elapsed = elapsedTime - glitchData.startTime;
                     const progress = elapsed / glitchData.duration;
-                    
+
                     if (progress >= 1.0) {
                         // Animation finished
                         clickedPlanes.delete(plane);
                     } else {
                         // Animate glitch intensity with multiple peaks for dramatic effect
-                        const intensity = Math.sin(progress * Math.PI * 3) * 
-                                        Math.exp(-progress * 2) * 
+                        const intensity = Math.sin(progress * Math.PI * 3) *
+                                        Math.exp(-progress * 2) *
                                         glitchData.intensity;
                         totalGlitchIntensity += Math.max(0, intensity);
                     }
                 }
-                
+
                 // Handle hover color effect (separate from glitch effect)
                 if (hoveredPlanes.has(plane)) {
                     const hoverData = hoveredPlanes.get(plane);
                     const elapsed = elapsedTime - hoverData.startTime;
-                    
+
                     // Subtle pulsing effect for hover
                     const hoverIntensity = Math.sin(elapsed * 4) * 0.5 + 0.5; // Oscillate between 0 and 1
                     totalHoverIntensity = hoverIntensity * hoverData.intensity;
                 }
-                
+
                 // Set final intensities
                 plane.material.uniforms.u_glitch_intensity.value = Math.min(totalGlitchIntensity, 1.0);
                 plane.material.uniforms.u_hover_intensity.value = Math.min(totalHoverIntensity, 1.0);
@@ -2278,3 +2128,129 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+// ===== DESKTOP WIDGETS =====
+// Update calendar widget
+function updateCalendarWidget() {
+    const now = new Date();
+    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const dayName = dayNames[now.getDay()];
+    const date = now.getDate();
+
+    const dayNameEl = document.getElementById('widget-day-name');
+    const dateEl = document.getElementById('widget-date');
+
+    if (dayNameEl) dayNameEl.textContent = dayName;
+    if (dateEl) dateEl.textContent = date;
+}
+
+// Draw analog clock on canvas
+function drawClock(canvasId, timezone) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const centerX = 35;
+    const centerY = 35;
+    const radius = 32;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, 70, 70);
+
+    // Get time for timezone
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const localTime = new Date(utc + (3600000 * timezone));
+
+    const hours = localTime.getHours() % 12;
+    const minutes = localTime.getMinutes();
+    const seconds = localTime.getSeconds();
+
+    // Draw clock face
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw hour markers
+    for (let i = 0; i < 12; i++) {
+        const angle = (i * 30 - 90) * Math.PI / 180;
+        const x1 = centerX + (radius - 6) * Math.cos(angle);
+        const y1 = centerY + (radius - 6) * Math.sin(angle);
+        const x2 = centerX + (radius - 2) * Math.cos(angle);
+        const y2 = centerY + (radius - 2) * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    }
+
+    // Draw hour numbers
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 1; i <= 12; i++) {
+        const angle = (i * 30 - 90) * Math.PI / 180;
+        const x = centerX + (radius - 11) * Math.cos(angle);
+        const y = centerY + (radius - 11) * Math.sin(angle);
+        ctx.fillText(i.toString(), x, y);
+    }
+
+    // Draw hour hand
+    const hourAngle = ((hours + minutes / 60) * 30 - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(
+        centerX + 14 * Math.cos(hourAngle),
+        centerY + 14 * Math.sin(hourAngle)
+    );
+    ctx.strokeStyle = '#FF9500';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Draw minute hand
+    const minuteAngle = ((minutes + seconds / 60) * 6 - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(
+        centerX + 22 * Math.cos(minuteAngle),
+        centerY + 22 * Math.sin(minuteAngle)
+    );
+    ctx.strokeStyle = '#FF9500';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Draw center dot
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = '#FF9500';
+    ctx.fill();
+}
+
+// Update all clocks
+function updateClocks() {
+    drawClock('clock-melbourne', 11);  // UTC+11
+    drawClock('clock-tokyo', 9);       // UTC+9
+    drawClock('clock-london', 0);      // UTC+0
+    drawClock('clock-newyork', -5);    // UTC-5
+}
+
+// Initialize widgets
+updateCalendarWidget();
+updateClocks();
+
+// Update clocks every second
+setInterval(updateClocks, 1000);
+
+// Update calendar at midnight
+setInterval(updateCalendarWidget, 60000); // Check every minute

@@ -5,13 +5,15 @@
 
 /* Override for clickable elements */
 a, button, .underline-link, .email-link, .back-link, .modal-close, .modal-overlay,
-#top-nav, #bottom-company-bar {
+#top-nav, #macos-dock, .dock-icon {
     cursor: pointer !important;
 }
 
 body {
     margin: 0;
     cursor: default; /* Default cursor */
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 }
 
 /* Only apply these styles to the main portfolio page (not about page) */
@@ -43,7 +45,7 @@ canvas#bg::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
         radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
         radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
@@ -60,7 +62,7 @@ canvas#bg::after {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
+    background-image:
         repeating-linear-gradient(
             0deg,
             transparent,
@@ -438,29 +440,80 @@ canvas#bg::after {
     }
 }
 
-/* Navigation styles */
+/* Navigation styles - macOS Sequoia Liquid Glass Menu Bar */
 #top-nav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 32px;
-    background: rgba(28, 28, 28, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: 30px;
+    /* Liquid Glass effect - ultra-transparent like macOS Sequoia */
+    background: rgba(22, 22, 24, 0.25);
+    backdrop-filter: blur(80px) saturate(200%) brightness(1.15);
+    -webkit-backdrop-filter: blur(80px) saturate(200%) brightness(1.15);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        0 0 0 0.5px rgba(255, 255, 255, 0.06) inset,
+        0 1px 0 rgba(255, 255, 255, 0.08) inset,
+        0 2px 8px rgba(0, 0, 0, 0.15);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: white;
+    /* macOS system fonts */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.95);
     z-index: 1000;
     user-select: none;
     /* Initial state for animation */
     transform: translateY(-100%);
     opacity: 0;
     transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease-out;
+}
+
+/* Liquid glass effect - subtle luminous gradient overlay */
+#top-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.04) 30%,
+        rgba(255, 255, 255, 0.01) 70%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+}
+
+/* Liquid glass effect - subtle corner luminosity */
+#top-nav::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 10% 50%,
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 50%
+    ),
+    radial-gradient(
+        circle at 90% 50%,
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
 }
 
 #top-nav.animate-in {
@@ -472,6 +525,8 @@ canvas#bg::after {
     display: flex;
     align-items: center;
     flex: 1;
+    position: relative;
+    z-index: 2;
 }
 
 .nav-center {
@@ -481,6 +536,7 @@ canvas#bg::after {
     flex: 1;
     position: relative;
     height: 100%;
+    z-index: 2;
 }
 
 .nav-right {
@@ -489,6 +545,8 @@ canvas#bg::after {
     gap: 15px;
     flex: 1;
     justify-content: flex-end;
+    position: relative;
+    z-index: 2;
 }
 
 .project-title-container {
@@ -508,10 +566,10 @@ canvas#bg::after {
     white-space: nowrap;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     color: #00fff9;
-    text-shadow: 0 0 5px rgba(0, 255, 249, 0.5);
-    font-weight: normal;
-    letter-spacing: 0.5px;
-    font-size: 8px;
+    text-shadow: 0 0 8px rgba(0, 255, 249, 0.4);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    font-size: 13px;
 }
 
 .project-title.slide-up-enter {
@@ -554,53 +612,63 @@ canvas#bg::after {
 }
 
 .underline-link {
-    color: white;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 2px;
-    transition: color 0.3s ease;
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 1px;
+    transition: all 0.2s ease;
     cursor: pointer;
 }
 
 .underline-link:hover {
     color: #00fff9;
-    text-shadow: 0 0 5px #00fff9;
+    border-bottom-color: #00fff9;
 }
 
 .location-time {
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 13px;
+    font-weight: 400;
 }
 
 .status-light {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #00ff00;
-    animation: blink 2s infinite;
+    box-shadow: 0 0 6px rgba(0, 255, 0, 0.6), 0 0 2px rgba(0, 255, 0, 0.8) inset;
+    transition: all 0.3s ease;
 }
 
 .status-light.evening {
-    background: #ffff00;
-}
-
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0.3; }
+    background: #ffaa00;
+    box-shadow: 0 0 6px rgba(255, 170, 0, 0.6), 0 0 2px rgba(255, 170, 0, 0.8) inset;
 }
 
 .email-link {
-    color: white;
-    transition: color 0.3s ease;
+    color: rgba(255, 255, 255, 0.95);
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
 }
 
 .email-link:hover {
     color: #00fff9;
-    filter: drop-shadow(0 0 3px #00fff9);
+    background: rgba(0, 255, 249, 0.1);
+    filter: drop-shadow(0 0 3px rgba(0, 255, 249, 0.6));
+}
+
+/* Standardize all navigation icons */
+.email-link svg,
+.nav-right svg,
+.nav-left svg {
+    width: 14px;
+    height: 14px;
 }
 
 /* Modal styles removed - using standalone about page */
@@ -608,38 +676,39 @@ canvas#bg::after {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #top-nav {
-        font-size: 7px;
+        font-size: 12px;
         padding: 0 15px;
-        height: 36px;
+        height: 28px;
         line-height: 1.4;
     }
-    
+
     .nav-logo {
         width: 12px;
         height: 12px;
         margin: 0 6px;
     }
-    
+
     .nav-right {
         gap: 12px;
     }
-    
+
     .location-time {
         gap: 6px;
+        font-size: 12px;
     }
-    
+
     .status-light {
-        width: 5px;
-        height: 5px;
+        width: 7px;
+        height: 7px;
     }
-    
+
     .project-title-container {
         height: 20px;
         min-width: 100px;
     }
-    
+
     .project-title {
-        font-size: 7px;
+        font-size: 12px;
         min-width: 100px;
         letter-spacing: 0.3px;
     }
@@ -647,120 +716,264 @@ canvas#bg::after {
 
 @media (max-width: 480px) {
     #top-nav {
-        font-size: 6px;
+        font-size: 11px;
         padding: 0 12px;
-        height: 32px;
+        height: 28px;
         flex-wrap: wrap;
-        min-height: 32px;
+        min-height: 28px;
     }
-    
+
     .nav-left {
         order: 2;
         flex: 1 1 100%;
         justify-content: center;
         margin-top: 4px;
-        font-size: 5px;
+        font-size: 10px;
     }
-    
+
     .nav-center {
         order: 1;
         flex: 1;
     }
-    
+
     .nav-right {
         order: 1;
         flex: 1;
         gap: 8px;
     }
-    
+
     .nav-logo {
         width: 8px;
         height: 8px;
         margin: 0 3px;
     }
+
+    .location-time {
+        font-size: 11px;
+    }
+
+    .project-title {
+        font-size: 11px;
+    }
 }
 
-/* === BOTTOM COMPANY SCROLLING BAR === */
-#bottom-company-bar {
+/* === MACOS DOCK === */
+#macos-dock {
     position: fixed;
-    bottom: 0;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 8px;
+    /* Initial state for animation */
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px);
+    transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#macos-dock.animate-in {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.dock-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: visible;
+}
+
+/* Liquid glass effect - inner glow */
+.dock-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
     left: 0;
     right: 0;
-    height: 32px;
-    background: rgba(28, 28, 28, 0.95);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
-    overflow: hidden;
-    /* Initial state for animation */
-    transform: translateY(100%);
-    opacity: 0;
-    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease-out;
+    bottom: 0;
+    border-radius: 24px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0.02) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
 }
 
-#bottom-company-bar.animate-in {
-    transform: translateY(0);
-    opacity: 1;
+/* Liquid glass effect - outer glow */
+.dock-container::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 26px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.05)
+    );
+    filter: blur(4px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: -1;
 }
 
-.company-scroll-container {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+.dock-icon {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: bottom center;
+    z-index: 2;
 }
 
-.company-scroll-track {
+.dock-icon-inner {
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    border-radius: 18px;
+}
+
+.dock-icon-inner img,
+.dock-icon-inner .dock-icon-svg {
+    width: 100%;
     height: 100%;
-    animation: scroll-companies 60s linear infinite;
-    white-space: nowrap;
-}
-
-.company-item-scroll {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 20px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: white;
-    user-select: none;
-    flex-shrink: 0;
-    transition: color 0.3s ease;
-}
-
-.company-item-scroll:hover {
-    color: #00fff9;
-}
-
-.company-logo-scroll {
-    width: 16px;
-    height: 16px;
     object-fit: contain;
+    border-radius: 14px;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Dark background for Figma and Spline icons */
+.dock-icon[data-app="figma"] .dock-icon-inner,
+.dock-icon[data-app="spline"] .dock-icon-inner {
+    background: rgba(30, 30, 30, 0.9);
+}
+
+/* Light background for Docker, Ollama, and Userbility Lab icons */
+.dock-icon[data-app="docker"] .dock-icon-inner,
+.dock-icon[data-app="ollama"] .dock-icon-inner,
+.dock-icon[data-app="userbilitylab"] .dock-icon-inner {
     background: rgba(255, 255, 255, 0.9);
-    border-radius: 2px;
-    padding: 2px;
 }
 
-.company-name-scroll {
+/* Hover effect - magnification (refined for subtlety) */
+.dock-icon:hover {
+    transform: translateY(-6px) scale(1.15);
+}
+
+.dock-icon:hover .dock-icon-inner {
+    filter: brightness(1.08);
+}
+
+/* Adjacent icon scaling (refined for subtlety) */
+.dock-icon.adjacent-1 {
+    transform: translateY(-3px) scale(1.08);
+}
+
+.dock-icon.adjacent-2 {
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* Dock label */
+.dock-label {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: rgba(40, 40, 40, 0.95);
+    backdrop-filter: blur(20px);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 500;
     white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 10;
 }
 
-@keyframes scroll-companies {
-    0% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+.dock-icon:hover .dock-label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-12px);
 }
 
-/* Responsive adjustments for company bar */
+/* Dock separator */
+.dock-separator {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(255, 255, 255, 0.3) 20%,
+        rgba(255, 255, 255, 0.3) 80%,
+        transparent
+    );
+    margin: 0 4px;
+    align-self: center;
+}
+
+/* Active/Running indicator */
+.dock-icon.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive adjustments for dock */
 @media (max-width: 768px) {
-    #bottom-company-bar {
-        height: 36px;
+    #macos-dock {
+        bottom: 6px;
+    }
+
+    .dock-container {
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .dock-icon-inner {
+        width: 48px;
+        height: 48px;
+        padding: 6px;
+    }
+
+    .dock-separator {
+        height: 40px;
     }
 
     #top-nav {
@@ -768,213 +981,637 @@ canvas#bg::after {
         font-size: 7px;
         padding: 0 15px;
     }
-
-    .company-item-scroll {
-        font-size: 7px;
-        padding: 0 15px;
-        gap: 6px;
-    }
-
-    .company-logo-scroll {
-        width: 14px;
-        height: 14px;
-    }
 }
 
 @media (max-width: 480px) {
-    #bottom-company-bar {
+    #macos-dock {
+        bottom: 4px;
+    }
+
+    .dock-container {
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 16px;
+    }
+
+    .dock-icon-inner {
+        width: 40px;
+        height: 40px;
+        padding: 5px;
+    }
+
+    .dock-separator {
         height: 32px;
+        margin: 0 2px;
     }
 
-    .company-item-scroll {
-        font-size: 6px;
-        padding: 0 12px;
-        gap: 5px;
-    }
-
-    .company-logo-scroll {
-        width: 12px;
-        height: 12px;
-        padding: 1px;
+    .dock-label {
+        font-size: 10px;
+        padding: 3px 8px;
     }
 }
 
-/* === PROJECT MODAL STYLES === */
-.modal {
+/* === PROJECT WINDOW STYLES - macOS Window Management === */
+/* Desktop area - space between top nav and dock */
+#desktop-area {
     position: fixed;
-    top: 0;
+    top: 30px; /* Below navigation */
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2000;
+    right: 0;
+    bottom: 90px; /* Above dock */
+    pointer-events: none;
+    z-index: 1500;
+}
+
+/* Desktop PDF File Icons */
+.desktop-file-icon {
+    position: absolute;
+    top: 20px;
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Position individual icons */
+#desktop-portfolio-icon {
+    right: 20px;
+}
+
+#desktop-bamai-icon {
+    right: 160px; /* Increased from 120px to provide 60px gap between icons */
+}
+
+.desktop-file-icon:hover {
+    transform: scale(1.05);
+}
+
+.desktop-file-icon:active {
+    cursor: grabbing;
+}
+
+.desktop-pdf-svg {
+    width: 80px;
+    height: 100px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    transition: filter 0.2s ease;
+}
+
+.desktop-file-icon:hover .desktop-pdf-svg {
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.4));
+}
+
+.desktop-pdf-thumbnail {
+    width: 80px;
+    height: 100px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.2s ease;
+    background: transparent;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+}
+
+.desktop-file-icon:hover .desktop-pdf-thumbnail {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.desktop-file-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Individual project window */
+.project-window {
+    position: absolute;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    overflow: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, box-shadow 0.2s ease;
+    pointer-events: auto;
+    will-change: transform;
 }
 
-.modal.active {
+.project-window.active {
     opacity: 1;
     visibility: visible;
 }
 
-.modal-overlay {
+/* Window is being dragged */
+.project-window.dragging {
+    transition: none;
+    cursor: grabbing !important;
+}
+
+/* Window is being resized */
+.project-window.resizing {
+    transition: none;
+}
+
+/* Focused/frontmost window */
+.project-window.focused {
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+}
+
+/* Resize handles - macOS native style with clear cursors */
+.resize-handle {
     position: absolute;
+    z-index: 10;
+    background: transparent;
+}
+
+/* Corner resize handles - larger hit area */
+.resize-handle.corner {
+    width: 20px;
+    height: 20px;
+}
+
+.resize-handle.nw {
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    touch-action: none;
+    cursor: nw-resize !important;
+}
+
+.resize-handle.ne {
+    top: 0;
+    right: 0;
+    cursor: ne-resize !important;
+}
+
+.resize-handle.sw {
+    bottom: 0;
+    left: 0;
+    cursor: sw-resize !important;
+}
+
+.resize-handle.se {
+    bottom: 0;
+    right: 0;
+    cursor: se-resize !important;
+}
+
+/* Edge resize handles - larger hit area for easier grabbing */
+.resize-handle.edge {
+    background: transparent;
+}
+
+.resize-handle.n {
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 6px;
+    cursor: n-resize !important;
+}
+
+.resize-handle.s {
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    height: 6px;
+    cursor: s-resize !important;
+}
+
+.resize-handle.e {
+    right: 0;
+    top: 20px;
+    bottom: 20px;
+    width: 6px;
+    cursor: e-resize !important;
+}
+
+.resize-handle.w {
+    left: 0;
+    top: 20px;
+    bottom: 20px;
+    width: 6px;
+    cursor: w-resize !important;
+}
+
+/* Show resize cursor on hover */
+.resize-handle:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Background windows (not focused) */
+.project-window:not(.focused) .modal-content {
+    opacity: 0.95;
+}
+
+/* Legacy modal overlay - now hidden since windows don't cover full screen */
+.modal-overlay {
+    display: none;
 }
 
 .modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    width: 90%;
-    max-width: 900px;
-    max-height: 90vh;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    position: relative;
+    width: 800px;
+    max-width: calc(100vw - 40px);
+    height: 600px;
+    max-height: calc(100vh - 150px); /* Account for nav + dock */
+    /* macOS Sequoia native window styling - clean and minimal */
+    background: rgba(28, 28, 30, 0.98);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 8px 24px rgba(0, 0, 0, 0.3),
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    transition: none; /* Remove transitions for snappier feel */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     cursor: default;
+    overflow: hidden; /* Keep hidden to prevent content from escaping rounded corners */
 }
 
-.modal.active .modal-content {
-    transform: translate(-50%, -50%) scale(1);
+.project-window.active .modal-content {
+    transform: scale(1);
 }
 
-.modal-close {
+/* Liquid glass effect for modal */
+.modal-content::before {
+    content: '';
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.modal-close:hover {
-    color: #00fff9;
-    background: rgba(0, 255, 249, 0.1);
-    transform: scale(1.1);
-}
-
-.modal-header {
-    position: relative;
-    padding: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    flex-shrink: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
     border-radius: 12px 12px 0 0;
 }
 
-.modal-project-image {
-    flex-shrink: 0;
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.05);
+/* Maximized state */
+.project-window.maximized .modal-content {
+    width: calc(100vw - 40px);
+    height: calc(100vh - 150px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* macOS Native Title Bar - Compact */
+.macos-title-bar {
+    position: relative;
+    height: 40px;
+    background: rgba(40, 40, 42, 0.95);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px 10px 0 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
 }
 
-.modal-project-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.macos-title-bar:active {
+    cursor: grabbing;
 }
 
-#modal-project-title {
-    color: #00fff9;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    text-shadow: 0 0 10px rgba(0, 255, 249, 0.3);
-    letter-spacing: -0.5px;
+/* macOS Window Controls (Traffic Lights) */
+.macos-window-controls {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+    align-items: center;
+    -webkit-app-region: no-drag;
+}
+
+/* Window Title in Title Bar */
+.window-title {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    letter-spacing: 0.3px;
+    pointer-events: none;
+    text-align: center;
+}
+
+.window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.window-control::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-size: 8px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.window-control.close {
+    background: linear-gradient(135deg, #FF6159 0%, #FF5F57 100%);
+}
+
+.window-control.close::before {
+    content: '×';
+    font-size: 14px;
+    line-height: 0;
+}
+
+.window-control.minimize {
+    background: linear-gradient(135deg, #FFBD2E 0%, #FFBB2E 100%);
+}
+
+.window-control.minimize::before {
+    content: '−';
+    font-size: 12px;
+    line-height: 0;
+}
+
+.window-control.maximize {
+    background: linear-gradient(135deg, #28CA42 0%, #27C93F 100%);
+}
+
+.window-control.maximize::before {
+    content: '⤢';
+    font-size: 10px;
+    line-height: 0;
+}
+
+.macos-window-controls:hover .window-control::before {
+    opacity: 1;
+}
+
+.window-control:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+.window-control:active {
+    transform: scale(0.95);
+}
+
+/* Content area - clean and minimal */
+.modal-content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent content from escaping */
+    background: rgba(28, 28, 30, 0.98);
+    min-height: 0; /* Critical for flex children to scroll properly */
 }
 
 .modal-body {
     padding: 0;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: #00fff9 transparent;
-    scroll-behavior: smooth;
-    border-radius: 0 0 12px 12px;
+    flex: 1 1 auto; /* Allow flex grow and shrink */
+    overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* Firefox - thumb and track */
+    scroll-behavior: smooth; /* Smooth scrolling */
+    border-radius: 0 0 10px 10px;
     position: relative;
-    min-height: 0;
-    touch-action: pan-y;
+    min-height: 0; /* CRITICAL: Allow flex shrinking - enables scrolling in flex container */
+    touch-action: pan-y; /* Enable touch scrolling */
     cursor: default;
+    z-index: 2;
+    background: transparent;
+    /* Force proper height calculation for scrolling */
+    height: 0; /* CRITICAL: Forces flex item to respect flex container height */
 }
 
+/* macOS native scrollbar styling - WebKit browsers (Chrome, Safari, Edge) */
 .modal-body::-webkit-scrollbar {
-    width: 8px;
+    width: 10px; /* Slightly wider for better visibility */
 }
 
 .modal-body::-webkit-scrollbar-track {
     background: transparent;
+    margin: 4px 0; /* Add margin to avoid touching window edges */
+    border-radius: 5px;
 }
 
 .modal-body::-webkit-scrollbar-thumb {
-    background: #00fff9;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background 0.2s ease;
 }
 
 .modal-body::-webkit-scrollbar-thumb:hover {
-    background: #00cccc;
+    background: rgba(255, 255, 255, 0.35); /* Brighter on hover */
+    background-clip: padding-box;
 }
 
+.modal-body::-webkit-scrollbar-thumb:active {
+    background: rgba(255, 255, 255, 0.45); /* Even brighter when dragging */
+    background-clip: padding-box;
+}
+
+/* Content sections - clean and minimal */
 .modal-section {
-    padding: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 24px 32px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
 }
 
 .modal-section:first-child {
-    border-radius: 0 0 0 0;
+    padding-top: 28px;
 }
 
 .modal-section:last-child {
     border-bottom: none;
-    border-radius: 0 0 12px 12px;
+    padding-bottom: 28px;
 }
 
 .modal-section h2 {
-    color: #ffffff;
-    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.25rem;
     font-weight: 600;
-    margin: 0 0 20px 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #00fff9;
-    display: inline-block;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.3px;
+}
+
+/* Project content styling */
+.project-intro-section {
+    padding: 24px 32px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+}
+
+.project-brief-content {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    font-size: 0.9375rem;
+}
+
+.project-brief-content p {
+    margin: 0 0 12px 0;
+}
+
+.project-brief-content strong {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+}
+
+.project-brief-content h3 {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.125rem;
+    margin: 20px 0 12px 0;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.project-brief-content ul {
+    padding-left: 20px;
+    margin: 15px 0;
+}
+
+.project-brief-content li {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Section 2: Image Gallery (Waterfall/Masonry Layout) */
+.project-gallery-section {
+    padding: 20px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+}
+
+.project-image-masonry {
+    column-count: 3;
+    column-gap: 16px;
+    width: 100%;
+}
+
+.masonry-item {
+    break-inside: avoid;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.masonry-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 255, 249, 0.2);
+}
+
+.masonry-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.masonry-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Section 2 Alternative: PDF Viewer */
+.project-pdf-section {
+    padding: 20px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+    min-height: 600px;
+}
+
+.pdf-viewer-container {
+    width: 100%;
+    height: 700px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.pdf-viewer-container iframe {
+    width: 100%;
+    height: 100%;
+}
+
+/* Section 3: Detailed Text Content */
+.project-details-section {
+    padding: 30px;
+    border-bottom: none;
+}
+
+.detail-content {
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.7;
+    font-size: 1rem;
+    margin-bottom: 30px;
+}
+
+.detail-content:last-child {
+    margin-bottom: 0;
+}
+
+.detail-content h3 {
+    color: #00fff9;
+    font-size: 1.2rem;
+    margin: 25px 0 15px 0;
+    font-weight: 500;
+}
+
+.detail-content p {
+    margin: 0 0 15px 0;
+}
+
+.detail-content strong {
+    color: #00fff9;
+    font-weight: 600;
+}
+
+.detail-content em {
+    color: #ffffff;
+    font-style: italic;
+}
+
+.detail-content ul {
+    padding-left: 20px;
+    margin: 15px 0;
+}
+
+.detail-content li {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .modal-section-content {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.8);
     line-height: 1.7;
     font-size: 1rem;
 }
@@ -1033,6 +1670,348 @@ canvas#bg::after {
     border-radius: 8px;
 }
 
+/* === VIDEO PROTOTYPE STYLES === */
+.project-video-section {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    overflow: hidden;
+}
+
+.video-prototype-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 350px; /* Scale down to fit in window - iPhone mockup is 988x2023 */
+    max-height: calc(100% - 20px); /* Leave small margin */
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iphone-mockup {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio based on width */
+    max-height: 100%; /* Don't exceed container height */
+    display: block;
+    position: relative;
+    z-index: 1;
+    object-fit: contain; /* Scale down mockup to fit container */
+}
+
+.video-overlay-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85.5%; /* Positioned to match iPhone screen area */
+    height: 85.5%; /* Positioned to match iPhone screen area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.prototype-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Fit entire video without cropping */
+    border-radius: 30px;
+    cursor: pointer; /* Indicate video is clickable for play/pause */
+}
+
+.video-controls {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.play-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.play-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+.play-button svg {
+    margin-left: 4px;
+}
+
+/* iOS 26 Liquid Glass Alert - Dark Mode */
+.ios-alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    max-width: 280px;
+    z-index: 4;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.ios-alert-content {
+    /* iOS 26 Liquid Glass Effect - Dark Mode */
+    background: rgba(28, 28, 30, 0.88);
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 24px 20px 20px 20px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.12);
+    width: 100%;
+    position: relative;
+}
+
+/* Liquid glass gradient overlay */
+.ios-alert-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    border-radius: 20px 20px 0 0;
+}
+
+.ios-alert-title {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    letter-spacing: -0.2px;
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+}
+
+.ios-alert-buttons {
+    display: flex;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.ios-alert-button {
+    flex: 1;
+    padding: 13px 16px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #0A84FF; /* iOS 26 blue in dark mode */
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    letter-spacing: -0.2px;
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.ios-alert-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: scale(1.02);
+}
+
+.ios-alert-button:active {
+    transform: scale(0.98);
+}
+
+.ios-alert-button.primary {
+    background: linear-gradient(
+        180deg,
+        rgba(10, 132, 255, 0.95) 0%,
+        rgba(10, 132, 255, 0.85) 100%
+    );
+    color: white;
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 4px 12px rgba(10, 132, 255, 0.3),
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ios-alert-button.primary:hover {
+    background: linear-gradient(
+        180deg,
+        rgba(10, 132, 255, 1) 0%,
+        rgba(10, 132, 255, 0.9) 100%
+    );
+    box-shadow:
+        0 6px 16px rgba(10, 132, 255, 0.4),
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.25);
+}
+
+.ios-alert-button.primary:active {
+    background: linear-gradient(
+        180deg,
+        rgba(8, 106, 204, 0.95) 0%,
+        rgba(8, 106, 204, 0.85) 100%
+    );
+}
+
+/* === STATIC IMAGE VIEWER STYLES === */
+.project-static-image-section {
+    padding: 0 !important; /* Force remove all padding to maximize space */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    overflow: hidden;
+}
+
+.static-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Minimal padding */
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.static-image {
+    width: 100%; /* Fill container width */
+    height: 100%; /* Fill container height */
+    object-fit: contain; /* Scale to fit while maintaining aspect ratio - this is key! */
+    border-radius: 0;
+    cursor: pointer;
+    transition: none;
+}
+
+/* Remove hover effect completely */
+.static-image:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.permission-warning {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* macOS Sequoia dark overlay with blur */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-radius: 0; /* Match window corners */
+}
+
+.warning-content {
+    /* macOS Sequoia liquid glass effect - dark theme */
+    background: rgba(28, 28, 30, 0.98);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 32px 40px;
+    max-width: 420px;
+    text-align: center;
+    /* macOS Sequoia shadow system */
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 8px 24px rgba(0, 0, 0, 0.3),
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
+    position: relative;
+}
+
+/* Liquid glass highlight effect */
+.warning-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    border-radius: 16px 16px 0 0;
+}
+
+.warning-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.warning-text {
+    color: rgba(255, 255, 255, 0.9); /* Light text for dark background */
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    letter-spacing: -0.2px;
+}
+
+.warning-close {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    /* macOS Sequoia accent button */
+    background: rgba(0, 122, 255, 0.9);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.warning-close:hover {
+    background: rgba(0, 122, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.warning-close:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 122, 255, 0.3);
+}
+
 .pdf-fallback {
     position: absolute;
     top: 50%;
@@ -1085,59 +2064,89 @@ canvas#bg::after {
         width: 95%;
         max-height: 90vh;
     }
-    
+
     .modal-header {
         padding: 25px;
         flex-direction: column;
         text-align: center;
         gap: 20px;
     }
-    
+
     .modal-project-image {
         width: 70px;
         height: 70px;
     }
-    
+
     #modal-project-title {
         font-size: 1.8rem;
         line-height: 1.3;
     }
-    
+
     .modal-section {
         padding: 25px;
     }
-    
+
     .modal-section h2 {
         font-size: 1.2rem;
         margin-bottom: 25px;
         line-height: 1.4;
     }
-    
+
     .modal-section-content {
         font-size: 1rem;
         line-height: 1.8;
     }
-    
+
     .modal-section-content p {
         margin-bottom: 20px;
     }
-    
+
     .modal-section-content h3 {
         font-size: 1.1rem;
         margin: 30px 0 20px 0;
         line-height: 1.4;
     }
-    
+
     .modal-section-content ul {
         margin: 20px 0;
         padding-left: 25px;
     }
-    
+
     .modal-section-content li {
         margin: 12px 0;
         line-height: 1.6;
     }
-    
+
+    .project-intro-section {
+        padding: 25px;
+    }
+
+    .project-gallery-section {
+        padding: 15px;
+    }
+
+    .project-image-masonry {
+        column-count: 2;
+        column-gap: 12px;
+    }
+
+    .masonry-item {
+        margin-bottom: 12px;
+    }
+
+    .project-pdf-section {
+        padding: 15px;
+        min-height: 500px;
+    }
+
+    .pdf-viewer-container {
+        height: 600px;
+    }
+
+    .project-details-section {
+        padding: 25px;
+    }
+
     .modal-close {
         top: 12px;
         right: 12px;
@@ -1172,57 +2181,87 @@ canvas#bg::after {
         width: 98%;
         max-height: 92vh;
     }
-    
+
     .modal-header {
         padding: 20px;
         gap: 15px;
     }
-    
+
     .modal-project-image {
         width: 60px;
         height: 60px;
     }
-    
+
     #modal-project-title {
         font-size: 1.5rem;
         line-height: 1.4;
     }
-    
+
     .modal-section {
         padding: 20px;
     }
-    
+
     .modal-section h2 {
         font-size: 1.1rem;
         margin-bottom: 20px;
         line-height: 1.5;
     }
-    
+
     .modal-section-content {
         font-size: 0.95rem;
         line-height: 1.9;
     }
-    
+
     .modal-section-content p {
         margin-bottom: 25px;
     }
-    
+
     .modal-section-content h3 {
         font-size: 1rem;
         margin: 25px 0 18px 0;
         line-height: 1.5;
     }
-    
+
     .modal-section-content ul {
         margin: 25px 0;
         padding-left: 20px;
     }
-    
+
     .modal-section-content li {
         margin: 15px 0;
         line-height: 1.7;
     }
-    
+
+    .project-intro-section {
+        padding: 20px;
+    }
+
+    .project-gallery-section {
+        padding: 12px;
+    }
+
+    .project-image-masonry {
+        column-count: 1;
+        column-gap: 10px;
+    }
+
+    .masonry-item {
+        margin-bottom: 10px;
+    }
+
+    .project-pdf-section {
+        padding: 12px;
+        min-height: 400px;
+    }
+
+    .pdf-viewer-container {
+        height: 500px;
+    }
+
+    .project-details-section {
+        padding: 20px;
+    }
+
     .modal-close {
         top: 8px;
         right: 8px;
@@ -1249,5 +2288,336 @@ canvas#bg::after {
     .pdf-download-link {
         padding: 8px 16px;
         font-size: 0.85rem;
+    }
+}
+
+
+/* === macOS Sequoia Desktop Widgets === */
+.desktop-widgets {
+    position: absolute;
+    left: 1vw;
+    top: 1vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6vw;
+    pointer-events: auto;
+    z-index: 10;
+    transform: scale(0.85); /* Increased from 0.7 to 0.85 (21% larger) */
+    transform-origin: top left;
+}
+
+/* Base widget styling - Liquid Glass effect */
+.widget {
+    background: rgba(240, 240, 245, 0.85);
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px) saturate(180%);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 0.5px solid rgba(255, 255, 255, 0.6);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.widget:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Liquid glass luminosity effect */
+.widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 20%,
+        rgba(255, 255, 255, 0.4) 0%,
+        transparent 50%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+/* Calendar Widget */
+.widget-calendar {
+    width: 200px;
+}
+
+.widget-header {
+    margin-bottom: 8px;
+}
+
+.widget-day-name {
+    color: #FF3B30;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.widget-date {
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1;
+    color: #1C1C1E;
+    margin-bottom: 10px;
+}
+
+.widget-event {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+}
+
+.event-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FF3B30;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: #1C1C1E;
+    margin-bottom: 2px;
+}
+
+.event-time {
+    font-size: 10px;
+    color: #8E8E93;
+}
+
+/* Weather Widget */
+.widget-weather {
+    width: 200px;
+    background: linear-gradient(135deg, rgba(135, 206, 250, 0.9) 0%, rgba(100, 149, 237, 0.9) 100%);
+    color: white;
+}
+
+.widget-location {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.widget-temp {
+    font-size: 48px;
+    font-weight: 200;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.widget-weather-icon {
+    font-size: 36px;
+    margin-bottom: 6px;
+}
+
+.widget-condition {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* World Clock Widget */
+.widget-clock {
+    width: 420px;
+    background: rgba(28, 28, 30, 0.9);
+    color: white;
+}
+
+.clock-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.clock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.clock-canvas {
+    width: 70px;
+    height: 70px;
+}
+
+.clock-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+.clock-time {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.clock-offset {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Reminders Widget */
+.widget-reminders {
+    width: 200px;
+}
+
+.widget-reminders-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.reminders-icon {
+    font-size: 18px;
+}
+
+.widget-reminders-count {
+    background: #007AFF;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.widget-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #007AFF;
+    margin-bottom: 10px;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.reminder-item:last-child {
+    border-bottom: none;
+}
+
+.reminder-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #C7C7CC;
+    border-radius: 50%;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reminder-checkbox:hover {
+    border-color: #007AFF;
+    background: rgba(0, 122, 255, 0.1);
+}
+
+.reminder-text {
+    font-size: 11px;
+    color: #1C1C1E;
+    flex: 1;
+}
+
+
+/* Responsive scaling for widgets */
+@media (max-width: 1600px) {
+    .desktop-widgets {
+        transform: scale(0.73); /* Increased from 0.6 to 0.73 (21% larger) */
+    }
+}
+
+@media (max-width: 1200px) {
+    .desktop-widgets {
+        transform: scale(0.61); /* Increased from 0.5 to 0.61 (22% larger) */
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-widgets {
+        transform: scale(0.48); /* Increased from 0.4 to 0.48 (20% larger) */
+        left: 0.5vw;
+        top: 0.5vh;
+    }
+
+    .widget-clock {
+        width: 320px;
+    }
+
+    .clock-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    /* Adjust desktop icon spacing for tablets */
+    #desktop-portfolio-icon {
+        right: 15px;
+    }
+
+    #desktop-bamai-icon {
+        right: 130px; /* Reduced spacing but still maintains 35px gap */
+    }
+
+    .desktop-file-icon {
+        width: 70px; /* Slightly smaller icons */
+    }
+
+    .desktop-pdf-thumbnail {
+        width: 70px;
+        height: 88px;
+    }
+
+    .desktop-file-label {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Adjust desktop icon spacing for mobile */
+    #desktop-portfolio-icon {
+        right: 10px;
+        top: 15px;
+    }
+
+    #desktop-bamai-icon {
+        right: 100px; /* Further reduced but maintains 20px gap */
+        top: 15px;
+    }
+
+    .desktop-file-icon {
+        width: 60px; /* Smaller icons for mobile */
+    }
+
+    .desktop-pdf-thumbnail {
+        width: 60px;
+        height: 75px;
+    }
+
+    .desktop-file-label {
+        font-size: 10px;
+        padding: 1px 6px;
     }
 }
