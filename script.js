@@ -931,89 +931,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectModalData = {
         "Bamai": {
             logo: "img/bamai_logo.png",
+            contentType: "pdf", // Indicates this project should display a PDF
+            pdfPath: "BamaiCaseStudy.pdf#toolbar=0&navpanes=0",
+            // Fallback content in case PDF cannot be displayed
             brief: `
                 <p><strong>Bamai</strong> is a revolutionary fitness ecosystem that transforms how people approach health and wellness through intelligent wearable technology and personalized coaching.</p>
-
-                <h3>Design Process & Methodology</h3>
-                <p>Following a <strong>Human-Centered Design (HCD)</strong> approach combined with <strong>Lean UX principles</strong>, the Bamai project employed a comprehensive design thinking methodology:</p>
-                <ul>
-                    <li><strong>Empathize & Research:</strong> Conducted 45+ user interviews with fitness enthusiasts, personal trainers, and health-conscious individuals. Utilized ethnographic studies in gyms and home workout environments to understand pain points and behavioral patterns.</li>
-                    <li><strong>Define & Synthesize:</strong> Applied Jobs-to-be-Done (JTBD) framework to identify core user needs. Created detailed personas and journey maps highlighting emotional and functional requirements throughout the fitness experience.</li>
-                    <li><strong>Ideate & Co-create:</strong> Facilitated design sprints with cross-functional teams including fitness experts, data scientists, and behavioral psychologists. Employed "How Might We" sessions to generate innovative solutions.</li>
-                    <li><strong>Prototype & Test:</strong> Developed rapid prototypes using Figma and Principle, conducting weekly usability testing sessions. Implemented A/B testing for key interaction patterns and information architecture decisions.</li>
-                    <li><strong>Iterate & Scale:</strong> Established continuous feedback loops with beta users, utilizing analytics and user feedback to refine the experience. Applied atomic design principles for scalable component systems.</li>
-                </ul>
-
-                <h3>Problem Statement</h3>
-                <p>Traditional fitness solutions are fragmented, offering either expensive personal training or generic app-based workouts. Users struggle with motivation, proper form, and consistent progress tracking. The market lacks an integrated solution that provides professional guidance at scale while maintaining personalization.</p>
-                
-                <h3>Solution</h3>
-                <p>Bamai bridges this gap by combining:</p>
-                <ul>
-                    <li><strong>Smart Wearables</strong> - Advanced sensors for real-time form correction and performance tracking</li>
-                    <li><strong>AI-Powered Coaching</strong> - Personalized workout plans that adapt to user progress and preferences</li>
-                    <li><strong>Community Integration</strong> - Social features that gamify fitness and build accountability</li>
-                    <li><strong>Comprehensive Analytics</strong> - Detailed insights into progress, recovery, and optimal training zones</li>
-                </ul>
-                
-                <h3>Target Audience</h3>
-                <p>Health-conscious individuals aged 25-45 who value technology-driven solutions, have disposable income for premium fitness products, and seek professional guidance without the constraints of traditional gym memberships.</p>
+                <p>View the complete case study in the PDF viewer above, or <a href="BamaiCaseStudy.pdf" download style="color: #00fff9; text-decoration: underline;">download the PDF</a>.</p>
             `,
-            designPhilosophy: `
-                <h3>Design Philosophy</h3>
-                <p>Bamai's design philosophy centers on <em>"Effortless Excellence"</em> - creating interfaces that feel intuitive while delivering sophisticated functionality. Every interaction should feel natural and empower users to achieve their fitness goals without technical barriers.</p>
-                
-                <h3>Visual Identity</h3>
-                <p>The brand leverages a <strong>modern, energetic aesthetic</strong> with:</p>
-                <ul>
-                    <li><strong>Color Palette</strong> - Vibrant blues and greens representing vitality and growth, balanced with clean whites and subtle grays</li>
-                    <li><strong>Typography</strong> - Modern sans-serif fonts that convey clarity and precision</li>
-                    <li><strong>Iconography</strong> - Geometric, minimalist icons that emphasize movement and progress</li>
-                    <li><strong>Motion Design</strong> - Smooth, purposeful animations that mirror the fluidity of physical movement</li>
-                </ul>
-                
-                <h3>UI Design Principles</h3>
-                <p><strong>Clarity Over Complexity:</strong> Every screen serves a specific purpose with clear hierarchy and minimal cognitive load.</p>
-                <p><strong>Data Visualization:</strong> Complex fitness metrics are presented through intuitive charts and progress indicators that motivate continued engagement.</p>
-                <p><strong>Contextual Feedback:</strong> Real-time visual and haptic feedback ensures users understand their performance and can make immediate adjustments.</p>
-                <p><strong>Accessibility First:</strong> High contrast ratios, scalable fonts, and voice commands ensure the platform is inclusive for all users.</p>
-            `,
-            uxStrategy: `
-                <h3>User Experience Strategy</h3>
-                <p>The UX strategy focuses on creating <strong>seamless user journeys</strong> that reduce friction and maximize engagement through every touchpoint of the fitness experience.</p>
-                
-                <h3>Onboarding Journey</h3>
-                <p>New users experience a <strong>progressive disclosure</strong> approach:</p>
-                <ul>
-                    <li><strong>Step 1:</strong> Quick fitness assessment to understand current level and goals</li>
-                    <li><strong>Step 2:</strong> Device pairing with guided setup and calibration</li>
-                    <li><strong>Step 3:</strong> First workout experience with comprehensive coaching</li>
-                    <li><strong>Step 4:</strong> Community integration and goal setting</li>
-                </ul>
-                
-                <h3>Engagement Loops</h3>
-                <p><strong>Daily Engagement:</strong> Morning check-ins, workout reminders, and evening progress reviews create consistent touchpoints.</p>
-                <p><strong>Weekly Challenges:</strong> Gamified competitions and personal milestones maintain long-term motivation.</p>
-                <p><strong>Monthly Insights:</strong> Comprehensive progress reports and goal adjustments keep users aligned with their objectives.</p>
-                
-                <h3>Behavioral Design</h3>
-                <p>The platform incorporates proven behavioral psychology principles:</p>
-                <ul>
-                    <li><strong>Variable Rewards:</strong> Unexpected achievements and milestone celebrations</li>
-                    <li><strong>Social Proof:</strong> Community achievements and shared progress</li>
-                    <li><strong>Loss Aversion:</strong> Streak tracking and gentle reminders about maintaining progress</li>
-                    <li><strong>Commitment Devices:</strong> Public goal setting and accountability partnerships</li>
-                </ul>
-                
-                <h3>Success Metrics</h3>
-                <p>UX success is measured through:</p>
-                <ul>
-                    <li>Monthly active users and retention rates</li>
-                    <li>Workout completion rates and progression tracking</li>
-                    <li>Community engagement and social sharing</li>
-                    <li>User satisfaction scores and Net Promoter Score</li>
-                </ul>
-                         `
+            designPhilosophy: ``,
+            uxStrategy: ``
          },
          "Ruce": {
              logo: "img/ruce_logo.png",
@@ -1329,7 +1255,7 @@ document.addEventListener('DOMContentLoaded', () => {
          console.log('🚀 DEBUG: Opening modal for project:', projectName);
          console.log('🔍 DEBUG: Modal element exists:', !!modal);
          console.log('🔍 DEBUG: Project modal data:', projectModalData[projectName]);
-         
+
          const projectData = projectModalData[projectName];
          if (!projectData) {
              console.error(`❌ No modal data found for project: ${projectName}`);
@@ -1346,9 +1272,60 @@ document.addEventListener('DOMContentLoaded', () => {
          modalProjectTitle.textContent = projectName;
          modalProjectLogo.src = projectData.logo;
          modalProjectLogo.alt = `${projectName} Logo`;
-         modalProjectBrief.innerHTML = projectData.brief;
-         modalDesignPhilosophy.innerHTML = projectData.designPhilosophy;
-         modalUxStrategy.innerHTML = projectData.uxStrategy;
+
+         // Check if this project should display a PDF
+         if (projectData.contentType === 'pdf' && projectData.pdfPath) {
+             console.log('📄 DEBUG: Displaying PDF content for:', projectName);
+
+             // Create PDF viewer container
+             const pdfContainer = `
+                 <div class="pdf-viewer-container">
+                     <iframe
+                         src="${projectData.pdfPath}"
+                         class="pdf-iframe"
+                         title="${projectName} Case Study PDF"
+                         frameborder="0">
+                     </iframe>
+                     <div class="pdf-fallback">
+                         <p>Your browser does not support inline PDF viewing.</p>
+                         <a href="${projectData.pdfPath}" download class="pdf-download-link">
+                             📥 Download ${projectName} Case Study PDF
+                         </a>
+                     </div>
+                 </div>
+             `;
+
+             // Replace modal body content with PDF viewer
+             modalProjectBrief.innerHTML = pdfContainer;
+             modalDesignPhilosophy.innerHTML = '';
+             modalUxStrategy.innerHTML = '';
+
+             // Hide the section headers for PDF view
+             const sections = document.querySelectorAll('.modal-section');
+             sections.forEach((section, index) => {
+                 if (index === 0) {
+                     // Keep first section visible for PDF
+                     const header = section.querySelector('h2');
+                     if (header) header.style.display = 'none';
+                 } else {
+                     // Hide other sections
+                     section.style.display = 'none';
+                 }
+             });
+         } else {
+             // Display regular HTML content
+             modalProjectBrief.innerHTML = projectData.brief;
+             modalDesignPhilosophy.innerHTML = projectData.designPhilosophy;
+             modalUxStrategy.innerHTML = projectData.uxStrategy;
+
+             // Show all sections for regular content
+             const sections = document.querySelectorAll('.modal-section');
+             sections.forEach(section => {
+                 section.style.display = 'block';
+                 const header = section.querySelector('h2');
+                 if (header) header.style.display = 'block';
+             });
+         }
 
          // Reset modal scroll position to top
         const modalBody = document.querySelector('.modal-body');

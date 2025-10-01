@@ -1010,6 +1010,75 @@ canvas#bg::after {
     font-style: italic;
 }
 
+/* === PDF VIEWER STYLES === */
+.pdf-viewer-container {
+    position: relative;
+    width: 100%;
+    height: calc(90vh - 200px); /* Account for modal header */
+    min-height: 500px;
+    background: #2a2a2a;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdf-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+.pdf-fallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 30px;
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 249, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Show fallback only if iframe fails to load */
+.pdf-iframe:not([src]),
+.pdf-iframe[src=""] ~ .pdf-fallback {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.pdf-fallback p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.pdf-download-link {
+    display: inline-block;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #00fff9 0%, #00b8d4 100%);
+    color: #1a1a1a;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 249, 0.3);
+}
+
+.pdf-download-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 249, 0.5);
+    background: linear-gradient(135deg, #00fff9 0%, #00d4ff 100%);
+}
+
 /* Responsive modal styles */
 @media (max-width: 768px) {
     .modal-content {
@@ -1076,6 +1145,26 @@ canvas#bg::after {
         width: 36px;
         height: 36px;
     }
+
+    /* PDF viewer responsive adjustments */
+    .pdf-viewer-container {
+        height: calc(90vh - 180px);
+        min-height: 400px;
+    }
+
+    .pdf-fallback {
+        padding: 20px;
+    }
+
+    .pdf-fallback p {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .pdf-download-link {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1141,4 +1230,24 @@ canvas#bg::after {
         width: 32px;
         height: 32px;
     }
-} 
+
+    /* PDF viewer responsive adjustments for mobile */
+    .pdf-viewer-container {
+        height: calc(92vh - 150px);
+        min-height: 300px;
+    }
+
+    .pdf-fallback {
+        padding: 15px;
+    }
+
+    .pdf-fallback p {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+
+    .pdf-download-link {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
