@@ -39,7 +39,20 @@ function initializeNavigation() {
 // Initialize navigation when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeNavigation);
 
+// --- Global Error Handler ---
+window.addEventListener('error', (event) => {
+    console.error('❌ GLOBAL ERROR:', event.error);
+    console.error('❌ Error details:', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+    });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 DOM loaded, initializing portfolio...');
+
     // Check if this is the about page - if so, only run basic scripts
     if (document.body.classList.contains('about-page')) {
         console.log('About page detected - running basic scripts only');
@@ -73,13 +86,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (typeof THREE === 'undefined') {
-        console.error('Three.js has not been loaded. See https://threejs.org');
+        console.error('❌ CRITICAL: Three.js has not been loaded. See https://threejs.org');
+        console.error('❌ Check if the Three.js CDN is accessible');
         return;
     }
+
+    console.log('✅ Three.js loaded successfully:', THREE.REVISION);
 
     const topNav = document.getElementById('top-nav');
     const macosDock = document.getElementById('macos-dock');
     const canvas = document.getElementById('bg');
+
+    console.log('🎬 Canvas element check:', canvas ? '✅ Found' : '❌ Not found');
+    if (!canvas) {
+        console.error('❌ CRITICAL: Canvas element with id "bg" not found!');
+        return;
+    }
+
+    // Check canvas styles
+    const canvasStyles = window.getComputedStyle(canvas);
+    console.log('📊 Canvas styles:', {
+        width: canvasStyles.width,
+        height: canvasStyles.height,
+        opacity: canvasStyles.opacity,
+        display: canvasStyles.display,
+        position: canvasStyles.position
+    });
 
     // --- Page Load Animation Sequence (SIMPLIFIED - NO LOADING SCREEN) ---
     const initializePageAnimations = () => {
@@ -298,17 +330,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // New function to initialize scene without loading screen
     const initializeSceneWithoutLoading = () => {
-        console.log('Initializing scene without loading screen...');
+        console.log('🎬 Initializing scene without loading screen...');
 
         // Make canvas visible immediately
         canvas.style.opacity = '1';
+        console.log('✅ Canvas opacity set to 1');
+
+        // Verify the opacity was actually set
+        setTimeout(() => {
+            const newOpacity = window.getComputedStyle(canvas).opacity;
+            console.log('🔍 Canvas opacity after setting:', newOpacity);
+        }, 100);
 
         // Project title initialization removed (canvas interaction removed)
 
-        // Planes are already visible, no need for intro animation
-        planes.forEach((plane) => {
-            plane.material.uniforms.u_intensity.value = 1;
-        });
+        // Planes will be made visible as they load (no need to access empty planes array here)
+        console.log('📊 Planes will be made visible as they are created');
+
+        // Set a flag to make planes visible as they're created
+        window.makePlanesVisible = true;
     };
 
 
@@ -627,12 +667,23 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     // --- Scene Setup ---
+    console.log('🎬 Creating Three.js scene...');
+
     const scene = new THREE.Scene();
+    console.log('✅ Scene created');
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    console.log('✅ Camera created');
+
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    console.log('✅ Renderer created and configured');
+
     camera.position.z = 40;
+    console.log('✅ Camera positioned at z=40');
+
+    console.log('📊 Scene setup complete - Canvas size:', window.innerWidth, 'x', window.innerHeight);
 
     // --- Texture Loader ---
     const textureLoader = new THREE.TextureLoader();
@@ -1267,7 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
              // Set fixed size for video prototype window
              // Sized to show scaled-down iPhone mockup with proper aspect ratio
              windowEl.style.width = '450px';  // Narrower to match scaled mockup
-             windowEl.style.height = '850px'; // Tall enough for iPhone aspect ratio (2:1 roughly)
+             windowEl.style.height = '600px'; // More reasonable height for iPhone aspect ratio
          }
 
          // Setup video prototype controls if applicable
@@ -1846,7 +1897,235 @@ document.addEventListener('DOMContentLoaded', () => {
     const bamaiY = totalHeight / 2 - (0 * gridConfig.spacingY); // Bamai is at index 0
     camera.position.y = bamaiY;
 
+    // === AUTO-PLAY ANIMATION SYSTEM ===
+    let currentRow = 0;
+    let currentCol = 0;
+    let autoPlayStartTime = performance.now();
+    let isAutoPlayTransitioning = false;
+    let lastUserInteraction = 0;
+
+    const autoPlayConfig = {
+        timePerImage: 2500, // 2.5 seconds per image
+        verticalTransitionTime: 1200, // 1.2 seconds for vertical transitions
+        pauseAtRowEnd: 600, // Brief pause at end of each row
+        userInteractionPause: 4000, // Pause auto-play for 4 seconds after user interaction
+        enabled: true
+    };
+
+    // Easing function for smooth transitions
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // Calculate Y position for a given row
+    function calculateRowY(rowIndex) {
+        const totalHeight = (gridConfig.rows - 1) * gridConfig.spacingY;
+        const result = totalHeight / 2 - (rowIndex * gridConfig.spacingY);
+        return result;
+    }
+
+    // Calculate X position for a given image in a row
+    function calculateImageX(rowIndex, colIndex) {
+        if (!projectAssets[rowIndex]) {
+            console.error(`❌ calculateImageX: Invalid rowIndex ${rowIndex}, projectAssets length: ${projectAssets.length}`);
+            return 0;
+        }
+        const project = projectAssets[rowIndex];
+        const numAssets = Math.min(project.assets.length, gridConfig.maxCols);
+        const rowWidth = (numAssets - 1) * gridConfig.spacingX;
+        const startX = -rowWidth / 2;
+        const result = startX + (colIndex * gridConfig.spacingX);
+        return result;
+    }
+
+    // Smooth camera animation function
+    function animateCameraTo(targetX, targetY, duration, onComplete) {
+        const startX = camera.position.x;
+        const startY = camera.position.y;
+        const startTime = performance.now();
+        isAutoPlayTransitioning = true;
+
+        function animateStep() {
+            const elapsed = performance.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeInOutCubic(progress);
+
+            camera.position.x = startX + (targetX - startX) * easedProgress;
+            camera.position.y = startY + (targetY - startY) * easedProgress;
+
+            if (progress < 1) {
+                requestAnimationFrame(animateStep);
+            } else {
+                isAutoPlayTransitioning = false;
+                if (onComplete) {
+                    onComplete();
+                }
+            }
+        }
+        animateStep();
+    }
+
+    // Advance to next position in auto-play sequence
+    function advanceAutoPlay() {
+        if (!autoPlayConfig.enabled || isAutoPlayTransitioning) return;
+
+        const currentProject = projectAssets[currentRow];
+        const numImagesInRow = Math.min(currentProject.assets.length, gridConfig.maxCols);
+
+        console.log(`Auto-play: Row ${currentRow} (${currentProject.name}), Col ${currentCol}/${numImagesInRow-1}`);
+
+        if (currentCol < numImagesInRow - 1) {
+            // Move to next image in current row (horizontal scroll)
+            currentCol++;
+            const targetX = calculateImageX(currentRow, currentCol);
+            const targetY = calculateRowY(currentRow);
+
+            console.log(`Moving horizontally to image ${currentCol} at position (${targetX.toFixed(1)}, ${targetY.toFixed(1)})`);
+
+            // Update cameraTarget to match auto-play target (prevents bouncing back)
+            cameraTarget.x = targetX;
+            cameraTarget.y = targetY;
+
+            animateCameraTo(targetX, targetY, autoPlayConfig.timePerImage, () => {
+                autoPlayStartTime = performance.now();
+            });
+        } else {
+            // Move to next row (vertical progression)
+            currentCol = 0;
+            const nextRow = (currentRow + 1) % projectAssets.length;
+            console.log(`Moving vertically from row ${currentRow} to row ${nextRow} (${nextRow === 0 ? 'LOOPING BACK TO START' : projectAssets[nextRow].name})`);
+
+            currentRow = nextRow;
+
+            const targetX = calculateImageX(currentRow, currentCol);
+            const targetY = calculateRowY(currentRow);
+
+            // Update cameraTarget to match auto-play target (prevents bouncing back)
+            cameraTarget.x = targetX;
+            cameraTarget.y = targetY;
+
+            // Add a brief pause at the end of each row
+            setTimeout(() => {
+                animateCameraTo(targetX, targetY, autoPlayConfig.verticalTransitionTime, () => {
+                    autoPlayStartTime = performance.now();
+                });
+            }, autoPlayConfig.pauseAtRowEnd);
+        }
+    }
+
+    // Update auto-play system
+    function updateAutoPlay(currentTime) {
+        if (!autoPlayConfig.enabled || !projectAssets || projectAssets.length === 0) return;
+
+        // Check if user has interacted recently
+        const timeSinceUserInteraction = currentTime - lastUserInteraction;
+        if (timeSinceUserInteraction < autoPlayConfig.userInteractionPause) {
+            return; // Pause auto-play during user interaction
+        }
+
+        // Check if it's time to advance to next position
+        if (!isAutoPlayTransitioning) {
+            const elapsed = currentTime - autoPlayStartTime;
+
+            // Ensure currentRow is valid
+            if (currentRow >= projectAssets.length) {
+                currentRow = 0;
+                currentCol = 0;
+            }
+
+            const currentProject = projectAssets[currentRow];
+            if (!currentProject || !currentProject.assets) return;
+
+            const numImagesInRow = Math.min(currentProject.assets.length, gridConfig.maxCols);
+
+            // Use different timing for horizontal vs vertical transitions
+            const timeThreshold = currentCol < numImagesInRow - 1 ?
+                autoPlayConfig.timePerImage : autoPlayConfig.verticalTransitionTime;
+
+            if (elapsed >= timeThreshold) {
+                advanceAutoPlay();
+            }
+        }
+    }
+
+    // Function to pause auto-play on user interaction
+    function pauseAutoPlayOnInteraction() {
+        lastUserInteraction = performance.now();
+    }
+
+    // Initialize auto-play - start at first image of first row
+    const initialX = calculateImageX(0, 0);
+    const initialY = calculateRowY(0);
+
+    console.log('🎯 DEBUG: Initial camera position:', { x: initialX, y: initialY, z: camera.position.z });
+    console.log('🎯 DEBUG: Grid config:', gridConfig);
+    console.log('🎯 DEBUG: Project assets length:', projectAssets.length);
+
+    camera.position.x = initialX;
+    camera.position.y = initialY;
+    autoPlayStartTime = performance.now();
+
+    // Function to toggle auto-play
+    function toggleAutoPlay() {
+        autoPlayConfig.enabled = !autoPlayConfig.enabled;
+        console.log('🎬 Auto-play', autoPlayConfig.enabled ? 'ENABLED' : 'DISABLED');
+
+        // Update UI indicator
+        const indicator = document.getElementById('auto-play-indicator');
+        if (indicator) {
+            if (autoPlayConfig.enabled) {
+                indicator.classList.remove('disabled');
+                indicator.title = 'Auto-play active (Press SPACE to toggle)';
+            } else {
+                indicator.classList.add('disabled');
+                indicator.title = 'Auto-play paused (Press SPACE to toggle)';
+            }
+        }
+
+        if (autoPlayConfig.enabled) {
+            autoPlayStartTime = performance.now(); // Reset timing when re-enabling
+            console.log('🚀 Auto-play restarted');
+        }
+    }
+
+    // Add keyboard controls for auto-play
+    document.addEventListener('keydown', (event) => {
+        if (event.key === ' ' || event.key === 'Spacebar') { // Spacebar to toggle auto-play
+            event.preventDefault();
+            toggleAutoPlay();
+        }
+    });
+
+    // Add click handler for auto-play indicator
+    document.addEventListener('DOMContentLoaded', () => {
+        const indicator = document.getElementById('auto-play-indicator');
+        if (indicator) {
+            indicator.addEventListener('click', toggleAutoPlay);
+        }
+    });
+
+    // Log initial auto-play status
+    console.log('🎬 Auto-play system initialized - Press SPACEBAR to toggle on/off');
+    console.log(`📊 Grid: ${projectAssets.length} rows, up to ${gridConfig.maxCols} columns per row`);
+    console.log(`⏱️ Timing: ${autoPlayConfig.timePerImage}ms per image, ${autoPlayConfig.verticalTransitionTime}ms for row transitions`);
+
+    // Add global function for debugging
+    window.getAutoPlayStatus = () => {
+        return {
+            enabled: autoPlayConfig.enabled,
+            currentRow: currentRow,
+            currentCol: currentCol,
+            currentProject: projectAssets[currentRow]?.name,
+            isTransitioning: isAutoPlayTransitioning,
+            timeSinceLastAdvance: performance.now() - autoPlayStartTime
+        };
+    };
+
+    console.log('🔧 Debug: Call getAutoPlayStatus() in console to check current status');
+
     const planes = [];
+
+    // Test cube removed - scene is working correctly
 
     const setupPlane = (texture, position, projectName, assetIndex) => {
         if (DEBUG) console.log('🛠️ DEBUG: Setting up plane:', {
@@ -1891,7 +2170,12 @@ document.addEventListener('DOMContentLoaded', () => {
         scene.add(plane);
         planes.push(plane);
 
-        if (DEBUG) console.log('📊 DEBUG: Total planes now:', planes.length);
+        // Make plane visible if the scene has been initialized
+        if (window.makePlanesVisible) {
+            plane.material.uniforms.u_intensity.value = 1;
+        }
+
+        if (DEBUG) console.log(`✅ Plane added: ${projectName}[${assetIndex}] - Total: ${planes.length}`);
     };
 
     // Create planes organized by project rows
@@ -1916,9 +2200,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
                 if (asset.type === 'image') {
-                    textureLoader.load(asset.src, (texture) => {
-                        setupPlane(texture, position, project.name, assetIndex);
-                    });
+                    textureLoader.load(
+                        asset.src,
+                        (texture) => {
+                            setupPlane(texture, position, project.name, assetIndex);
+                        },
+                        undefined, // progress callback removed for cleaner logs
+                        (error) => {
+                            console.error(`❌ Failed to load texture: ${asset.src}`, error);
+                        }
+                    );
                 } else if (asset.type === 'video') {
                     const video = document.createElement('video');
                     video.src = asset.src;
@@ -1951,8 +2242,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cameraTarget = new THREE.Vector2();
 
     // Set initial camera target to show Bamai (first project) on load
-    // Use the same Y position as the camera
-    cameraTarget.y = camera.position.y;
+    cameraTarget.x = calculateImageX(0, 0);
+    cameraTarget.y = calculateRowY(0);
+    console.log('🎯 Camera target set to first image position');
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     let currentHoveredPlane = null;
@@ -1979,11 +2271,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
+        const currentTime = performance.now();
 
-        // Canvas interaction removed - camera is now static
-        // Update camera position smoothly
-        camera.position.x += (cameraTarget.x - camera.position.x) * 0.06;
-        camera.position.y += (cameraTarget.y - camera.position.y) * 0.06;
+        // --- Auto-play Animation Update ---
+        updateAutoPlay(currentTime);
+
+        // Update camera position smoothly (for manual interactions, auto-play handles its own camera movement)
+        if (!isAutoPlayTransitioning) {
+            // Use gentler interpolation when auto-play is enabled to avoid conflicts
+            const interpolationFactor = autoPlayConfig.enabled ? 0.02 : 0.06;
+            camera.position.x += (cameraTarget.x - camera.position.x) * interpolationFactor;
+            camera.position.y += (cameraTarget.y - camera.position.y) * interpolationFactor;
+        }
 
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(planes);
@@ -1995,6 +2294,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 object.material.uniforms.u_mouse.value = intersection.uv;
                 object.material.uniforms.u_intensity.value = 1.0;
                 if (currentHoveredPlane !== object) {
+                    // Pause auto-play on user interaction
+                    pauseAutoPlayOnInteraction();
+
                     if (currentHoveredPlane) {
                         currentHoveredPlane.material.uniforms.u_intensity.value = 0;
                         // Remove previous plane from hover glitch effect
@@ -2093,7 +2395,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderer.render(scene, camera);
+
+        // Test cube rotation removed
+
+        // Debug logging every 300 frames (roughly every 5 seconds at 60fps)
+        if (Math.floor(elapsedTime * 60) % 300 === 0) {
+            console.log(`🎬 Auto-play: Time: ${elapsedTime.toFixed(1)}s, Planes: ${planes.length}, Camera: (${camera.position.x.toFixed(1)}, ${camera.position.y.toFixed(1)}, ${camera.position.z.toFixed(1)})`);
+        }
     }
+
+    console.log('🚀 Starting animate loop...');
     animate();
 
     // --- Resize Handling ---

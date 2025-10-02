@@ -549,6 +549,47 @@ canvas#bg::after {
     z-index: 2;
 }
 
+/* Auto-play indicator */
+.auto-play-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(0, 255, 0, 0.9);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auto-play-indicator.disabled {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.auto-play-icon {
+    font-size: 8px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.auto-play-indicator.disabled .auto-play-icon {
+    animation: none;
+}
+
+.auto-play-text {
+    letter-spacing: 0.5px;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
 .project-title-container {
     position: relative;
     height: 20px;
