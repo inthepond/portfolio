@@ -924,6 +924,7 @@ canvas#bg::after {
 /* Hover effect - magnification (refined for subtlety) */
 .dock-icon:hover {
     transform: translateY(-6px) scale(1.15);
+    cursor: pointer;
 }
 
 .dock-icon:hover .dock-icon-inner {
@@ -1955,6 +1956,220 @@ canvas#bg::after {
 .static-image:hover {
     transform: none;
     box-shadow: none;
+}
+
+/* === INFO WINDOW STYLES === */
+.project-info-section {
+    padding: 20px;
+}
+
+.info-window-content {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+    color: #ffffff;
+}
+
+.info-window-content h3 {
+    color: #00fff9;
+    margin: 0 0 16px 0;
+    font-size: 1.4em;
+    font-weight: 600;
+}
+
+.info-window-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+}
+
+.info-window-content li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.info-window-content li:last-child {
+    border-bottom: none;
+}
+
+.info-window-content em {
+    color: #00fff9;
+    font-style: italic;
+    display: block;
+    margin-top: 16px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* === OLLAMA CHAT INTERFACE STYLES === */
+.project-ollama-section {
+    padding: 0 !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Override modal-body scrolling for Ollama chat */
+.project-window[data-project="Ollama"] .modal-body {
+    overflow: hidden !important;
+    height: auto !important;
+}
+
+.ollama-chat-interface {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.ollama-logo {
+    font-size: 24px;
+    margin-right: 12px;
+}
+
+.model-selector {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.model-dropdown {
+    margin-left: 8px;
+    opacity: 0.7;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0; /* Important for flex scrolling */
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.user-message {
+    align-self: flex-end;
+}
+
+.assistant-message {
+    align-self: flex-start;
+}
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+.user-message .message-content {
+    background: #007AFF;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.assistant-message .message-content {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-input-area {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+}
+
+.chat-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    padding: 8px 0;
+}
+
+.chat-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.send-button {
+    background: none;
+    border: none;
+    color: #007AFF;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+}
+
+.send-button:hover {
+    opacity: 0.8;
+}
+
+/* Demo notice styles removed since chat is now fully interactive */
+
+/* Typing cursor animation - uses pseudo-element to avoid text blinking */
+.typing-cursor::after {
+    content: '|';
+    color: #00fff9;
+    animation: blink 1s infinite;
+    margin-left: 1px;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 
 .permission-warning {

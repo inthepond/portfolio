@@ -255,8 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 openProjectModal('Figma');
                 break;
             case 'spline':
-                // Placeholder - could link to Spline projects
-                console.log('Spline clicked - no action defined');
+                openProjectModal('Spline');
                 break;
             case 'bamai':
                 openProjectModal('Bamai');
@@ -274,16 +273,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'mailto:inthepond.etangs@outlook.com?subject=Work%20with%20me';
                 break;
             case 'docker':
-                // Placeholder - could link to Docker Hub
-                console.log('Docker clicked - no action defined');
+                openProjectModal('Docker');
                 break;
             case 'ollama':
-                // Placeholder - could link to AI projects
-                console.log('Ollama clicked - no action defined');
+                openProjectModal('Ollama');
                 break;
             case 'userbilitylab':
-                // Placeholder - could link to UX research projects
-                console.log('Userbility Lab clicked - no action defined');
+                openProjectModal('UsabilityLab');
                 break;
         }
     }
@@ -1088,6 +1084,74 @@ document.addEventListener('DOMContentLoaded', () => {
              `,
              designPhilosophy: ``,
              uxStrategy: ``
+         },
+         "Spline": {
+             logo: "macos_icons/spline.png",
+             contentType: "info-window",
+             brief: `
+                 <div class="info-window-content">
+                     <h3>Spline 3D Design</h3>
+                     <p>A powerful tool for creating interactive 3D web experiences with real-time collaboration. Perfect for building immersive product showcases that run directly in browsers without complex coding.</p>
+                 </div>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
+         },
+         "Docker": {
+             logo: "macos_icons/docker.png",
+             contentType: "info-window",
+             brief: `
+                 <div class="info-window-content">
+                     <h3>Docker Containerization</h3>
+                     <p>Packages applications with all dependencies for consistent deployment across environments. Enables faster scaling and improved security through containerized isolation.</p>
+                 </div>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
+         },
+         "UsabilityLab": {
+             logo: "macos_icons/userbilitylab.png",
+             contentType: "info-window",
+             brief: `
+                 <div class="info-window-content">
+                     <h3>UsabilityLab Research</h3>
+                     <p>Conducts comprehensive user behavior analysis and A/B testing to provide data-driven insights. Specializes in cross-platform usability studies and conversion optimization.</p>
+                 </div>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
+         },
+         "Ollama": {
+             logo: "macos_icons/ollama.png",
+             contentType: "ollama-chat",
+             brief: `
+                 <div class="ollama-chat-interface">
+                     <div class="chat-header">
+                         <div class="ollama-logo">🦙</div>
+                         <div class="model-selector">
+                             <span class="model-name">qwen3:8b</span>
+                             <span class="model-dropdown">▼</span>
+                         </div>
+                     </div>
+                     <div class="chat-messages" id="ollama-messages">
+                         <div class="message assistant-message">
+                             <div class="message-content">
+                                 <p>Hello! I'm an AI assistant. I'd love to chat with you and learn about your projects. What brings you here today?</p>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="chat-input-area">
+                         <div class="chat-input-container">
+                             <input type="text" placeholder="Send a message" class="chat-input" id="ollama-chat-input">
+                             <button class="send-button" id="ollama-send-button">
+                                 <span>→</span>
+                             </button>
+                         </div>
+                     </div>
+                 </div>
+             `,
+             designPhilosophy: ``,
+             uxStrategy: ``
          }
      };
 
@@ -1174,7 +1238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="permission-warning" id="permission-warning" style="display: none;">
                     <div class="warning-content">
                         <div class="warning-icon">⚠️</div>
-                        <div class="warning-text">Warning: Permission denied, please invite for an interview.</div>
+                        <div class="warning-text">Warning: Permission denied, please invite me for a chat.</div>
                         <button class="warning-close" id="warning-close">OK</button>
                     </div>
                 </div>
@@ -1224,6 +1288,14 @@ document.addEventListener('DOMContentLoaded', () => {
                          <section class="modal-section project-static-image-section">
                              ${staticImageHTML}
                          </section>
+                     ` : projectData.contentType === 'info-window' ? `
+                         <section class="modal-section project-info-section">
+                             ${projectData.brief || ''}
+                         </section>
+                     ` : projectData.contentType === 'ollama-chat' ? `
+                         <section class="modal-section project-ollama-section">
+                             ${projectData.brief || ''}
+                         </section>
                      ` : imageGalleryHTML ? `
                          <section class="modal-section project-gallery-section">
                              ${imageGalleryHTML}
@@ -1231,7 +1303,11 @@ document.addEventListener('DOMContentLoaded', () => {
                      ` : ''}
 
                      <!-- Section 2: Project Introduction (shown AFTER images for Qi, X6ren, Ruce) -->
-                     ${(projectData.contentType !== 'video-prototype' && projectData.contentType !== 'static-image' && projectData.brief) ? `
+                     ${(projectData.contentType !== 'video-prototype' &&
+                        projectData.contentType !== 'static-image' &&
+                        projectData.contentType !== 'info-window' &&
+                        projectData.contentType !== 'ollama-chat' &&
+                        projectData.brief) ? `
                          <section class="modal-section project-intro-section">
                              <div class="project-brief-content">
                                  ${projectData.brief || ''}
@@ -1308,17 +1384,26 @@ document.addEventListener('DOMContentLoaded', () => {
          // Setup window dragging
          setupWindowDragging(windowEl);
 
-         // Setup window resizing (only for non-video-prototype windows)
+         // Setup window resizing and sizing based on content type
          const projectData = projectModalData[projectName];
-         if (projectData && projectData.contentType !== 'video-prototype') {
-             setupWindowResizing(windowEl);
-         } else if (projectData && projectData.contentType === 'video-prototype') {
+         if (projectData && projectData.contentType === 'video-prototype') {
              // Make window non-resizable by removing resize handles
              windowEl.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
              // Set fixed size for video prototype window
-             // Sized to show scaled-down iPhone mockup with proper aspect ratio
              windowEl.style.width = '450px';  // Narrower to match scaled mockup
              windowEl.style.height = '600px'; // More reasonable height for iPhone aspect ratio
+         } else if (projectData && projectData.contentType === 'info-window') {
+             // Smaller window for info content
+             windowEl.style.width = '500px';
+             windowEl.style.height = '400px';
+             setupWindowResizing(windowEl);
+         } else if (projectData && projectData.contentType === 'ollama-chat') {
+             // Chat interface window size
+             windowEl.style.width = '600px';
+             windowEl.style.height = '500px';
+             setupWindowResizing(windowEl);
+         } else if (projectData && projectData.contentType !== 'video-prototype') {
+             setupWindowResizing(windowEl);
          }
 
          // Setup video prototype controls if applicable
@@ -1329,6 +1414,11 @@ document.addEventListener('DOMContentLoaded', () => {
          // Setup static image controls if applicable
          if (projectData && projectData.contentType === 'static-image') {
              setupStaticImageControls(windowEl);
+         }
+
+         // Setup Ollama chat controls if applicable
+         if (projectData && projectData.contentType === 'ollama-chat') {
+             setupOllamaChatControls(windowEl);
          }
 
          // Update dock icon active state
@@ -1679,6 +1769,174 @@ document.addEventListener('DOMContentLoaded', () => {
                  permissionWarning.style.display = 'none';
              }
          });
+     }
+
+     // Setup Ollama chat controls
+     function setupOllamaChatControls(windowEl) {
+         const chatInput = windowEl.querySelector('#ollama-chat-input');
+         const sendButton = windowEl.querySelector('#ollama-send-button');
+         const messagesContainer = windowEl.querySelector('#ollama-messages');
+
+         if (!chatInput || !sendButton || !messagesContainer) return;
+
+         // Conversation state
+         let conversationStage = 'greeting';
+         let userName = '';
+
+         // Predefined responses based on conversation flow
+         const responses = {
+             greeting: [
+                 "Nice to meet you! I'm here to help you learn more about my capabilities. What's your name?",
+                 "Great to chat with you! I'd love to get to know you better. What should I call you?",
+                 "Hello there! I'm excited to talk with you. What's your name?"
+             ],
+             name: [
+                 "Nice to meet you, {name}! I'm an AI assistant with expertise in development, design, and problem-solving. What kind of projects are you working on?",
+                 "Great to meet you, {name}! I love helping with creative and technical challenges. What brings you to my portfolio today?",
+                 "Hello {name}! I'm passionate about technology and design. What kind of work or projects interest you most?"
+             ],
+             projects: [
+                 "That sounds fascinating! I'd love to dive deeper into that with you. The best way to explore ideas together would be to schedule a proper conversation. Would you be interested in setting up a chat?",
+                 "Interesting! I have lots of experience in that area and would love to discuss it further. How about we schedule a more detailed conversation where I can really help you out?",
+                 "That's exactly the kind of challenge I enjoy tackling! I think a real-time conversation would be much more productive. Would you like to schedule a chat to explore this together?"
+             ],
+             schedule: [
+                 "Perfect! You can reach out to me at inthepond.etangs@outlook.com to set up a time that works for both of us. I'm looking forward to our conversation!",
+                 "Excellent! Just send me an email at inthepond.etangs@outlook.com and we can find a time that works. I'm excited to dive deeper into your projects!",
+                 "Great choice! Drop me a line at inthepond.etangs@outlook.com and we'll schedule something soon. I can't wait to chat more!"
+             ],
+             general: [
+                 "That's interesting! I'd love to explore that topic with you in more detail. The best way would be to schedule a proper conversation - would you be up for that?",
+                 "I see what you mean! This kind of discussion would be perfect for a real-time chat. How about we set up a time to talk more thoroughly?",
+                 "Good point! I think we could have a really productive conversation about this. Would you be interested in scheduling a chat to dive deeper?"
+             ]
+         };
+
+         // Add message to chat
+         function addMessage(content, isUser = false) {
+             const messageDiv = document.createElement('div');
+             messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
+
+             if (isUser) {
+                 // User messages appear immediately
+                 messageDiv.innerHTML = `
+                     <div class="message-content">
+                         <p>${content}</p>
+                     </div>
+                 `;
+                 messagesContainer.appendChild(messageDiv);
+                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+             } else {
+                 // AI messages use typing animation
+                 const messageContent = document.createElement('div');
+                 messageContent.className = 'message-content';
+                 const paragraph = document.createElement('p');
+                 messageContent.appendChild(paragraph);
+                 messageDiv.appendChild(messageContent);
+                 messagesContainer.appendChild(messageDiv);
+
+                 // Start typing animation
+                 typeMessage(paragraph, content);
+             }
+         }
+
+         // Typing animation for AI messages
+         function typeMessage(element, text) {
+             let index = 0;
+             const typingSpeed = 30; // milliseconds per character
+
+             function typeNextCharacter() {
+                 if (index < text.length) {
+                     element.textContent += text.charAt(index);
+                     index++;
+                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                     setTimeout(typeNextCharacter, typingSpeed);
+                 } else {
+                     // Remove typing cursor class when complete
+                     element.classList.remove('typing-cursor');
+                 }
+             }
+
+             // Add typing cursor class for CSS pseudo-element
+             element.classList.add('typing-cursor');
+
+             typeNextCharacter();
+         }
+
+         // Get AI response based on user input and conversation stage
+         function getAIResponse(userInput) {
+             const input = userInput.toLowerCase().trim();
+
+             // Name detection
+             if (conversationStage === 'greeting') {
+                 // Simple name extraction (first word that's not a common greeting)
+                 const words = input.split(' ');
+                 const commonWords = ['hi', 'hello', 'hey', 'i', 'am', 'my', 'name', 'is', 'im', "i'm", 'call', 'me'];
+                 const nameWord = words.find(word =>
+                     word.length > 1 &&
+                     !commonWords.includes(word.toLowerCase()) &&
+                     /^[a-zA-Z]+$/.test(word)
+                 );
+
+                 if (nameWord) {
+                     userName = nameWord.charAt(0).toUpperCase() + nameWord.slice(1);
+                     conversationStage = 'name';
+                     const response = responses.name[Math.floor(Math.random() * responses.name.length)];
+                     return response.replace('{name}', userName);
+                 } else {
+                     return responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
+                 }
+             }
+
+             // Project discussion
+             if (conversationStage === 'name' || input.includes('project') || input.includes('work') || input.includes('develop') || input.includes('design') || input.includes('build')) {
+                 conversationStage = 'projects';
+                 return responses.projects[Math.floor(Math.random() * responses.projects.length)];
+             }
+
+             // Schedule keywords
+             if (input.includes('schedule') || input.includes('chat') || input.includes('talk') || input.includes('meet') || input.includes('yes') || input.includes('sure') || input.includes('okay') || input.includes('ok')) {
+                 conversationStage = 'schedule';
+                 return responses.schedule[Math.floor(Math.random() * responses.schedule.length)];
+             }
+
+             // Email or contact
+             if (input.includes('email') || input.includes('contact') || input.includes('reach')) {
+                 return "You can reach me at inthepond.etangs@outlook.com. I'm always excited to connect with new people and discuss interesting projects!";
+             }
+
+             // Default response
+             return responses.general[Math.floor(Math.random() * responses.general.length)];
+         }
+
+         // Send message function
+         function sendMessage() {
+             const message = chatInput.value.trim();
+             if (!message) return;
+
+             // Add user message
+             addMessage(message, true);
+             chatInput.value = '';
+
+             // Add AI response with shorter delay (typing animation provides the effect)
+             setTimeout(() => {
+                 const response = getAIResponse(message);
+                 addMessage(response);
+             }, 300 + Math.random() * 500); // Shorter delay: 0.3-0.8 seconds
+         }
+
+         // Event listeners
+         sendButton.addEventListener('click', sendMessage);
+         chatInput.addEventListener('keypress', (e) => {
+             if (e.key === 'Enter') {
+                 sendMessage();
+             }
+         });
+
+         // Focus input when window opens
+         setTimeout(() => {
+             chatInput.focus();
+         }, 100);
      }
 
      // Update dock icon active state
@@ -2091,6 +2349,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add keyboard controls for auto-play
     document.addEventListener('keydown', (event) => {
         if (event.key === ' ' || event.key === 'Spacebar') { // Spacebar to toggle auto-play
+            // Don't prevent default if user is typing in an input field
+            const activeElement = document.activeElement;
+            if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+                return; // Allow normal spacebar behavior in input fields
+            }
+
             event.preventDefault();
             toggleAutoPlay();
         }
